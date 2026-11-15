@@ -1,0 +1,168 @@
+LAB/OFICIO — Laboratorio personal de diseño
+===========================================
+
+EMPEZAR (WINDOWS)
+Descomprimí todo el ZIP, y en la carpeta LAB-OFICIO hacé doble clic en
+INICIAR-LAB-OFICIO.bat. Esto abre la web en http://127.0.0.1:8765.
+Mantené la consola abierta mientras estudiás. Para cerrar, apretá Ctrl+C.
+El iniciador usa Node.js o Python si ya tenés alguno instalado; no necesita
+paquetes adicionales ni conexión a internet.
+
+ALTERNATIVA SIMPLE
+También podés abrir index.html directamente con el navegador: el curso,
+las láminas y el taller se muestran. Sin embargo, según el navegador, las
+páginas file:// pueden no compartir el guardado local entre sí. Por eso el
+iniciador local es la opción recomendada para registrar tu progreso.
+
+En Mac/Linux con Node.js: en esta carpeta ejecutá `node servidor.js` y abrí
+http://127.0.0.1:8765. O usá `python3 -m http.server 8765 --bind 127.0.0.1`.
+
+Todos los archivos del ZIP deben quedar juntos en su carpeta.
+
+QUÉ HAY
+- 5 módulos originales (diseño gráfico, web, editorial, identidad y movimiento).
+- 58 láminas de teoría y demostraciones interactivas, conservadas.
+- 25 preguntas de repaso, con respuestas persistidas.
+- Un cuaderno por lámina: consignas de proyectos, espacio para reflexiones,
+  marcar como comprendida o señalar para volver a revisar.
+- Un panel de progreso, acceso directo a la última lámina, y un archivo
+  de principios pendientes de revisión.
+- Un TALLER DE COMPOSICIÓN (taller.html) con 4 briefs de práctica.
+
+CAJA DE HERRAMIENTAS (herramientas.html)
+- Generador de retículas: 8 formatos (redes, web, A4 y pantalla LED), márgenes,
+  columnas, filas, líneas base, áreas seguras y regla de tercios. Exportación
+  de guías transparentes en SVG y PNG a resolución real.
+- Laboratorio de color: 8 paletas editoriales editables, control de contraste
+  WCAG AA, muestras Adobe .ASE, variables CSS y tokens JSON. Guardá tus paletas.
+- Escala tipográfica: familias de prueba, razón modular, ancho de texto,
+  interlineado y exportación CSS/JSON.
+- Combinaciones tipográficas: 8 parejas seleccionadas por intención visual,
+  análisis de sus relaciones y limitaciones, control de fuentes y pesos,
+  tracking, pruebas de titulares/párrafos/caracteres en español y vistas
+  de afiche, web y editorial. Compara versiones A/B, guarda combinaciones
+  y exporta CSS/JSON. Incluye opción para probar fuentes instaladas en
+  tu computadora (también fuentes activadas por Adobe si el navegador las ve).
+- Todo se guarda en el navegador; el respaldo del cuaderno también incluye
+  las herramientas en esta versión.
+
+TALLER
+- Elegí uno de los 4 encargos, arrastrá textos y formas en el lienzo.
+- Editá texto, tamaño, peso, color, posición y dimensiones desde el inspector.
+- Agregá y reordená elementos, deshacé y rehacé.
+- Activá/desactivá grilla y ajuste a una retícula de 8 px.
+- Guardá versiones A y B y cargalas para comparar decisiones.
+- Tomá notas y completá los criterios de revisión.
+- Exportá cada ejercicio en PNG, SVG o JSON.
+
+GUARDADO Y PRIVACIDAD
+Las notas, avances, repaso y composiciones se guardan localmente en el navegador
+(localStorage). No se envían a ningún servicio. Si cambiás de navegador,
+computadora o perfil, el progreso NO se sincroniza automáticamente.
+
+En el inicio podés usar "Exportar mi cuaderno" para guardar una copia .json
+que incluye tus apuntes, avances, repaso y composiciones. Después podés
+importar ese respaldo, reemplazando el estado local.
+
+Las fuentes originales (Archivo, Source Serif 4, JetBrains Mono) se cargan
+opcionalmente desde Google Fonts: si no hay conexión, se utilizan fuentes
+alternativas del sistema. El curso, el taller y la caja de herramientas funcionan igualmente.
+
+NOTA SOBRE LA PRÁCTICA
+Los casos CARVAN, SENTIDA, HTG y TRAMA usan composiciones con textos y formas
+para aprender, no artes finales ni recursos oficiales de esas identidades.
+Los espacios de fotografía son marcadores: no sustituyen fotos reales.
+
+Si eliminás los datos del sitio/navegador, se pierde el progreso local no
+respaldado. Conservá el JSON exportado en una carpeta propia.
+
+VERSION 3: las combinaciones usan Google Fonts como muestra online opcional.
+Sin conexión los ejemplos muestran fuentes alternativas, no la forma exacta
+de esas familias. Para ver una fuente instalada, poné su nombre exacto en
+los campos correspondientes. Esa fuente debe estar instalada o activada.
+
+
+VERSION 4 · SEIS LABORATORIOS NUEVOS (estudio.html)
+==================================================
+- 05 Composición: lienzo SVG editable con arrastre, teclado, inspector, diseños
+  de partida, guías opcionales, crítica geométrica y exportación SVG/PNG/JSON.
+- 06 Jerarquía visual: cargá una pieza PNG/JPG/WebP o usá tu composición,
+  compará en gris, desenfocada y reducida, marcá tres puntos de atención
+  subjetivos, descargá una plancha PNG y notas JSON. NO simula eye-tracking.
+- 07 Constructor de sistemas visuales: tokens, aplicación web/social/tarjeta,
+  importación de paletas y fuentes de V3, comprobación básica de contraste,
+  exportación CSS/JSON/mini guía HTML imprimible.
+- 08 Encuadre y fotografía: recorte real de PNG/JPG/WebP con zoom, foco,
+  arrastre, zonas de texto y guías. Exporta PNG/JPG sin superposiciones.
+  Conserva el contenido fotográfico original: no genera ni altera objetos.
+- 09 Pruebas de logotipo: importá SVG/PNG, evaluá escalas, fondos, grises y
+  silueta alfa monocroma. Exporta lámina PNG e informe JSON con checklist.
+- 10 Archivo de referencias: miniaturas comprimidas, anotaciones de decisiones,
+  filtros/búsquedas, edición/eliminación, importación/exportación JSON y
+  plancha visual PNG. Límite 24 miniaturas: los originales permanecen aparte.
+
+NAVEGACIÓN Y GUARDADO
+Desde la portada encontrás las 10 herramientas. Las 4 primeras se mantienen
+exactamente en herramientas.html, las 6 nuevas viven en estudio.html.
+El respaldo de portada "Exportar mi cuaderno" ahora incluye los nuevos
+laboratorios. También acepta respaldos V2 anteriores (sin laboratorios).
+
+PRIVACIDAD Y LÍMITES
+Las imágenes importadas se procesan localmente, en el navegador. El análisis
+visual no afirma medir la atención humana. El banco de pruebas usa el archivo
+que cargues; la mini guía usa textos de demostración, no reconstruye marcas.
+Fotografías y logotipos NO se conservan al cerrar la pestaña: cargalos de nuevo
+para exportar. El archivo de referencias guarda miniaturas comprimidas.
+
+Para pruebas confiables usá el iniciador .bat de Windows y abrí
+http://127.0.0.1:8765/estudio.html
+
+
+VERSION 5 · RECORRIDOS (recorridos.html)
+========================================
+La V5 conecta el curso, el taller y las diez herramientas en un mismo proceso.
+No se quitó ni se reemplazó ninguna función anterior.
+
+SEIS RECORRIDOS, CINCO ESTACIONES CADA UNO
+01 Jerarquía y lectura · 02 Espacio, alineación y retícula · 03 Tipografía con
+intención · 04 Color como función · 05 Imagen y encuadre · 06 Identidad como
+sistema. Cada uno pasa por:
+ 1 Entender: láminas puntuales. Se cumple al marcarlas como comprendidas; tus
+   apuntes del cuaderno aparecen en el recorrido.
+ 2 Experimentar: una herramienta con configuración sugerida opcional. Al
+   aplicarla se guarda la anterior y se puede restaurar desde la guía. Se
+   cumple cuando la herramienta registra el uso y escribís qué observaste.
+ 3 Practicar: un encargo del taller convertido en experimento (A y B cambian
+   una sola variable). Las versiones se miden y se "fijan" en el recorrido,
+   así el taller puede seguir cambiando sin alterar lo que evaluás.
+ 4 Evaluar: A y B lado a lado, indicadores medidos (relación de niveles,
+   tamaños, familias, ejes, superficie ocupada, usos del acento, contraste
+   mínimo, área de imagen), predicción, lectura en el laboratorio 06 con
+   tus tres marcas, rúbrica de cuatro niveles (incluye intención y contexto)
+   y una decisión escrita.
+ 5 Aplicar: pieza real, soporte, revisión final, antes y después opcionales
+   y reflexión.
+Si una estación no se puede completar con evidencia, se puede cerrar igual:
+queda marcada como cerrada, no como cumplida.
+
+GUÍA DEL RECORRIDO
+Al ir a una estación aparece una guía en la esquina inferior derecha de la
+página (láminas, taller, herramientas y laboratorios) con la consigna y el
+estado medido en vivo. Se minimiza con el botón –. En el taller, la guía
+permite fijar A y B sin volver al recorrido.
+
+CONEXIONES NUEVAS
+- Cada lámina indica en qué recorridos se trabaja.
+- Cada herramienta indica en qué recorridos y estaciones se usa.
+- Taller: "Analizar lectura" envía la composición actual al laboratorio 06.
+  taller.html#carvan (o #sentida, #htg, #trama) abre ese encargo.
+- Repaso: si respondés mal, aparece la lámina que lo enseña.
+- Bitácora: cada recorrido (o todos) se descarga como HTML autónomo con
+  apuntes, versiones, mediciones, lecturas, rúbrica y aplicación.
+- El respaldo "Exportar mi cuaderno" ahora es versión 4 e incluye los
+  recorridos. Sigue aceptando respaldos V2 y V3.
+
+LÍMITES
+Los indicadores miden geometría y color: comprueban si el experimento se hizo,
+no dicen si una pieza es buena. El módulo 5 (Movimiento) todavía no tiene
+recorrido porque no hay una herramienta de práctica de animación medible.

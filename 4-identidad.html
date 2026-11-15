@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Principios de identidad de marca</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+
+/* Layout: pliego de imprenta — láminas numeradas con escenario interactivo, barra de control CMYK y marcas de corte */
+:root{
+  --paper:#ECEFF2;
+  --sheet:#FFFFFF;
+  --ink:#14161B;
+  --ink-2:#4B525E;
+  --rule:#C9D0D8;
+  --dot:#B7BEC8;
+  --mag:#D4006A;
+  --cyan:#008DC4;
+  --yel:#EFBE00;
+  --f-display:"Archivo","Arial Narrow",Arial,sans-serif;
+  --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --s-1:12px; --s-2:14px; --s-3:17px; --s-4:22px; --s-5:34px; --s-6:clamp(44px,8vw,104px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#101215; --sheet:#181B20; --ink:#ECEEF1; --ink-2:#A2A9B4; --rule:#2D323A; --dot:#4A515C;
+  --mag:#FF4D9B; --cyan:#3DB6E6; --yel:#FFD43F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#101215; --sheet:#181B20; --ink:#ECEEF1; --ink-2:#A2A9B4; --rule:#2D323A; --dot:#4A515C;
+  --mag:#FF4D9B; --cyan:#3DB6E6; --yel:#FFD43F; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:var(--s-3);line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+em,i{font-style:normal}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-family:var(--f-display);margin:0;text-wrap:balance}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-size:var(--s-1);letter-spacing:.06em;text-transform:uppercase}
+:focus-visible{outline:2px solid var(--mag);outline-offset:3px}
+
+/* ---------- Hero ---------- */
+.hero{padding-block:48px 56px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:center}
+.hero-kicker{display:flex;gap:14px;align-items:center;color:var(--ink-2);margin-bottom:20px}
+.hero-kicker .chip{background:var(--ink);color:var(--paper);padding:4px 8px}
+.hero h1{font-size:var(--s-6);font-stretch:118%;font-weight:850;line-height:.9;letter-spacing:-.02em}
+.hero h1 .l2{display:block;font-stretch:72%;font-weight:300;letter-spacing:0;color:var(--mag)}
+.hero-lede{margin-top:24px;max-width:52ch;color:var(--ink-2)}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:28px;color:var(--ink-2)}
+.hero-meta b{color:var(--ink);font-weight:600}
+.hero-side{display:flex;flex-direction:column;gap:12px}
+.hero-stage{position:relative;aspect-ratio:4/3;max-width:100%;background:var(--sheet);border:1px solid var(--rule);overflow:hidden}
+.hero-grid{position:absolute;inset:0 6%;display:grid;grid-template-columns:repeat(6,1fr);gap:2%;opacity:0;transition:opacity .8s ease .6s;pointer-events:none}
+.hero-grid span{background:color-mix(in oklab,var(--cyan) 9%,transparent);border-inline:1px solid color-mix(in oklab,var(--cyan) 30%,transparent)}
+.hero-stage.ordered .hero-grid{opacity:1}
+.h-el{position:absolute;transition:transform 1.1s cubic-bezier(.2,.8,.2,1),border-radius 1.1s}
+.c-ink{background:var(--ink)} .c-ink2{background:var(--ink-2)} .c-mag{background:var(--mag)} .c-cyan{background:var(--cyan)} .c-yel{background:var(--yel)}
+.c-line{border:2px solid var(--ink)}
+.hero-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.hero-state{color:var(--ink-2)}
+
+/* ---------- Layout ---------- */
+.layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:56px;padding-bottom:80px}
+.index{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start}
+.index h3{font-family:var(--f-mono);font-size:var(--s-1);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin-bottom:12px}
+.index ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.index a{display:flex;gap:10px;align-items:baseline;padding:5px 8px;color:var(--ink-2);text-decoration:none;font-family:var(--f-display);font-size:15px;font-weight:500;border-left:2px solid transparent;transition:color .2s,border-color .2s,background .2s}
+.index a span{font-family:var(--f-mono);font-size:11px;font-variant-numeric:tabular-nums}
+.index a:hover{color:var(--ink)}
+.index a.on{color:var(--ink);border-left-color:var(--mag);background:var(--sheet)}
+.plates{display:flex;flex-direction:column;gap:96px;min-width:0}
+
+/* ---------- Plate ---------- */
+.plate{scroll-margin-top:24px;min-width:0}
+.plate-head{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-bottom:24px}
+.plate-no{display:flex;gap:12px;align-items:center;color:var(--mag)}
+.plate-no::after{content:"";flex:1;height:1px;background:var(--rule)}
+.plate h2{font-size:var(--s-5);font-stretch:112%;font-weight:800;letter-spacing:-.01em;line-height:1.05}
+.lede{max-width:66ch;color:var(--ink-2)}
+.lede strong{color:var(--ink);font-weight:600}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:0;border:1px solid var(--rule);background:var(--sheet)}
+.stage{position:relative;min-height:340px;overflow:hidden;min-width:0;display:flex;align-items:center;justify-content:center;padding:24px}
+.stage svg{display:block;max-width:100%;height:auto}
+.crop{position:absolute;width:14px;height:14px;pointer-events:none}
+.crop.tl{top:8px;left:8px;border-top:1px solid var(--ink-2);border-left:1px solid var(--ink-2)}
+.crop.tr{top:8px;right:8px;border-top:1px solid var(--ink-2);border-right:1px solid var(--ink-2)}
+.crop.bl{bottom:8px;left:8px;border-bottom:1px solid var(--ink-2);border-left:1px solid var(--ink-2)}
+.crop.br{bottom:8px;right:8px;border-bottom:1px solid var(--ink-2);border-right:1px solid var(--ink-2)}
+.controls{border-left:1px solid var(--rule);padding:20px;display:flex;flex-direction:column;gap:18px;background:color-mix(in oklab,var(--paper) 45%,var(--sheet));min-width:0}
+.ctl{display:flex;flex-direction:column;gap:6px}
+.ctl label,.ctl .lbl{display:flex;justify-content:space-between;gap:8px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.ctl output{color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--mag);margin:0}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button,.btn{font-family:var(--f-display);font-size:13px;font-weight:600;padding:6px 10px;background:var(--sheet);color:var(--ink);border:1px solid var(--rule);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.seg button:hover,.btn:hover{border-color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.btn.prime{background:var(--mag);border-color:var(--mag);color:#fff}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.checks label{display:flex;gap:6px;align-items:center;font-family:var(--f-display);font-size:13px;text-transform:none;letter-spacing:0;color:var(--ink);cursor:pointer}
+.checks input{accent-color:var(--mag)}
+.readout{font-family:var(--f-mono);font-size:12px;line-height:1.5;color:var(--ink-2);border-top:1px dashed var(--rule);padding-top:12px;font-variant-numeric:tabular-nums}
+.readout b{color:var(--ink);font-weight:600}
+.pill{display:inline-block;padding:1px 7px;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.04em}
+.pill.ok{background:color-mix(in oklab,#1F9D55 18%,transparent);color:#1C8A4B}
+.pill.mid{background:color-mix(in oklab,var(--yel) 30%,transparent);color:color-mix(in oklab,var(--yel) 40%,var(--ink))}
+.pill.bad{background:color-mix(in oklab,var(--mag) 16%,transparent);color:var(--mag)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill.ok{color:#5FD08F}}
+:root[data-theme="dark"] .pill.ok{color:#5FD08F}
+
+.strip{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 12px;border:1px solid var(--rule);border-top:0;background:var(--sheet);color:var(--ink-2);flex-wrap:wrap}
+.patches{display:flex;gap:3px}
+.patches i{width:14px;height:10px;display:block}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}
+.notes h4{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.notes .do h4{color:var(--cyan)} .notes .dont h4{color:var(--mag)}
+.notes p{font-size:16px;color:var(--ink-2);max-width:60ch}
+
+@media (max-width:980px){
+  .bench{grid-template-columns:minmax(0,1fr)}
+  .controls{border-left:0;border-top:1px solid var(--rule)}
+}
+@media (max-width:900px){
+  .hero{grid-template-columns:minmax(0,1fr);gap:32px;padding-block:32px 40px}
+  .layout{grid-template-columns:minmax(0,1fr);gap:24px}
+  .index{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding-block:8px;border-bottom:1px solid var(--rule)}
+  .index h3{display:none}
+  .index ol{flex-direction:row;overflow-x:auto;gap:4px;scrollbar-width:none}
+  .index a{white-space:nowrap;border-left:0;border-bottom:2px solid transparent}
+  .index a.on{border-bottom-color:var(--mag)}
+  .plate{scroll-margin-top:64px}
+  .notes{grid-template-columns:1fr}
+  .plates{gap:72px}
+}
+@media (max-width:560px){ .stage{min-height:280px;padding:16px} }
+
+/* ---------- Demos ---------- */
+/* Jerarquía */
+.poster{width:min(100%,420px);aspect-ratio:3/4;background:var(--paper);padding:8%;display:flex;flex-direction:column;justify-content:flex-start;gap:4%;border:1px solid var(--rule);overflow:hidden}
+.poster > *{transition:font-size .25s,font-weight .25s,letter-spacing .25s,color .25s,margin .25s;font-family:var(--f-display);line-height:1.05}
+.poster .p-foot{margin-top:auto}
+/* Contraste / proximidad / etc. SVG tokens */
+.f-ink{fill:var(--ink)} .f-ink2{fill:var(--ink-2)} .f-mag{fill:var(--mag)} .f-cyan{fill:var(--cyan)} .f-yel{fill:var(--yel)} .f-dot{fill:var(--dot)} .f-sheet{fill:var(--sheet)} .f-paper{fill:var(--paper)}
+.s-ink{stroke:var(--ink)} .s-mag{stroke:var(--mag)} .s-cyan{stroke:var(--cyan)} .s-rule{stroke:var(--rule)}
+svg text{font-family:var(--f-mono);font-size:12px;fill:var(--ink-2)}
+.tr{transition:transform .6s cubic-bezier(.2,.8,.2,1),fill .4s,opacity .4s,rx .4s}
+.tbox{transform-box:fill-box}
+
+/* Alineación */
+.align-card{position:relative;width:min(100%,460px);background:var(--paper);border:1px solid var(--rule);padding:28px 24px;display:flex;flex-direction:column;gap:12px}
+.align-card .ai{transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.align-guide{position:absolute;top:0;bottom:0;width:0;border-left:1px dashed var(--mag);transition:left .7s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.ai-tag{width:96px;height:10px;background:var(--mag)}
+.ai-title{width:280px;height:26px;background:var(--ink)}
+.ai-img{width:200px;height:110px;background:var(--cyan)}
+.ai-l1{width:240px;height:8px;background:var(--ink-2)}
+.ai-l2{width:180px;height:8px;background:var(--ink-2)}
+.ai-btn{width:120px;height:32px;border:2px solid var(--ink)}
+
+/* Proximidad */
+.prox{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px;width:100%;align-items:center}
+.form{display:flex;flex-direction:column;font-family:var(--f-display);font-size:13px}
+.form .fl{color:var(--ink-2);font-weight:600;transition:margin .3s}
+.form .fi{height:30px;border:1px solid var(--ink-2);background:var(--sheet);transition:margin .3s}
+@media (max-width:560px){.prox{grid-template-columns:minmax(0,1fr)}}
+
+/* Espacio */
+.air{width:min(100%,440px);aspect-ratio:4/3;background:var(--paper);border:1px solid var(--rule);display:flex;transition:padding .3s}
+.air-in{display:flex;flex-direction:column;transition:gap .3s;width:100%}
+.air-logo{width:28px;height:28px;background:var(--mag);border-radius:50%;flex:none}
+.air h5{font-family:var(--f-display);font-weight:800;font-stretch:110%;font-size:22px;margin:0;line-height:1.05}
+.air p{font-size:13px;line-height:1.45;color:var(--ink-2)}
+.air .air-cta{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--ink);text-transform:uppercase}
+
+/* Proporción */
+.ratio-wrap{width:100%;height:340px;display:flex;align-items:center;justify-content:center}
+.ratio-box{position:relative;background:var(--paper);border:1px solid var(--ink);transition:width .7s cubic-bezier(.2,.8,.2,1),height .7s cubic-bezier(.2,.8,.2,1);max-width:100%}
+.ratio-box svg{position:absolute;inset:0;width:100%;height:100%}
+.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .9s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.fadein{opacity:0;animation:fade .6s ease forwards}
+@keyframes fade{to{opacity:1}}
+
+/* Color */
+.color-lab{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:center;width:100%}
+.wheel{position:relative;width:200px;height:200px;border-radius:50%;flex:none}
+.wheel::after{content:"";position:absolute;inset:28%;border-radius:50%;background:var(--sheet)}
+.mk{position:absolute;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;border:3px solid var(--sheet);box-shadow:0 0 0 1px var(--ink);transition:left .5s cubic-bezier(.2,.8,.2,1),top .5s cubic-bezier(.2,.8,.2,1),background .3s;z-index:1}
+.mk.base{width:26px;height:26px;margin:-13px 0 0 -13px}
+.swatches{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.swatches div{width:44px;height:44px;transition:background .3s;position:relative}
+.cposter{aspect-ratio:4/3;max-width:100%;display:grid;grid-template-columns:3fr 2fr;transition:background .3s;border:1px solid var(--rule)}
+.cposter .cp-a{padding:16px;display:flex;flex-direction:column;justify-content:space-between;transition:color .3s}
+.cposter .cp-b{transition:background .3s;display:flex;align-items:flex-end;padding:14px}
+.cposter h5{margin:0;font-family:var(--f-display);font-weight:850;font-stretch:115%;font-size:clamp(20px,3vw,30px);line-height:.95}
+.cposter .acc{width:40%;height:10px;transition:background .3s}
+.ratio606{display:flex;height:10px;margin-top:10px}
+.ratio606 span{transition:background .3s}
+@media (max-width:640px){.color-lab{grid-template-columns:minmax(0,1fr);justify-items:center}.color-lab>div:last-child{width:100%}}
+
+/* Tipografía */
+.typo{max-width:100%;color:var(--ink);transition:font-size .2s,line-height .2s,letter-spacing .2s,max-width .3s;border-left:2px solid var(--mag);padding-left:16px}
+.typo-wrap{width:100%;display:flex;justify-content:center}
+.measure-ruler{height:6px;margin-top:10px;background:repeating-linear-gradient(90deg,var(--rule) 0 1px,transparent 1px 1ch)}
+
+/* Grilla */
+.gdemo{position:relative;width:100%;background:var(--paper);border:1px solid var(--rule);transition:padding .3s}
+.gcols,.gcontent{display:grid;transition:gap .3s}
+.gcols{position:absolute;inset:0;pointer-events:none;transition:padding .3s,opacity .3s}
+.gcols span{background:color-mix(in oklab,var(--mag) 12%,transparent);border-inline:1px solid color-mix(in oklab,var(--mag) 35%,transparent)}
+.gcontent{position:relative;row-gap:12px}
+.gb{min-height:24px;transition:all .4s}
+.gb.h{background:var(--ink);height:28px}
+.gb.img{background:var(--cyan);height:120px}
+.gb.txt{display:flex;flex-direction:column;gap:7px;padding-top:4px}
+.gb.txt i{height:7px;background:var(--ink-2)}
+.gb.card{height:70px;border:2px solid var(--ink)}
+
+/* Recorrido */
+.path-dot{transition:opacity .3s}
+
+/* ---------- Módulo 4: identidad ---------- */
+.back{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--rule)}
+.back:hover{color:var(--ink);border-color:var(--ink)}
+.brandcard{background:#F4EEE4;border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;position:relative;transition:background .4s}
+.brandcard svg{display:block;max-width:100%;height:auto}
+.bw{width:100%;display:flex;flex-direction:column;gap:12px;align-items:center}
+.stamp{position:absolute;top:12px;right:12px;font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.08em;padding:4px 8px;border:2px solid;transform:rotate(-6deg);transition:all .3s}
+.stamp.ok{color:#1C8A4B;border-color:#1C8A4B}
+.stamp.no{color:#D03030;border-color:#D03030}
+.logo-wrap{transition:transform .6s cubic-bezier(.2,.8,.2,1),filter .4s;display:block}
+.sizes{display:flex;gap:28px;align-items:flex-end;justify-content:center;flex-wrap:wrap;width:100%}
+.sizes figure{margin:0;display:flex;flex-direction:column;gap:8px;align-items:center}
+.sizes figcaption{font-family:var(--f-mono);font-size:11px;color:var(--ink-2)}
+.ramp{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:3px;width:100%}
+.ramp div{aspect-ratio:1;display:flex;align-items:flex-end;padding:4px;font-family:var(--f-mono);font-size:9px;transition:background .3s}
+.specs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%}
+.spec{border:1px solid var(--rule);background:var(--sheet)}
+.spec .sw{height:64px;transition:background .3s}
+.spec .tx{padding:8px;font-family:var(--f-mono);font-size:10.5px;line-height:1.5;color:var(--ink-2)}
+.spec .tx b{color:var(--ink);font-family:var(--f-display);font-size:13px}
+@media (max-width:560px){.specs{grid-template-columns:1fr}}
+.menu-card{width:min(100%,420px);background:#F4EEE4;color:#2B1E16;padding:24px;border:1px solid var(--rule);display:flex;flex-direction:column;gap:10px}
+.menu-card .mh{font-size:30px;line-height:1}
+.menu-card .ms{font-size:15px;line-height:1.45}
+.menu-card .mc{font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.menu-card .row{display:flex;justify-content:space-between;border-top:1px solid #2B1E1630;padding-top:8px;font-size:15px}
+.menu-card *{transition:font-family .2s}
+canvas.pat{width:100%;height:320px;display:block;background:#F4EEE4}
+.voice{width:min(100%,380px);display:flex;flex-direction:column;gap:10px}
+.phone{background:#E9E4DA;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:8px;min-height:220px}
+.bub{background:#fff;color:#1d1d1d;padding:10px 12px;border-radius:12px 12px 12px 3px;font-family:var(--f-display);font-size:14px;line-height:1.4;max-width:90%;box-shadow:0 1px 0 #0001;animation:pop .35s ease both}
+.bub small{display:block;font-family:var(--f-mono);font-size:10px;color:#777;margin-bottom:3px}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}}
+.pad{position:relative;aspect-ratio:1;width:100%;max-width:220px;background:var(--sheet);border:1px solid var(--rule);cursor:crosshair;touch-action:none}
+.pad::before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed var(--rule)}
+.pad::after{content:"";position:absolute;top:50%;left:0;right:0;border-top:1px dashed var(--rule)}
+.pad i{position:absolute;width:16px;height:16px;margin:-8px;border-radius:50%;background:var(--mag);transition:left .15s,top .15s;z-index:1}
+.pad span{position:absolute;font-family:var(--f-mono);font-size:10px;color:var(--ink-2)}
+.apps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:100%}
+.app{background:var(--paper);border:1px solid var(--rule);aspect-ratio:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.app > div{transition:all .5s cubic-bezier(.2,.8,.2,1)}
+.app label{position:absolute;left:6px;bottom:4px;font-family:var(--f-mono);font-size:9px;color:var(--ink-2)}
+@media (max-width:560px){.apps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<link rel="stylesheet" href="laboratorio.css">
+<link rel="stylesheet" href="oficio.css">
+<script src="oficio-datos.js"></script>
+<script src="oficio.js"></script>
+
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <div class="hero-kicker mono"><span class="chip">Módulo 4</span><span>Identidad de marca</span></div>
+      <h1>Identidad<span class="l2">de un logo a un sistema</span></h1>
+      <p class="hero-lede">Una marca no es un logo: es un conjunto de reglas que hace que cualquier pieza, hecha por cualquiera, se reconozca como de la misma familia. Todo el módulo usa una marca de ejemplo, Hornero, una panadería de masa madre inventada para practicar.</p>
+      <div class="hero-meta mono"><a href="index.html" style="color:var(--ink);font-weight:600;text-decoration:none;border-bottom:1px solid var(--mag)">← Índice del curso</a><span><b>11</b> láminas</span><a class="back" href="1-grafico.html">1 · Gráfico</a><a class="back" href="2-web.html">2 · Web</a><a class="back" href="3-editorial.html">3 · Editorial</a><a class="back" href="5-motion.html">5 · Motion →</a></div>
+    </div>
+    <div class="hero-side">
+      <div class="hero-stage" id="heroStage" aria-label="Manual de marca que pasa del desorden al orden">
+        <div class="hero-grid"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="hero-bar">
+        <span class="hero-state mono" id="heroState">Con sistema: logo, color, tipografía, aplicaciones</span>
+        <button class="btn" id="heroBtn" type="button">Desordenar</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="index" aria-label="Índice de láminas"><h3>Láminas</h3><ol id="indexList"></ol></aside>
+    <main class="plates" id="plates">
+
+<section class="plate" id="tipos" data-name="Tipos de marca">
+  <div class="plate-head"><div class="plate-no mono">Lámina 01</div><h2>Tipos de marca</h2>
+  <p class="lede">Con los mismos ingredientes (un símbolo y un nombre) se arman distintas estructuras. En el vocabulario que se usa en Argentina: <strong>logotipo, isotipo, imagotipo, isologotipo</strong>, monograma y emblema. Elegir bien depende de dónde va a vivir la marca y de cuánto la conoce la gente.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="brandcard" style="width:100%;height:280px"><svg id="tpSvg" viewBox="0 0 400 220" width="400" aria-label="Marca Hornero"></svg></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Estructura</span><div class="seg" id="tpSeg"><button type="button" data-t="logo">Logotipo</button><button type="button" data-t="iso">Isotipo</button><button type="button" data-t="imago" aria-pressed="true">Imagotipo</button><button type="button" data-t="isologo">Isologotipo</button><button type="button" data-t="mono">Monograma</button><button type="button" data-t="emb">Emblema</button></div></div>
+      <div class="readout" id="tpRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>01 / 11 · Tipos de marca</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Una marca nueva casi siempre necesita el nombre escrito: el símbolo solo funciona cuando la gente ya lo asocia. Diseñá el imagotipo completo y derivá de ahí el isotipo para avatares y favicons.</p></div><div class="dont"><h4>Error común</h4><p>Presentar un solo archivo. Una identidad necesita varias configuraciones (horizontal, vertical, solo símbolo) porque los espacios donde va a aparecer tienen formas distintas.</p></div></div>
+</section>
+
+<section class="plate" id="reduccion" data-name="Reducción">
+  <div class="plate-head"><div class="plate-no mono">Lámina 02</div><h2>Reducción y escalabilidad</h2>
+  <p class="lede">El mismo logo va a aparecer en un cartel de dos metros y en una pestaña del navegador de 16 píxeles. Los detalles finos <strong>se empastan al achicarse</strong>. Las marcas actuales tienen versiones según el tamaño: completa, simplificada y mínima.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="sizes" id="rdBox"></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="rdS">Tamaño <output id="rdSO">96 px</output></label><input id="rdS" type="range" min="12" max="200" value="96"></div>
+      <div class="ctl"><span class="lbl">Probar en</span><div class="seg" id="rdSeg"><button type="button" data-s="16">Favicon</button><button type="button" data-s="40">Avatar</button><button type="button" data-s="96" aria-pressed="true">Encabezado</button><button type="button" data-s="200">Cartel</button></div></div>
+      <div class="readout" id="rdRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>02 / 11 · Reducción</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Definí en el manual un tamaño mínimo de reproducción en milímetros (impreso) y en píxeles (pantalla). Probá el logo a 16 px antes de presentarlo, no después.</p></div><div class="dont"><h4>Error común</h4><p>Diseñar el logo a pantalla completa con texturas, degradados y líneas de 0,5 pt. Se ve espectacular en la presentación y se vuelve una mancha en el bordado de un uniforme.</p></div></div>
+</section>
+
+<section class="plate" id="resguardo" data-name="Área de resguardo">
+  <div class="plate-head"><div class="plate-no mono">Lámina 03</div><h2>Área de resguardo</h2>
+  <p class="lede">Alrededor de la marca hay una zona que <strong>ningún otro elemento puede invadir</strong>. Se mide con una unidad que sale del propio logo (acá, la altura de la puerta del horno, llamada x), así escala junto con él a cualquier tamaño.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="brandcard" style="width:100%;height:280px"><svg id="rgSvg" viewBox="0 0 460 240" width="460" aria-label="Área de resguardo"></svg></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="rgD">Posición del otro elemento <output id="rgDO"></output></label><input id="rgD" type="range" min="0" max="100" value="80"></div>
+      <div class="ctl"><label for="rgX">Resguardo <output id="rgXO">1 x</output></label><input id="rgX" type="range" min="0" max="20" value="10"></div>
+      <div class="readout" id="rgRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>03 / 11 · Resguardo</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Cuando la marca convive con otras (sponsors, cobranding), el área de resguardo es la regla que evita discusiones: se mide, no se opina.</p></div><div class="dont"><h4>Error común</h4><p>Definir el resguardo en centímetros fijos. Si no sale del logo, no sirve cuando el logo cambia de tamaño.</p></div></div>
+</section>
+
+<section class="plate" id="versiones" data-name="Versiones de color">
+  <div class="plate-head"><div class="plate-no mono">Lámina 04</div><h2>Versiones de color</h2>
+  <p class="lede">La marca tiene que funcionar sobre cualquier fondo que le toque: blanco, color propio, negro, fotos, un sello de goma. Por eso se definen <strong>versión principal, negativa y monocromas</strong>, y una regla clara de cuál va sobre qué.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="brandcard" id="vcCard" style="width:100%;height:280px"><svg id="vcSvg" viewBox="0 0 360 120" width="360" aria-label="Versión de color"></svg><span class="stamp" id="vcStamp"></span></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Fondo</span><div class="seg" id="vcBg"><button type="button" data-b="#F4EEE4" aria-pressed="true">Crudo</button><button type="button" data-b="#FFFFFF">Blanco</button><button type="button" data-b="#C9861E">Ocre</button><button type="button" data-b="#2B1E16">Tierra</button><button type="button" data-b="photo">Foto</button></div></div>
+      <div class="ctl"><span class="lbl">Versión</span><div class="seg" id="vcVer"><button type="button" data-v="main" aria-pressed="true">Principal</button><button type="button" data-v="neg">Negativa</button><button type="button" data-v="black">Mono negra</button><button type="button" data-v="white">Mono blanca</button></div></div>
+      <div class="readout" id="vcRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>04 / 11 · Versiones</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Armá una tabla fondo por versión en el manual. Sobre fotos, elegí la zona más pareja de la imagen o usá la versión monocroma que más contraste.</p></div><div class="dont"><h4>Error común</h4><p>Poner la versión a color sobre un fondo del mismo tono "porque es la oficial". La oficial es la que se lee.</p></div></div>
+</section>
+
+<section class="plate" id="incorrectos" data-name="Usos incorrectos">
+  <div class="plate-head"><div class="plate-no mono">Lámina 05</div><h2>Usos incorrectos</h2>
+  <p class="lede">Todo manual tiene una página de prohibiciones porque <strong>alguien va a intentar cada una</strong>. Estirar para que entre, rotar para darle dinamismo, cambiarle el color para combinar con la campaña. Probá cada error.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="brandcard" id="icCard" style="width:100%;height:280px;overflow:hidden"><div class="logo-wrap" id="icWrap"><svg id="icSvg" viewBox="0 0 360 120" width="320" aria-label="Logo"></svg></div><span class="stamp ok" id="icStamp">CORRECTO</span></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Probar</span><div class="seg" id="icSeg"><button type="button" data-m="ok" aria-pressed="true">Correcto</button><button type="button" data-m="stretch">Deformar</button><button type="button" data-m="rotate">Rotar</button><button type="button" data-m="color">Otro color</button><button type="button" data-m="shadow">Sombra y efectos</button><button type="button" data-m="outline">Contorno</button><button type="button" data-m="rearr">Reordenar</button><button type="button" data-m="font">Otra tipografía</button><button type="button" data-m="bg">Fondo sin contraste</button></div></div>
+      <div class="readout" id="icRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>05 / 11 · Usos incorrectos</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Mostrá cada error aplicado de verdad sobre el logo, con una marca visible. Ver el logo deformado convence más que leer "no deformar".</p></div><div class="dont"><h4>Error común</h4><p>Entregar solo un JPG del logo. Sin archivos vectoriales en todas sus versiones, la gente improvisa, y la improvisación es exactamente esta lista.</p></div></div>
+</section>
+
+<section class="plate" id="construccion" data-name="Construcción y óptica">
+  <div class="plate-head"><div class="plate-no mono">Lámina 06</div><h2>Construcción y corrección óptica</h2>
+  <p class="lede">Un símbolo se construye con geometría para que sea reproducible, pero se termina <strong>a ojo</strong>. Un círculo y un cuadrado de la misma altura no se ven del mismo tamaño: el círculo parece más chico y hay que agrandarlo un poco. Los tipógrafos lo llaman rebase.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="brandcard" style="width:100%;height:300px"><svg id="csSvg" viewBox="0 0 480 240" width="480" aria-label="Construcción del símbolo y corrección óptica"></svg></div>
+    </div>
+    <div class="controls">
+      <button class="btn prime" id="csPlay" type="button">Trazar construcción</button>
+      <div class="ctl"><label for="csO">Rebase del círculo y el triángulo <output id="csOO">0 %</output></label><input id="csO" type="range" min="0" max="12" value="0"></div>
+      <div class="readout" id="csRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>06 / 11 · Construcción</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Los círculos rebasan entre un 2 y un 4 % arriba y abajo; los triángulos con punta, bastante más. Las líneas horizontales se hacen un poco más finas que las verticales para que parezcan iguales.</p></div><div class="dont"><h4>Error común</h4><p>Confiar en la grilla geométrica como argumento de venta. La construcción sirve para redibujar el logo; el cliente lo va a juzgar con los ojos.</p></div></div>
+</section>
+
+<section class="plate" id="paleta" data-name="Sistema cromático">
+  <div class="plate-head"><div class="plate-no mono">Lámina 07</div><h2>Sistema cromático</h2>
+  <p class="lede">El color de marca se especifica para <strong>cada medio</strong>: HEX y RGB para pantalla, CMYK para imprenta, y una referencia Pantone elegida con la guía física. Además se define una escala de tonos para interfaz y la proporción de uso de cada color.</p></div>
+  <div class="bench">
+    <div class="stage" style="flex-direction:column;gap:14px"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="specs" id="plSpecs"></div>
+      <div class="ramp" id="plRamp"></div>
+      <div style="display:flex;height:14px;width:100%" id="plProp"></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="plC">Color principal</label><input type="color" id="plC" value="#C9861E" style="width:100%;height:40px;border:1px solid var(--rule);background:var(--sheet);padding:2px"></div>
+      <div class="readout" id="plRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>07 / 11 · Color</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Los valores CMYK de esta lámina son una conversión aproximada. Para imprenta, convertí con el perfil de color de la imprenta (por ejemplo FOGRA39) y pedí una prueba de color antes de la tirada.</p></div><div class="dont"><h4>Error común</h4><p>Elegir el color mirando la pantalla y descubrirlo impreso. Los verdes y naranjas saturados de pantalla suelen no existir en CMYK.</p></div></div>
+</section>
+
+<section class="plate" id="tipografia" data-name="Sistema tipográfico">
+  <div class="plate-head"><div class="plate-no mono">Lámina 08</div><h2>Sistema tipográfico</h2>
+  <p class="lede">La tipografía de marca hace más trabajo que el logo: aparece en cada cartel, menú y publicación. Una buena regla es <strong>dos familias como máximo</strong>, con roles definidos: una con carácter para títulos y una cómoda para leer.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="menu-card" id="tyCard"><span class="mc">Menú de la mañana</span><span class="mh">Hornero</span><span class="ms">Pan de masa madre con fermentación de 48 horas. Harina agroecológica de molino de piedra.</span><div class="row"><span>Hogaza de campo</span><span>$ 6.500</span></div><div class="row"><span>Medialunas de manteca × 6</span><span>$ 4.800</span></div><div class="row"><span>Budín de naranja</span><span>$ 5.200</span></div></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Combinación</span><div class="seg" id="tySeg"><button type="button" data-p="a" aria-pressed="true">Expandida + serif</button><button type="button" data-p="b">Serif + sans</button><button type="button" data-p="c">Una familia</button><button type="button" data-p="d">Mono + serif</button><button type="button" data-p="x">Cuatro familias</button></div></div>
+      <div class="readout" id="tyRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>08 / 11 · Tipografía</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Verificá la licencia antes de proponer una fuente: si es de pago, el cliente la tiene que comprar para cada uso (escritorio, web, app). Las de Google Fonts tienen licencia libre para todo.</p></div><div class="dont"><h4>Error común</h4><p>Usar la misma tipografía del logo para los textos. Las letras de un logo suelen estar dibujadas para verse grandes; en un párrafo cansan.</p></div></div>
+</section>
+
+<section class="plate" id="patron" data-name="Elementos gráficos">
+  <div class="plate-head"><div class="plate-no mono">Lámina 09</div><h2>Elementos gráficos y patrones</h2>
+  <p class="lede">Un sistema necesita recursos para llenar superficies sin repetir el logo en todos lados: patrones, texturas, formas que salen del símbolo. Bien resueltos, hacen que <strong>la marca se reconozca aunque el logo no esté</strong>.</p></div>
+  <div class="bench">
+    <div class="stage" style="padding:16px"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <canvas class="pat" id="ptCan" aria-label="Patrón generado con el símbolo"></canvas>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Disposición</span><div class="seg" id="ptSeg"><button type="button" data-m="grid">Grilla</button><button type="button" data-m="brick" aria-pressed="true">Trabado</button><button type="button" data-m="rot">Girado</button><button type="button" data-m="crop">Recorte gigante</button></div></div>
+      <div class="ctl"><label for="ptS">Escala <output id="ptSO">36</output></label><input id="ptS" type="range" min="14" max="90" value="36"></div>
+      <div class="ctl"><label for="ptG">Separación <output id="ptGO">22</output></label><input id="ptG" type="range" min="0" max="60" value="22"></div>
+      <div class="ctl"><span class="lbl">Color</span><div class="seg" id="ptC"><button type="button" data-c="0" aria-pressed="true">Tono sobre tono</button><button type="button" data-c="1">Contraste</button><button type="button" data-c="2">Dos tintas</button></div></div>
+      <div class="readout" id="ptRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>09 / 11 · Elementos gráficos</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Pensá en las superficies reales: papel de envolver, la parte de atrás de una tarjeta, el fondo de una historia de Instagram. El patrón tono sobre tono acompaña; el de contraste protagoniza.</p></div><div class="dont"><h4>Error común</h4><p>Llenar todo con patrón. Necesita espacio liso alrededor para que el logo y los textos se lean.</p></div></div>
+</section>
+
+<section class="plate" id="voz" data-name="Voz y tono">
+  <div class="plate-head"><div class="plate-no mono">Lámina 10</div><h2>Voz y tono</h2>
+  <p class="lede">La marca también habla. La <strong>voz</strong> es la personalidad y no cambia; el <strong>tono</strong> se ajusta a la situación, como una persona que es la misma en un velorio y en un cumpleaños. Mové el punto y mirá cómo cambia el mismo aviso.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="voice"><div class="phone" id="vzPhone"></div></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Arrastrá el punto</span>
+        <div class="pad" id="vzPad"><i id="vzDot"></i><span style="top:4px;left:50%;transform:translateX(-50%)">Lúdico</span><span style="bottom:4px;left:50%;transform:translateX(-50%)">Serio</span><span style="left:4px;top:50%;transform:translateY(-50%)">Formal</span><span style="right:4px;top:50%;transform:translateY(-50%)">Cercano</span></div></div>
+      <div class="ctl"><span class="lbl">Situación</span><div class="seg" id="vzSeg"><button type="button" data-s="delay" aria-pressed="true">Pedido demorado</button><button type="button" data-s="new">Producto nuevo</button></div></div>
+      <div class="readout" id="vzRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>10 / 11 · Voz y tono</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Definí la voz con tres adjetivos y su contrario ("cercana, pero no confianzuda") y escribí ejemplos reales de lo que se dice y lo que no. Las listas de adjetivos solas no le sirven a nadie que tenga que escribir.</p></div><div class="dont"><h4>Error común</h4><p>Ser chistoso cuando el cliente tiene un problema. El tono lúdico que funciona para presentar un producto puede sonar a burla en un reclamo.</p></div></div>
+</section>
+
+<section class="plate" id="aplicaciones" data-name="Aplicaciones">
+  <div class="plate-head"><div class="plate-no mono">Lámina 11</div><h2>Aplicaciones y coherencia</h2>
+  <p class="lede">La prueba final de una identidad es verla aplicada: tarjeta, bolsa, cartel, perfil de redes, ícono de app. Si se reconoce como una sola marca en todas, el sistema funciona. Si cada pieza la hizo alguien distinto <strong>sin reglas</strong>, se nota enseguida.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="apps" id="apBox"></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Aplicaciones</span><div class="seg" id="apSeg"><button type="button" data-m="sys" aria-pressed="true">Con sistema</button><button type="button" data-m="raw">Sin reglas</button></div></div>
+      <div class="readout" id="apRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>11 / 11 · Aplicaciones</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Presentá la identidad con las aplicaciones que el cliente va a usar de verdad en los próximos seis meses, no con mockups de camiones y aviones que nunca va a tener.</p></div><div class="dont"><h4>Error común</h4><p>Entregar el manual y desaparecer. Los primeros meses de uso muestran qué reglas faltan; prevé una revisión.</p></div></div>
+</section>
+
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+const RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $=(s,c=document)=>c.querySelector(s);
+const $$=(s,c=document)=>[...c.querySelectorAll(s)];
+const lerp=(a,b,t)=>a+(b-a)*t;
+const NS='http://www.w3.org/2000/svg';
+const el=(tag,attrs={},parent)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;};
+const fmt=(n,d=2)=>n.toFixed(d).replace('.',',');
+const pill=(cls,t)=>`<span class="pill ${cls}">${t}</span>`;
+function seg(container,cb){$$('button',container).forEach(b=>b.addEventListener('click',()=>{$$('button',container).forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');cb(b);}));}
+function hex2rgb(h){h=h.replace('#','');return [0,2,4].map(i=>parseInt(h.substr(i,2),16)/255);}
+function lum(c){const f=v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);return .2126*f(c[0])+.7152*f(c[1])+.0722*f(c[2]);}
+function cr(a,b){const A=lum(hex2rgb(a)),B=lum(hex2rgb(b));return (Math.max(A,B)+.05)/(Math.min(A,B)+.05);}
+const fadeIn=n=>{if(!RM)n.animate([{opacity:0,transform:'scale(.96)'},{opacity:1,transform:'none'}],{duration:450,easing:'cubic-bezier(.2,.8,.2,1)'});};
+
+/* ---------- Marca Hornero ---------- */
+const C={ocre:'#C9861E',tierra:'#2B1E16',cielo:'#4F86B5',crudo:'#F4EEE4',blanco:'#FFFFFF'};
+const SYM='M10 82 L10 56 A40 40 0 0 1 90 56 L90 82 Z M38 82 L38 66 A12 12 0 0 1 62 66 L62 82 Z';
+const WORD_STYLE="font-family:Archivo,Arial,sans-serif;font-weight:850;font-stretch:115%;letter-spacing:-0.02em";
+function sym(x,y,s,col,detail,ground=col){
+  let d=`<g transform="translate(${x} ${y}) scale(${s/100})"><path d="${SYM}" fill="${col}" fill-rule="evenodd"/><rect x="4" y="86" width="92" height="6" fill="${ground}"/>`;
+  if(detail){d+=`<g fill="none" stroke="${C.crudo}" stroke-width=".7" opacity=".9"><path d="M18 56 A32 32 0 0 1 82 56"/><path d="M26 56 A24 24 0 0 1 74 56"/>${[20,30,70,80].map(xx=>`<path d="M${xx} 60 V80"/>`).join('')}<path d="M10 70 H38 M62 70 H90"/></g><g fill="none" stroke="${col}" stroke-width="1.2"><path d="M78 20 c4 -4 -4 -8 0 -12 c4 -4 -4 -8 0 -12"/><path d="M84 22 c3 -3 -3 -6 0 -9"/></g><text x="50" y="99" text-anchor="middle" style="font-family:JetBrains Mono,monospace;font-size:4.5px;letter-spacing:.3px" fill="${col}">PANADERÍA · DESDE 1998</text>`;}
+  return d+'</g>';
+}
+const word=(x,y,size,col,anchor='start',style=WORD_STYLE)=>`<text x="${x}" y="${y}" font-size="${size}" fill="${col}" text-anchor="${anchor}" style="${style}">Hornero</text>`;
+const imago=(col=C.tierra,symCol=C.ocre,wordStyle=WORD_STYLE)=>sym(0,10,100,symCol,false)+word(112,84,50,col,'start',wordStyle);
+
+/* Índice */
+const list=$('#indexList');
+$$('.plate').forEach((p,i)=>{const li=document.createElement('li');li.innerHTML=`<a href="#${p.id}"><span>${String(i+1).padStart(2,'0')}</span>${p.dataset.name}</a>`;list.appendChild(li);});
+const links=$$('a',list);
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));const on=links.find(a=>a.classList.contains('on'));if(on&&window.innerWidth<=900)list.scrollTo({left:on.offsetLeft-list.clientWidth/2+on.offsetWidth/2,behavior:RM?'auto':'smooth'});}});},{rootMargin:'-40% 0px -55% 0px'});
+$$('.plate').forEach(p=>io.observe(p));
+
+/* Hero */
+(function(){
+  const stage=$('#heroStage');
+  const items=[
+    {x:6,y:8,w:21,h:28,c:'mag',r:'50% 50% 0 0'},{x:31,y:14,w:40,h:10,c:'ink'},{x:31,y:28,w:26,h:3,c:'ink2'},
+    {x:6,y:44,w:14,h:14,c:'mag'},{x:22,y:44,w:14,h:14,c:'cyan'},{x:38,y:44,w:14,h:14,c:'ink'},{x:54,y:44,w:14,h:14,c:'yel'},
+    {x:74,y:8,w:20,h:50,c:'line'},
+    {x:6,y:66,w:40,h:6,c:'ink'},{x:6,y:76,w:30,h:2.5,c:'ink2'},{x:6,y:81,w:34,h:2.5,c:'ink2'},
+    {x:54,y:66,w:40,h:26,c:'cyan'},{x:60,y:72,w:8,h:10,c:'mag',r:'50% 50% 0 0'}
+  ];
+  const els=items.map(it=>{const d=document.createElement('div');d.className='h-el c-'+it.c;Object.assign(d.style,{left:it.x+'%',top:it.y+'%',width:it.w+'%',height:it.h+'%',borderRadius:it.r||'0'});stage.appendChild(d);return d;});
+  let ordered=true;
+  const scatter=()=>els.forEach(d=>{d.style.transform=`translate(${(Math.random()-.5)*50}%,${(Math.random()-.5)*60}%) rotate(${(Math.random()-.5)*60}deg) scale(${.5+Math.random()*.8})`;});
+  const apply=()=>{ordered?els.forEach(d=>d.style.transform='none'):scatter();stage.classList.toggle('ordered',ordered);$('#heroState').textContent=ordered?'Con sistema: logo, color, tipografía, aplicaciones':'Sin sistema: piezas sueltas que no se reconocen';$('#heroBtn').textContent=ordered?'Desordenar':'Ordenar';};
+  $('#heroBtn').addEventListener('click',()=>{ordered=!ordered;apply();});
+  if(!RM){els.forEach(d=>d.style.transition='none');ordered=false;apply();void stage.offsetWidth;els.forEach(d=>d.style.transition='');setTimeout(()=>{ordered=true;apply();},350);}else apply();
+})();
+
+/* 01 Tipos */
+(function(){
+  const svg=$('#tpSvg');
+  const T={
+    logo:['Logotipo','Solo el nombre, con una tipografía propia o dibujada. Ideal cuando el nombre es corto y distintivo.',()=>word(200,130,74,C.tierra,'middle')],
+    iso:['Isotipo','Solo el símbolo. Funciona cuando la marca ya es conocida, o en espacios cuadrados: favicon, avatar, ícono de app.',()=>sym(130,20,140,C.ocre,false,C.tierra)],
+    imago:['Imagotipo','Símbolo y nombre juntos pero separables: cada uno puede usarse solo. La configuración más versátil.',()=>`<g transform="translate(24 52)">${imago()}</g>`],
+    isologo:['Isologotipo','Símbolo y nombre fusionados en una sola pieza que no se separa. Muy sólido, menos flexible.',()=>`<g transform="translate(110 4)">${sym(0,0,180,C.ocre,false,C.ocre)}<rect x="0" y="152" width="180" height="40" fill="${C.tierra}"/>${word(90,182,30,C.crudo,'middle')}</g>`],
+    mono:['Monograma','Una o más iniciales con tratamiento gráfico. Útil para sellos, bordados y aplicaciones chicas.',()=>`${sym(130,20,140,C.tierra,false)}<text x="200" y="134" text-anchor="middle" font-size="44" fill="${C.ocre}" style="${WORD_STYLE}">H</text>`],
+    emb:['Emblema','Todo encerrado en una forma, como un sello o escudo. Transmite tradición; cuesta reducirlo.',()=>`<defs><path id="circ" d="M200 110 m-78 0 a78 78 0 1 1 156 0 a78 78 0 1 1 -156 0"/></defs><circle cx="200" cy="110" r="98" fill="${C.tierra}"/><circle cx="200" cy="110" r="90" fill="none" stroke="${C.ocre}" stroke-width="1.5"/><text font-size="13" fill="${C.crudo}" style="font-family:JetBrains Mono,monospace;letter-spacing:3px"><textPath href="#circ" startOffset="2%">HORNERO · PANADERÍA DE MASA MADRE · DESDE 1998 ·</textPath></text>${sym(160,62,80,C.ocre,false)}`]
+  };
+  function render(t){svg.innerHTML=T[t][2]();fadeIn(svg);$('#tpRead').innerHTML=`<b>${T[t][0]}</b><br>${T[t][1]}`;}
+  seg($('#tpSeg'),b=>render(b.dataset.t));render('imago');
+})();
+
+/* 02 Reducción */
+(function(){
+  const box=$('#rdBox');
+  function render(){
+    const s=+$('#rdS').value;$('#rdSO').textContent=s+' px';
+    const mm=s*25.4/96;
+    const detail=`<svg viewBox="0 0 100 100" width="${s}" height="${s}">${sym(0,0,100,C.ocre,true,C.tierra)}</svg>`;
+    const simple=`<svg viewBox="0 0 100 100" width="${s}" height="${s}">${sym(0,0,100,C.ocre,false,C.tierra)}</svg>`;
+    const respW=s>=72?`<svg viewBox="0 0 400 100" height="${s*.5}" width="${s*2}">${sym(0,0,100,C.ocre,false,C.tierra)}${word(112,74,50,C.tierra)}</svg>`:simple;
+    box.innerHTML=`<figure><div class="brandcard" style="padding:12px">${detail}</div><figcaption>Detallado</figcaption></figure><figure><div class="brandcard" style="padding:12px">${simple}</div><figcaption>Simplificado</figcaption></figure><figure><div class="brandcard" style="padding:12px;min-height:${s+24}px">${respW}</div><figcaption>Responsive: ${s>=72?'imagotipo':'solo isotipo'}</figcaption></figure>`;
+    $('#rdRead').innerHTML=`Equivale a <b>${fmt(mm,1)} mm</b> impreso a 96 ppp<br>Detallado: ${s<64?pill('bad','Se empasta'):pill('ok','Se lee')}<br>Simplificado: ${s<16?pill('mid','Al límite'):pill('ok','Se lee')}<br>Tamaño mínimo sugerido: <b>64 px</b> detallado, <b>16 px</b> simplificado.`;
+    $$('#rdSeg button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.s===s)));
+  }
+  $('#rdS').addEventListener('input',render);seg($('#rdSeg'),b=>{$('#rdS').value=b.dataset.s;render();});render();
+})();
+
+/* 03 Resguardo */
+(function(){
+  const svg=$('#rgSvg');
+  function render(){
+    const p=+$('#rgD').value/100,xs=+$('#rgX').value/10;
+    const LX=40,LY=70,LW=362*0.75,LH=100*0.75,X=28*.75; // x = altura de la puerta (28 u)
+    const pad=X*xs;
+    const ox=LX+LW+pad+lerp(-200,50,p);
+    const intr=ox<LX+LW+pad;
+    $('#rgDO').textContent=intr?'invade':'libre';$('#rgXO').textContent=fmt(xs,1)+' x';
+    svg.innerHTML=`<rect x="${LX-pad}" y="${LY-pad}" width="${LW+2*pad}" height="${LH+2*pad}" fill="${intr?'#D0303018':'#4F86B514'}" stroke="${intr?'#D03030':C.cielo}" stroke-dasharray="5 4"/>
+      <g transform="translate(${LX} ${LY}) scale(.75)">${imago()}</g>
+      ${xs>0?`<g fill="${C.cielo}" style="font-family:JetBrains Mono,monospace;font-size:10px"><rect x="${LX-pad}" y="${LY-pad}" width="${pad}" height="${pad}" opacity=".35"/><text x="${LX-pad+3}" y="${LY-pad+12}">${fmt(xs,1)}x</text></g>`:''}
+      <g transform="translate(${ox} ${LY+10})" style="transition:transform .2s"><rect width="120" height="56" fill="${C.cielo}"/><text x="60" y="34" text-anchor="middle" fill="#fff" style="font-family:Archivo,sans-serif;font-weight:800;font-size:16px">PROMO 2×1</text></g>
+      <g transform="translate(${LX} ${LY+LH+pad+22})"><path d="M0 0 V-14 M0 -7 H${X} M${X} 0 V-14" stroke="${C.tierra}" fill="none"/><text x="${X+6}" y="-3" fill="${C.tierra}" style="font-family:JetBrains Mono,monospace;font-size:10px">x = altura de la puerta del horno</text></g>`;
+    $('#rgRead').innerHTML=`Resguardo: <b>${fmt(xs,1)} x</b> alrededor del logo<br>${xs<.5?pill('bad','Sin aire'):intr?pill('bad','El elemento invade'):pill('ok','Respetado')}`;
+  }
+  ['#rgD','#rgX'].forEach(s=>$(s).addEventListener('input',render));render();
+})();
+
+/* 04 Versiones */
+(function(){
+  const card=$('#vcCard'),svg=$('#vcSvg'),st=$('#vcStamp');let bg='#F4EEE4',ver='main';
+  const V={main:[C.ocre,C.tierra],neg:[C.ocre,C.crudo],black:[C.tierra,C.tierra],white:[C.blanco,C.blanco]};
+  const rules={'#F4EEE4':'main','#FFFFFF':'main','#C9861E':'white','#2B1E16':'neg','photo':'white'};
+  function render(){
+    const [sc,wc]=V[ver];
+    card.style.background=bg==='photo'?'radial-gradient(circle at 30% 30%,#9C7A4E,#5C3E22 55%,#2E1E12)':bg;
+    svg.innerHTML=imago(wc,sc);
+    const ref=bg==='photo'?'#5C3E22':bg;
+    const rW=cr(wc,ref),rS=cr(sc,ref);
+    const good=rules[bg]===ver||(Math.min(rW,rS)>=3);
+    st.className='stamp '+(good?'ok':'no');st.textContent=good?(rules[bg]===ver?'RECOMENDADA':'ACEPTABLE'):'NO USAR';
+    $('#vcRead').innerHTML=`Contraste del nombre: <b>${fmt(rW,1)}:1</b><br>Contraste del símbolo: <b>${fmt(rS,1)}:1</b><br>Recomendada sobre este fondo: <b>${({main:'Principal',neg:'Negativa',black:'Mono negra',white:'Mono blanca'})[rules[bg]]}</b>`;
+  }
+  seg($('#vcBg'),b=>{bg=b.dataset.b;render();});seg($('#vcVer'),b=>{ver=b.dataset.v;render();});render();
+})();
+
+/* 05 Incorrectos */
+(function(){
+  const wrap=$('#icWrap'),svg=$('#icSvg'),st=$('#icStamp'),card=$('#icCard');
+  const M={
+    ok:['Correcto','Proporciones, colores y tipografía originales.'],
+    stretch:['Deformar','Escalar sin mantener la proporción. El caso más común: "lo estiré para que entre en el banner".'],
+    rotate:['Rotar','Girar la marca para darle movimiento. La marca tiene una sola orientación.'],
+    color:['Otro color','Cambiar los colores para combinar con una campaña o un evento.'],
+    shadow:['Sombra y efectos','Sombras, biseles, brillos o degradados que no están en el original.'],
+    outline:['Contorno','Convertir en línea una marca que es de relleno.'],
+    rearr:['Reordenar','Cambiar la posición o la proporción entre el símbolo y el nombre.'],
+    font:['Otra tipografía','Reescribir el nombre con otra fuente porque no se tenía el archivo.'],
+    bg:['Fondo sin contraste','Ubicar la marca sobre un fondo que la hace desaparecer.']
+  };
+  function render(m){
+    let html=imago(),tf='none',flt='none',bg='#F4EEE4';
+    if(m==='stretch')tf='scaleX(1.45) scaleY(.75)';
+    if(m==='rotate')tf='rotate(-14deg)';
+    if(m==='color')html=imago('#7B2FBF','#2FBF71');
+    if(m==='shadow')flt='drop-shadow(6px 8px 0 #2B1E1666) drop-shadow(0 0 10px #C9861E)';
+    if(m==='outline')html=`<g fill="none" stroke="${C.tierra}" stroke-width="1.5">${sym(0,10,100,'none',false,'none').replace(/fill="none"/g,'fill="none" stroke="#C9861E" stroke-width="2"')}</g><text x="112" y="84" font-size="50" fill="none" stroke="${C.tierra}" stroke-width="1.5" style="${WORD_STYLE}">Hornero</text>`;
+    if(m==='rearr')html=`${word(0,60,50,C.tierra)}${sym(250,0,50,C.ocre,false,C.tierra)}`;
+    if(m==='font')html=imago(C.tierra,C.ocre,'font-family:Georgia,serif;font-weight:400;font-style:normal');
+    if(m==='bg')bg='#C3852A';
+    svg.innerHTML=html;wrap.style.transform=tf;wrap.style.filter=flt;card.style.background=bg;
+    if(m==='bg')svg.innerHTML=imago('#A06A1A',C.ocre);
+    st.className='stamp '+(m==='ok'?'ok':'no');st.textContent=m==='ok'?'CORRECTO':'NO';
+    $('#icRead').innerHTML=`<b>${M[m][0]}</b><br>${M[m][1]}`;
+  }
+  seg($('#icSeg'),b=>render(b.dataset.m));render('ok');
+})();
+
+/* 06 Construcción */
+(function(){
+  const svg=$('#csSvg');
+  function shapes(o){
+    const H=80,base=200,cy=base-H/2;const r=H/2*(1+o);const th=H*(1+o*2.2);
+    return `<g><line x1="250" y1="${base}" x2="470" y2="${base}" stroke="${C.cielo}" stroke-dasharray="3 3"/><line x1="250" y1="${base-H}" x2="470" y2="${base-H}" stroke="${C.cielo}" stroke-dasharray="3 3"/>
+      <rect x="262" y="${base-H}" width="${H}" height="${H}" fill="${C.tierra}"/>
+      <circle cx="${262+H+12+r}" cy="${cy}" r="${r}" fill="${C.tierra}"/>
+      <path d="M${262+2*H+28+(H*(1+o))/2} ${base-th+(th-H)*.25} L${262+2*H+28+H*(1+o)} ${base+(th-H)*.25} L${262+2*H+28} ${base+(th-H)*.25} Z" fill="${C.tierra}"/></g>`;
+  }
+  function render(draw){
+    const o=+$('#csO').value/100;$('#csOO').textContent=Math.round(o*100)+' %';
+    svg.innerHTML=`<g transform="translate(20 20) scale(2)">
+      <g id="cons" fill="none" stroke="${C.cielo}" stroke-width=".5">
+        <rect x="0" y="0" width="100" height="100"/>${[10,20,30,40,50,60,70,80,90].map(v=>`<path d="M${v} 0V100M0 ${v}H100" opacity=".35"/>`).join('')}
+        <circle cx="50" cy="56" r="40"/><circle cx="50" cy="66" r="12"/><path d="M10 56H90M10 82H90M38 56V82M62 56V82"/></g>
+      ${sym(0,0,100,C.ocre+'D0',false,C.tierra)}</g>${shapes(o)}
+      <text x="262" y="226" fill="${C.tierra}" style="font-family:JetBrains Mono,monospace;font-size:10px">misma altura matemática ${o>0?'+ rebase':''}</text>`;
+    if(draw&&!RM){$$('#cons > *',svg).forEach((n,i)=>{const L=n.getTotalLength?n.getTotalLength():400;n.style.strokeDasharray=L;n.animate([{strokeDashoffset:L},{strokeDashoffset:0}],{duration:700,delay:i*45,fill:'backwards'});});}
+    $('#csRead').innerHTML=`Grilla de 10 × 10 unidades. Arco de radio 40, puerta de radio 12, base en la línea 82.<br><br>Rebase: <b>${Math.round(o*100)} %</b> ${o===0?pill('bad','El círculo parece más chico'):o<=.05?pill('ok','Ópticamente iguales'):pill('mid','Se pasó')}`;
+  }
+  $('#csO').addEventListener('input',()=>render(false));$('#csPlay').addEventListener('click',()=>render(true));
+  let done=false;new IntersectionObserver(es=>{if(es[0].isIntersecting&&!done){done=true;render(true);}},{threshold:.4}).observe(svg);render(false);
+})();
+
+/* 07 Paleta */
+(function(){
+  const toHex=c=>'#'+c.map(v=>Math.round(Math.max(0,Math.min(1,v))*255).toString(16).padStart(2,'0')).join('').toUpperCase();
+  function rgb2hsl([r,g,b]){const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h=0,s=0,l=(mx+mn)/2;if(mx!==mn){const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);h=mx===r?(g-b)/d+(g<b?6:0):mx===g?(b-r)/d+2:(r-g)/d+4;h*=60;}return[h,s,l];}
+  function hsl2rgb(h,s,l){const k=n=>(n+h/30)%12,a=s*Math.min(l,1-l),f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));return[f(0),f(8),f(4)];}
+  function cmyk([r,g,b]){const k=1-Math.max(r,g,b);if(k>=1)return[0,0,0,100];return[(1-r-k)/(1-k),(1-g-k)/(1-k),(1-b-k)/(1-k),k].map(v=>Math.round(v*100));}
+  function spec(name,hex,role){const c=hex2rgb(hex),[cc,m,y,k]=cmyk(c);return `<div class="spec"><div class="sw" style="background:${hex}"></div><div class="tx"><b>${name}</b><br>${role}<br>HEX ${hex}<br>RGB ${c.map(v=>Math.round(v*255)).join(' ')}<br>CMYK ${cc} ${m} ${y} ${k}</div></div>`;}
+  function render(){
+    const hex=$('#plC').value.toUpperCase();const [h,s,l]=rgb2hsl(hex2rgb(hex));
+    const dark=toHex(hsl2rgb(h,Math.min(.45,s*.5),.13)),light=toHex(hsl2rgb(h,Math.min(.45,s*.4),.94));
+    $('#plSpecs').innerHTML=spec('Principal',hex,'Logo y acentos')+spec('Oscuro',dark,'Textos y fondos fuertes')+spec('Claro',light,'Fondos y papel');
+    const steps=[50,100,200,300,400,500,600,700,800,900];
+    $('#plRamp').innerHTML=steps.map((st,i)=>{const L=lerp(.96,.12,i/9);const c=toHex(hsl2rgb(h,s*(i<2?.6:1),L));const onW=cr(c,'#FFFFFF')>=4.5;return `<div style="background:${c};color:${L>.55?'#111':'#fff'}" title="${c}">${st}${onW?'':''}</div>`;}).join('');
+    $('#plProp').innerHTML=`<span style="flex:6;background:${light};outline:1px solid var(--rule)"></span><span style="flex:3;background:${dark}"></span><span style="flex:1;background:${hex}"></span>`;
+    const rw=cr(hex,'#FFFFFF'),rd=cr(hex,dark);
+    $('#plRead').innerHTML=`Texto blanco sobre principal: <b>${fmt(rw,1)}:1</b> ${rw>=4.5?pill('ok','AA'):rw>=3?pill('mid','Solo títulos'):pill('bad','No')}<br>Oscuro sobre principal: <b>${fmt(rd,1)}:1</b> ${rd>=4.5?pill('ok','AA'):pill('mid','Solo títulos')}<br><br>Proporción de uso: claro 60, oscuro 30, principal 10.<br>CMYK: conversión aproximada, sin perfil.`;
+  }
+  $('#plC').addEventListener('input',render);render();
+})();
+
+/* 08 Tipografía */
+(function(){
+  const card=$('#tyCard');
+  const D='Archivo,Arial,sans-serif',S='"Source Serif 4",Georgia,serif',M='"JetBrains Mono",monospace';
+  const P={
+    a:[[D,850,'115%'],[S,400,'100%'],[D,600,'100%'],'Expandida pesada para títulos, serif para leer. Contraste claro de roles: moderna y artesanal a la vez.'],
+    b:[[S,600,'100%'],[D,400,'100%'],[D,600,'100%'],'Serif para títulos, sans para textos. Más clásica y editorial.'],
+    c:[[D,800,'75%'],[D,400,'100%'],[D,500,'100%'],'Una sola familia con variaciones de ancho y peso. Máxima coherencia, menos contraste.'],
+    d:[[M,600,'100%'],[S,400,'100%'],[M,400,'100%'],'Monoespaciada para títulos y datos, serif para el texto. Técnica, de receta o de laboratorio.'],
+    x:[['Georgia,serif',700,'100%'],['"Comic Sans MS","Trebuchet MS",sans-serif',400,'100%'],['Impact,sans-serif',400,'100%'],'Cuatro familias sin roles. Cada línea parece de una marca distinta.']
+  };
+  function set(e,[f,w,st]){e.style.fontFamily=f;e.style.fontWeight=w;e.style.fontStretch=st;}
+  function render(k){const p=P[k];set($('.mh',card),p[0]);set($('.ms',card),p[1]);set($('.mc',card),p[2]);$$('.row',card).forEach((r,i)=>set(r,k==='x'?[['Courier New,monospace',400,'100%'],[S,400,'100%'],[D,700,'100%']][i]:p[1]));
+    if(!RM)card.animate([{opacity:.4},{opacity:1}],{duration:300});
+    const fams=k==='x'?4:k==='c'?1:2;
+    $('#tyRead').innerHTML=`${p[3]}<br><br>Familias: <b>${fams}</b> ${fams<=2?pill('ok','Sistema claro'):pill('bad','Sin sistema')}`;}
+  seg($('#tySeg'),b=>render(b.dataset.p));render('a');
+})();
+
+/* 09 Patrón */
+(function(){
+  const can=$('#ptCan'),ctx=can.getContext('2d');let mode='brick',col=0;
+  const sp=new Path2D(SYM),gr=new Path2D('M4 86h92v6H4z');
+  const COLS=[[C.crudo,'#E7D9C2','#E7D9C2'],[C.ocre,C.tierra,C.tierra],[C.crudo,C.ocre,C.cielo]];
+  function render(){
+    const s=+$('#ptS').value,g=+$('#ptG').value;$('#ptSO').textContent=s;$('#ptGO').textContent=g;
+    const dpr=window.devicePixelRatio||1,W=can.clientWidth,H=can.clientHeight;can.width=W*dpr;can.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    const [bg,a,b]=COLS[col];ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+    const step=s+g;let n=0;
+    if(mode==='crop'){ctx.save();ctx.translate(W*.15,H*.05);ctx.scale(W*.012,W*.012);ctx.fillStyle=a;ctx.fill(sp,'evenodd');ctx.fill(gr);ctx.restore();n=1;}
+    else for(let r=-1;r*step<H+step;r++)for(let c=-1;c*step<W+step;c++){
+      let x=c*step,y=r*step;if(mode==='brick'&&r%2)x+=step/2;
+      ctx.save();ctx.translate(x+s/2,y+s/2);
+      if(mode==='rot')ctx.rotate(((r+c)%4)*Math.PI/2);
+      ctx.scale(s/100,s/100);ctx.translate(-50,-50);ctx.fillStyle=(col===2&&(r+c)%2)?b:a;ctx.fill(sp,'evenodd');ctx.fill(gr);ctx.restore();n++;}
+    $('#ptRead').innerHTML=`Repeticiones visibles: <b>${n}</b><br>${col===0?'Tono sobre tono: fondo para envoltorios y papelería.':col===1?'Contraste: superficie protagonista, por ejemplo una bolsa.':'Dos tintas: más lúdico, para redes o eventos.'}`;
+  }
+  seg($('#ptSeg'),b=>{mode=b.dataset.m;render();});seg($('#ptC'),b=>{col=+b.dataset.c;render();});
+  ['#ptS','#ptG'].forEach(s=>$(s).addEventListener('input',render));new ResizeObserver(render).observe(can);
+})();
+
+/* 10 Voz */
+(function(){
+  const pad=$('#vzPad'),dot=$('#vzDot'),phone=$('#vzPhone');let x=.7,y=.35,sit='delay',last='';
+  const T={delay:{
+    fs:'Estimado cliente: le informamos que su pedido N.º 2041 presenta una demora de aproximadamente 30 minutos. Lamentamos las molestias ocasionadas.',
+    fl:'Estimado cliente: su pedido N.º 2041 sigue en el horno un poco más de lo previsto. Estimamos 30 minutos adicionales. Gracias por la espera.',
+    cs:'Hola, Marina. Tu pedido viene con unos 30 minutos de demora. Te pedimos disculpas; te avisamos apenas salga.',
+    cl:'¡Hola, Marina! La masa madre se tomó su tiempo hoy 😅 Tu pedido sale en unos 30 minutos. Te avisamos cuando esté en camino.'},
+  new:{
+    fs:'Comunicamos la incorporación de un nuevo producto: pan de centeno integral, disponible a partir del lunes en nuestras sucursales.',
+    fl:'Presentamos el nuevo pan de centeno integral. Una receta que llevó meses de prueba, disponible desde el lunes.',
+    cs:'Desde el lunes tenemos pan de centeno integral. Fermentación lenta, miga densa y húmeda. Pasá a probarlo.',
+    cl:'Llegó el centeno 🍞 Miga oscura, corteza crocante y 48 horas de paciencia. El lunes te esperamos con una feta de prueba.'}};
+  function render(){
+    dot.style.left=x*100+'%';dot.style.top=y*100+'%';
+    const k=(x<.5?(y>.5?'fs':'fl'):(y>.5?'cs':'cl'));
+    if(k+sit!==last){last=k+sit;phone.innerHTML=`<div class="bub"><small>Hornero · ahora</small>${T[sit][k]}</div>`;}
+    const desc={fs:'Formal y serio: institucional, distante. Útil en temas legales o de facturación.',fl:'Formal con algo de calidez: profesional, todavía distante.',cs:'Cercano y serio: personal, directo, sin chistes. Ideal para reclamos.',cl:'Cercano y lúdico: humor y emojis. Para novedades y redes, no para problemas.'}[k];
+    const ok=sit==='delay'?(k==='cs'||k==='fl'):(k==='cl'||k==='cs');
+    $('#vzRead').innerHTML=`${desc}<br><br>Para esta situación: ${ok?pill('ok','Adecuado'):pill('mid','Poco adecuado')}`;
+  }
+  function move(e){const r=pad.getBoundingClientRect();x=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));y=Math.min(1,Math.max(0,(e.clientY-r.top)/r.height));render();}
+  pad.addEventListener('pointerdown',e=>{pad.setPointerCapture(e.pointerId);move(e);});pad.addEventListener('pointermove',e=>{if(e.buttons)move(e);});
+  pad.tabIndex=0;pad.setAttribute('role','slider');pad.setAttribute('aria-label','Tono: horizontal formal a cercano, vertical lúdico a serio');
+  pad.addEventListener('keydown',e=>{const d=.1;if(e.key==='ArrowLeft')x=Math.max(0,x-d);else if(e.key==='ArrowRight')x=Math.min(1,x+d);else if(e.key==='ArrowUp')y=Math.max(0,y-d);else if(e.key==='ArrowDown')y=Math.min(1,y+d);else return;e.preventDefault();render();});
+  seg($('#vzSeg'),b=>{sit=b.dataset.s;render();});render();
+})();
+
+/* 11 Aplicaciones */
+(function(){
+  const box=$('#apBox');
+  const items=['Tarjeta','Bolsa','Cartel','Perfil','Ícono de app','Sticker'];
+  const raw=[{bg:'#7B2FBF',fg:'#fff',f:'Georgia,serif',r:-8,s:.9},{bg:'#FFD400',fg:'#E00000',f:'Impact,sans-serif',r:0,s:1.1},{bg:'#fff',fg:'#2FBF71',f:'"Comic Sans MS",cursive',r:6,s:.8},{bg:'#000',fg:'#C9861E',f:'"Courier New",monospace',r:0,s:1},{bg:'linear-gradient(135deg,#ff6a00,#ee0979)',fg:'#fff',f:'Arial,sans-serif',r:12,s:.9},{bg:'#4F86B5',fg:'#fff',f:'Georgia,serif',r:-4,s:1.2}];
+  function card(i,m){
+    const sys=m==='sys',R=raw[i];
+    const bg=sys?[C.crudo,C.ocre,C.tierra,C.ocre,C.tierra,C.crudo][i]:R.bg;
+    const wc=sys?([1,2,4].includes(i)?C.crudo:C.tierra):R.fg;
+    const sc=sys?([1].includes(i)?C.tierra:C.ocre):R.fg;
+    const ws=sys?WORD_STYLE:`font-family:${R.f};font-weight:700`;
+    let inner='';
+    if(i===0)inner=`<div style="width:78%;aspect-ratio:1.6;background:${bg};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 var(--rule);transform:rotate(${sys?0:R.r}deg)"><svg viewBox="0 0 362 110" width="70%">${imago(wc,sc,ws)}</svg></div>`;
+    if(i===1)inner=`<div style="width:56%;aspect-ratio:.8;background:${bg};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6%;clip-path:polygon(0 8%,100% 8%,100% 100%,0 100%);transform:scale(${sys?1:R.s})"><svg viewBox="0 0 100 100" width="44%">${sym(0,0,100,sc,false,wc)}</svg><svg viewBox="0 0 260 60" width="70%">${word(130,48,52,wc,'middle',ws)}</svg></div>`;
+    if(i===2)inner=`<div style="width:62%;aspect-ratio:.75;background:${bg};display:flex;flex-direction:column;justify-content:space-between;padding:8%;transform:rotate(${sys?0:R.r}deg)"><span style="font:800 13px/1 ${sys?'Archivo,sans-serif':R.f};color:${wc}">Centeno nuevo</span><svg viewBox="0 0 100 100" width="40%">${sym(0,0,100,sc,false,wc)}</svg></div>`;
+    if(i===3)inner=`<div style="width:56%;aspect-ratio:1;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;transform:scale(${sys?1:R.s})"><svg viewBox="0 0 100 100" width="58%">${sym(0,0,100,sc,false,wc)}</svg></div>`;
+    if(i===4)inner=`<div style="width:50%;aspect-ratio:1;border-radius:22%;background:${bg};display:flex;align-items:center;justify-content:center;transform:rotate(${sys?0:R.r}deg)"><svg viewBox="0 0 100 100" width="62%">${sys?sym(0,0,100,sc,false,C.crudo):`<text x="50" y="68" text-anchor="middle" font-size="56" fill="${wc}" style="${ws}">H</text>`}</svg></div>`;
+    if(i===5)inner=`<div style="width:60%;aspect-ratio:1;border-radius:50%;background:${bg};border:${sys?'3px solid '+C.tierra:'0'};display:flex;align-items:center;justify-content:center;transform:rotate(${sys?-8:R.r*2}deg)"><svg viewBox="0 0 260 60" width="80%">${word(130,46,46,sys?C.tierra:wc,'middle',ws)}</svg></div>`;
+    return `<div class="app">${inner}<label>${items[i]}</label></div>`;
+  }
+  function render(m){box.innerHTML=items.map((_,i)=>card(i,m)).join('');if(!RM)$$('.app > div',box).forEach((d,i)=>d.animate([{opacity:0,transform:'translateY(10px)'},{opacity:1}],{duration:400,delay:i*60,fill:'backwards'}));
+    $('#apRead').innerHTML=m==='sys'?'Tres colores, una familia tipográfica, el símbolo siempre igual y una sola versión por fondo.<br><br>'+pill('ok','Una sola marca'):'Cada pieza con otro color, otra fuente, el logo rotado o reemplazado por una inicial.<br><br>'+pill('bad','Seis marcas distintas');}
+  seg($('#apSeg'),b=>render(b.dataset.m));render('sys');
+})();
+})();
+</script>
+
+<script src="laboratorio.js" defer></script>
+</body>
+</html>

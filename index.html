@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Curso de principios del diseño</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+
+/* Layout: pliego de imprenta — láminas numeradas con escenario interactivo, barra de control CMYK y marcas de corte */
+:root{
+  --paper:#ECEFF2;
+  --sheet:#FFFFFF;
+  --ink:#14161B;
+  --ink-2:#4B525E;
+  --rule:#C9D0D8;
+  --dot:#B7BEC8;
+  --mag:#D4006A;
+  --cyan:#008DC4;
+  --yel:#EFBE00;
+  --f-display:"Archivo","Arial Narrow",Arial,sans-serif;
+  --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --s-1:12px; --s-2:14px; --s-3:17px; --s-4:22px; --s-5:34px; --s-6:clamp(44px,8vw,104px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#101215; --sheet:#181B20; --ink:#ECEEF1; --ink-2:#A2A9B4; --rule:#2D323A; --dot:#4A515C;
+  --mag:#FF4D9B; --cyan:#3DB6E6; --yel:#FFD43F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#101215; --sheet:#181B20; --ink:#ECEEF1; --ink-2:#A2A9B4; --rule:#2D323A; --dot:#4A515C;
+  --mag:#FF4D9B; --cyan:#3DB6E6; --yel:#FFD43F; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:var(--s-3);line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+em,i{font-style:normal}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-family:var(--f-display);margin:0;text-wrap:balance}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-size:var(--s-1);letter-spacing:.06em;text-transform:uppercase}
+:focus-visible{outline:2px solid var(--mag);outline-offset:3px}
+
+/* ---------- Hero ---------- */
+.hero{padding-block:48px 56px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:center}
+.hero-kicker{display:flex;gap:14px;align-items:center;color:var(--ink-2);margin-bottom:20px}
+.hero-kicker .chip{background:var(--ink);color:var(--paper);padding:4px 8px}
+.hero h1{font-size:var(--s-6);font-stretch:118%;font-weight:850;line-height:.9;letter-spacing:-.02em}
+.hero h1 .l2{display:block;font-stretch:72%;font-weight:300;letter-spacing:0;color:var(--mag)}
+.hero-lede{margin-top:24px;max-width:52ch;color:var(--ink-2)}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:28px;color:var(--ink-2)}
+.hero-meta b{color:var(--ink);font-weight:600}
+.hero-side{display:flex;flex-direction:column;gap:12px}
+.hero-stage{position:relative;aspect-ratio:4/3;max-width:100%;background:var(--sheet);border:1px solid var(--rule);overflow:hidden}
+.hero-grid{position:absolute;inset:0 6%;display:grid;grid-template-columns:repeat(6,1fr);gap:2%;opacity:0;transition:opacity .8s ease .6s;pointer-events:none}
+.hero-grid span{background:color-mix(in oklab,var(--cyan) 9%,transparent);border-inline:1px solid color-mix(in oklab,var(--cyan) 30%,transparent)}
+.hero-stage.ordered .hero-grid{opacity:1}
+.h-el{position:absolute;transition:transform 1.1s cubic-bezier(.2,.8,.2,1),border-radius 1.1s}
+.c-ink{background:var(--ink)} .c-ink2{background:var(--ink-2)} .c-mag{background:var(--mag)} .c-cyan{background:var(--cyan)} .c-yel{background:var(--yel)}
+.c-line{border:2px solid var(--ink)}
+.hero-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.hero-state{color:var(--ink-2)}
+
+/* ---------- Layout ---------- */
+.layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:56px;padding-bottom:80px}
+.index{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start}
+.index h3{font-family:var(--f-mono);font-size:var(--s-1);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin-bottom:12px}
+.index ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.index a{display:flex;gap:10px;align-items:baseline;padding:5px 8px;color:var(--ink-2);text-decoration:none;font-family:var(--f-display);font-size:15px;font-weight:500;border-left:2px solid transparent;transition:color .2s,border-color .2s,background .2s}
+.index a span{font-family:var(--f-mono);font-size:11px;font-variant-numeric:tabular-nums}
+.index a:hover{color:var(--ink)}
+.index a.on{color:var(--ink);border-left-color:var(--mag);background:var(--sheet)}
+.plates{display:flex;flex-direction:column;gap:96px;min-width:0}
+
+/* ---------- Plate ---------- */
+.plate{scroll-margin-top:24px;min-width:0}
+.plate-head{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-bottom:24px}
+.plate-no{display:flex;gap:12px;align-items:center;color:var(--mag)}
+.plate-no::after{content:"";flex:1;height:1px;background:var(--rule)}
+.plate h2{font-size:var(--s-5);font-stretch:112%;font-weight:800;letter-spacing:-.01em;line-height:1.05}
+.lede{max-width:66ch;color:var(--ink-2)}
+.lede strong{color:var(--ink);font-weight:600}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:0;border:1px solid var(--rule);background:var(--sheet)}
+.stage{position:relative;min-height:340px;overflow:hidden;min-width:0;display:flex;align-items:center;justify-content:center;padding:24px}
+.stage svg{display:block;max-width:100%;height:auto}
+.crop{position:absolute;width:14px;height:14px;pointer-events:none}
+.crop.tl{top:8px;left:8px;border-top:1px solid var(--ink-2);border-left:1px solid var(--ink-2)}
+.crop.tr{top:8px;right:8px;border-top:1px solid var(--ink-2);border-right:1px solid var(--ink-2)}
+.crop.bl{bottom:8px;left:8px;border-bottom:1px solid var(--ink-2);border-left:1px solid var(--ink-2)}
+.crop.br{bottom:8px;right:8px;border-bottom:1px solid var(--ink-2);border-right:1px solid var(--ink-2)}
+.controls{border-left:1px solid var(--rule);padding:20px;display:flex;flex-direction:column;gap:18px;background:color-mix(in oklab,var(--paper) 45%,var(--sheet));min-width:0}
+.ctl{display:flex;flex-direction:column;gap:6px}
+.ctl label,.ctl .lbl{display:flex;justify-content:space-between;gap:8px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.ctl output{color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--mag);margin:0}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button,.btn{font-family:var(--f-display);font-size:13px;font-weight:600;padding:6px 10px;background:var(--sheet);color:var(--ink);border:1px solid var(--rule);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.seg button:hover,.btn:hover{border-color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.btn.prime{background:var(--mag);border-color:var(--mag);color:#fff}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.checks label{display:flex;gap:6px;align-items:center;font-family:var(--f-display);font-size:13px;text-transform:none;letter-spacing:0;color:var(--ink);cursor:pointer}
+.checks input{accent-color:var(--mag)}
+.readout{font-family:var(--f-mono);font-size:12px;line-height:1.5;color:var(--ink-2);border-top:1px dashed var(--rule);padding-top:12px;font-variant-numeric:tabular-nums}
+.readout b{color:var(--ink);font-weight:600}
+.pill{display:inline-block;padding:1px 7px;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.04em}
+.pill.ok{background:color-mix(in oklab,#1F9D55 18%,transparent);color:#1C8A4B}
+.pill.mid{background:color-mix(in oklab,var(--yel) 30%,transparent);color:color-mix(in oklab,var(--yel) 40%,var(--ink))}
+.pill.bad{background:color-mix(in oklab,var(--mag) 16%,transparent);color:var(--mag)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill.ok{color:#5FD08F}}
+:root[data-theme="dark"] .pill.ok{color:#5FD08F}
+
+.strip{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 12px;border:1px solid var(--rule);border-top:0;background:var(--sheet);color:var(--ink-2);flex-wrap:wrap}
+.patches{display:flex;gap:3px}
+.patches i{width:14px;height:10px;display:block}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}
+.notes h4{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.notes .do h4{color:var(--cyan)} .notes .dont h4{color:var(--mag)}
+.notes p{font-size:16px;color:var(--ink-2);max-width:60ch}
+
+@media (max-width:980px){
+  .bench{grid-template-columns:minmax(0,1fr)}
+  .controls{border-left:0;border-top:1px solid var(--rule)}
+}
+@media (max-width:900px){
+  .hero{grid-template-columns:minmax(0,1fr);gap:32px;padding-block:32px 40px}
+  .layout{grid-template-columns:minmax(0,1fr);gap:24px}
+  .index{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding-block:8px;border-bottom:1px solid var(--rule)}
+  .index h3{display:none}
+  .index ol{flex-direction:row;overflow-x:auto;gap:4px;scrollbar-width:none}
+  .index a{white-space:nowrap;border-left:0;border-bottom:2px solid transparent}
+  .index a.on{border-bottom-color:var(--mag)}
+  .plate{scroll-margin-top:64px}
+  .notes{grid-template-columns:1fr}
+  .plates{gap:72px}
+}
+@media (max-width:560px){ .stage{min-height:280px;padding:16px} }
+
+/* ---------- Demos ---------- */
+/* Jerarquía */
+.poster{width:min(100%,420px);aspect-ratio:3/4;background:var(--paper);padding:8%;display:flex;flex-direction:column;justify-content:flex-start;gap:4%;border:1px solid var(--rule);overflow:hidden}
+.poster > *{transition:font-size .25s,font-weight .25s,letter-spacing .25s,color .25s,margin .25s;font-family:var(--f-display);line-height:1.05}
+.poster .p-foot{margin-top:auto}
+/* Contraste / proximidad / etc. SVG tokens */
+.f-ink{fill:var(--ink)} .f-ink2{fill:var(--ink-2)} .f-mag{fill:var(--mag)} .f-cyan{fill:var(--cyan)} .f-yel{fill:var(--yel)} .f-dot{fill:var(--dot)} .f-sheet{fill:var(--sheet)} .f-paper{fill:var(--paper)}
+.s-ink{stroke:var(--ink)} .s-mag{stroke:var(--mag)} .s-cyan{stroke:var(--cyan)} .s-rule{stroke:var(--rule)}
+svg text{font-family:var(--f-mono);font-size:12px;fill:var(--ink-2)}
+.tr{transition:transform .6s cubic-bezier(.2,.8,.2,1),fill .4s,opacity .4s,rx .4s}
+.tbox{transform-box:fill-box}
+
+/* Alineación */
+.align-card{position:relative;width:min(100%,460px);background:var(--paper);border:1px solid var(--rule);padding:28px 24px;display:flex;flex-direction:column;gap:12px}
+.align-card .ai{transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.align-guide{position:absolute;top:0;bottom:0;width:0;border-left:1px dashed var(--mag);transition:left .7s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.ai-tag{width:96px;height:10px;background:var(--mag)}
+.ai-title{width:280px;height:26px;background:var(--ink)}
+.ai-img{width:200px;height:110px;background:var(--cyan)}
+.ai-l1{width:240px;height:8px;background:var(--ink-2)}
+.ai-l2{width:180px;height:8px;background:var(--ink-2)}
+.ai-btn{width:120px;height:32px;border:2px solid var(--ink)}
+
+/* Proximidad */
+.prox{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px;width:100%;align-items:center}
+.form{display:flex;flex-direction:column;font-family:var(--f-display);font-size:13px}
+.form .fl{color:var(--ink-2);font-weight:600;transition:margin .3s}
+.form .fi{height:30px;border:1px solid var(--ink-2);background:var(--sheet);transition:margin .3s}
+@media (max-width:560px){.prox{grid-template-columns:minmax(0,1fr)}}
+
+/* Espacio */
+.air{width:min(100%,440px);aspect-ratio:4/3;background:var(--paper);border:1px solid var(--rule);display:flex;transition:padding .3s}
+.air-in{display:flex;flex-direction:column;transition:gap .3s;width:100%}
+.air-logo{width:28px;height:28px;background:var(--mag);border-radius:50%;flex:none}
+.air h5{font-family:var(--f-display);font-weight:800;font-stretch:110%;font-size:22px;margin:0;line-height:1.05}
+.air p{font-size:13px;line-height:1.45;color:var(--ink-2)}
+.air .air-cta{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--ink);text-transform:uppercase}
+
+/* Proporción */
+.ratio-wrap{width:100%;height:340px;display:flex;align-items:center;justify-content:center}
+.ratio-box{position:relative;background:var(--paper);border:1px solid var(--ink);transition:width .7s cubic-bezier(.2,.8,.2,1),height .7s cubic-bezier(.2,.8,.2,1);max-width:100%}
+.ratio-box svg{position:absolute;inset:0;width:100%;height:100%}
+.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .9s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.fadein{opacity:0;animation:fade .6s ease forwards}
+@keyframes fade{to{opacity:1}}
+
+/* Color */
+.color-lab{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:center;width:100%}
+.wheel{position:relative;width:200px;height:200px;border-radius:50%;flex:none}
+.wheel::after{content:"";position:absolute;inset:28%;border-radius:50%;background:var(--sheet)}
+.mk{position:absolute;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;border:3px solid var(--sheet);box-shadow:0 0 0 1px var(--ink);transition:left .5s cubic-bezier(.2,.8,.2,1),top .5s cubic-bezier(.2,.8,.2,1),background .3s;z-index:1}
+.mk.base{width:26px;height:26px;margin:-13px 0 0 -13px}
+.swatches{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.swatches div{width:44px;height:44px;transition:background .3s;position:relative}
+.cposter{aspect-ratio:4/3;max-width:100%;display:grid;grid-template-columns:3fr 2fr;transition:background .3s;border:1px solid var(--rule)}
+.cposter .cp-a{padding:16px;display:flex;flex-direction:column;justify-content:space-between;transition:color .3s}
+.cposter .cp-b{transition:background .3s;display:flex;align-items:flex-end;padding:14px}
+.cposter h5{margin:0;font-family:var(--f-display);font-weight:850;font-stretch:115%;font-size:clamp(20px,3vw,30px);line-height:.95}
+.cposter .acc{width:40%;height:10px;transition:background .3s}
+.ratio606{display:flex;height:10px;margin-top:10px}
+.ratio606 span{transition:background .3s}
+@media (max-width:640px){.color-lab{grid-template-columns:minmax(0,1fr);justify-items:center}.color-lab>div:last-child{width:100%}}
+
+/* Tipografía */
+.typo{max-width:100%;color:var(--ink);transition:font-size .2s,line-height .2s,letter-spacing .2s,max-width .3s;border-left:2px solid var(--mag);padding-left:16px}
+.typo-wrap{width:100%;display:flex;justify-content:center}
+.measure-ruler{height:6px;margin-top:10px;background:repeating-linear-gradient(90deg,var(--rule) 0 1px,transparent 1px 1ch)}
+
+/* Grilla */
+.gdemo{position:relative;width:100%;background:var(--paper);border:1px solid var(--rule);transition:padding .3s}
+.gcols,.gcontent{display:grid;transition:gap .3s}
+.gcols{position:absolute;inset:0;pointer-events:none;transition:padding .3s,opacity .3s}
+.gcols span{background:color-mix(in oklab,var(--mag) 12%,transparent);border-inline:1px solid color-mix(in oklab,var(--mag) 35%,transparent)}
+.gcontent{position:relative;row-gap:12px}
+.gb{min-height:24px;transition:all .4s}
+.gb.h{background:var(--ink);height:28px}
+.gb.img{background:var(--cyan);height:120px}
+.gb.txt{display:flex;flex-direction:column;gap:7px;padding-top:4px}
+.gb.txt i{height:7px;background:var(--ink-2)}
+.gb.card{height:70px;border:2px solid var(--ink)}
+
+/* Recorrido */
+.path-dot{transition:opacity .3s}
+
+/* ---------- Portada ---------- */
+.cover{padding-block:56px 40px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:48px;align-items:end;border-bottom:1px solid var(--rule)}
+.cover h1{font-size:clamp(52px,10vw,132px);font-stretch:120%;font-weight:880;line-height:.86;letter-spacing:-.025em}
+.cover h1 span{display:block;font-stretch:70%;font-weight:300;color:var(--mag);letter-spacing:0}
+.cover .lede{margin-top:24px;max-width:56ch;color:var(--ink-2);font-size:18px}
+.cover-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.cover-stats div{background:var(--sheet);padding:16px}
+.cover-stats b{display:block;font-family:var(--f-display);font-size:44px;font-weight:850;font-stretch:115%;line-height:1;font-variant-numeric:tabular-nums}
+.cover-stats span{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.how{display:flex;gap:24px;flex-wrap:wrap;margin-top:16px;color:var(--ink-2)}
+.sec-h{display:flex;align-items:center;gap:12px;color:var(--mag);margin:56px 0 20px}
+.sec-h::after{content:"";flex:1;height:1px;background:var(--rule)}
+.mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:16px}
+.mod{display:flex;flex-direction:column;background:var(--sheet);border:1px solid var(--rule);text-decoration:none;color:var(--ink);transition:border-color .25s,transform .25s}
+.mod:hover{border-color:var(--ink);transform:translateY(-3px)}
+.mod:hover .mv i{animation-play-state:running}
+.mv{height:150px;position:relative;overflow:hidden;background:var(--paper);border-bottom:1px solid var(--rule)}
+.mv i{position:absolute;display:block}
+.mod-b{padding:18px 18px 20px;display:flex;flex-direction:column;gap:10px;flex:1}
+.mod-n{display:flex;justify-content:space-between;color:var(--ink-2)}
+.mod h2{font-size:28px;font-weight:850;font-stretch:112%;line-height:1}
+.mod p{font-size:15px;color:var(--ink-2)}
+.mod ul{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:4px}
+.mod li{font-family:var(--f-mono);font-size:10.5px;padding:2px 6px;border:1px solid var(--rule);color:var(--ink-2)}
+.mod .go{margin-top:auto;padding-top:10px;font-family:var(--f-display);font-weight:700;font-size:14px;color:var(--mag)}
+/* mini previews */
+@keyframes bob{50%{transform:translateY(-14px)}}
+@keyframes slide{0%,15%{transform:translateX(0)}45%,65%{transform:translateX(150px)}95%,100%{transform:translateX(0)}}
+@keyframes grow{50%{transform:scaleY(.4)}}
+@keyframes spin{to{transform:rotate(1turn)}}
+@keyframes flip{50%{transform:scaleX(-1)}}
+.mv i{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){.mv i{animation:none!important}}
+
+/* Repaso */
+.quiz{display:grid;grid-template-columns:200px minmax(0,1fr);border:1px solid var(--rule);background:var(--sheet)}
+.qtabs{display:flex;flex-direction:column;border-right:1px solid var(--rule);background:color-mix(in oklab,var(--paper) 45%,var(--sheet))}
+.qtabs button{all:unset;cursor:pointer;padding:14px 16px;font-family:var(--f-display);font-weight:600;font-size:15px;color:var(--ink-2);border-left:3px solid transparent;display:flex;justify-content:space-between;gap:8px}
+.qtabs button:focus-visible{outline:2px solid var(--mag);outline-offset:-2px}
+.qtabs button[aria-selected="true"]{color:var(--ink);background:var(--sheet);border-left-color:var(--mag)}
+.qtabs small{font-family:var(--f-mono);font-size:11px;font-variant-numeric:tabular-nums}
+.qbody{padding:24px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.q{display:flex;flex-direction:column;gap:8px;animation:qin .35s ease both}
+@keyframes qin{from{opacity:0;transform:translateY(6px)}}
+.q h3{font-family:var(--f-display);font-size:17px;font-weight:700;line-height:1.3}
+.q h3 span{font-family:var(--f-mono);font-size:11px;color:var(--mag);margin-right:8px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.opts button{font:inherit;font-family:var(--f-body);font-size:15px;text-align:left;padding:9px 12px;background:var(--paper);border:1px solid var(--rule);color:var(--ink);cursor:pointer;transition:background .2s,border-color .2s}
+.opts button:hover:not(:disabled){border-color:var(--ink)}
+.opts button:disabled{cursor:default}
+.opts button.right{background:color-mix(in oklab,#1F9D55 16%,var(--sheet));border-color:#1F9D55}
+.opts button.wrong{background:color-mix(in oklab,var(--mag) 12%,var(--sheet));border-color:var(--mag)}
+.why{font-size:14px;color:var(--ink-2);border-left:2px solid var(--rule);padding-left:10px}
+.qfoot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px dashed var(--rule);padding-top:14px}
+.score{font-family:var(--f-mono);font-size:13px}
+.score b{font-size:20px;font-family:var(--f-display);font-variant-numeric:tabular-nums}
+@media (max-width:900px){.cover{grid-template-columns:minmax(0,1fr);gap:28px;padding-block:36px 28px}}
+@media (max-width:720px){.quiz{grid-template-columns:minmax(0,1fr)}.qtabs{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--rule)}.qtabs button{border-left:0;border-bottom:3px solid transparent;white-space:nowrap}.qtabs button[aria-selected="true"]{border-bottom-color:var(--mag)}.opts{grid-template-columns:1fr}}
+footer.end{padding-block:48px 64px;color:var(--ink-2)}
+</style>
+<link rel="stylesheet" href="laboratorio.css">
+<link rel="stylesheet" href="oficio.css">
+<script src="oficio-datos.js"></script>
+<script src="oficio.js"></script>
+
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="cover">
+    <div>
+      <div class="hero-kicker mono"><span class="chip">Curso interactivo</span><span>5 módulos · 58 láminas</span></div>
+      <h1>Principios<span>del diseño</span></h1>
+      <p class="lede">Del afiche a la pantalla, de la página a la marca y de la marca al movimiento. Cada principio tiene un banco de pruebas: se toca, se rompe y se entiende. Al final, un repaso por módulo.</p>
+    </div>
+    <div>
+      <div class="cover-stats"><div><b>5</b><span>Módulos</span></div><div><b>58</b><span>Láminas</span></div><div><b>25</b><span>Preguntas</span></div></div>
+      <div class="how mono"><span>Orden sugerido: 1 → 5</span><span>Cada módulo funciona solo</span></div>
+    </div>
+  </header>
+
+  <div class="sec-h mono">Módulos</div>
+  <div class="mods" id="mods"></div>
+
+  <div class="sec-h mono" id="repaso">Repaso</div>
+  <div class="quiz">
+    <div class="qtabs" role="tablist" id="qtabs" aria-label="Módulos del repaso"></div>
+    <div class="qbody" id="qbody" role="tabpanel"></div>
+  </div>
+
+  <footer class="end mono">Curso de principios del diseño · Gráfico, Web, Editorial, Identidad y Motion</footer>
+</div>
+
+<script>
+(function(){
+const $=(s,c=document)=>c.querySelector(s);
+const $$=(s,c=document)=>[...c.querySelectorAll(s)];
+const MODS=[
+  {n:1,t:'Diseño gráfico',href:'1-grafico.html',d:'Las bases que sostienen todo lo demás: cómo se organiza lo que se ve.',l:['Jerarquía','Contraste','Alineación','Proximidad','Ritmo','Equilibrio','Espacio negativo','Proporción','Gestalt','Color','Tipografía','Grilla','Recorrido visual'],
+   pv:`<i style="left:24px;top:30px;width:120px;height:18px;background:var(--ink)"></i><i style="left:24px;top:58px;width:80px;height:6px;background:var(--ink-2)"></i><i style="right:28px;top:26px;width:96px;height:96px;border-radius:50%;background:var(--mag);animation:bob 2.4s ease-in-out infinite"></i><i style="left:24px;top:84px;width:140px;height:40px;background:var(--cyan)"></i>`},
+  {n:2,t:'Web e interfaz',href:'2-web.html',d:'Lo que aparece cuando hay un cursor, un dedo y un tiempo de espera.',l:['Affordance','Estados','Fitts','Hick','Divulgación progresiva','Responsive','Espaciado','Tipografía fluida','Feedback','Movimiento','Accesibilidad','Convenciones'],
+   pv:`<i style="left:0;right:0;top:0;height:22px;background:var(--sheet);border-bottom:1px solid var(--rule)"></i><i style="left:24px;top:46px;width:150px;height:16px;background:var(--ink)"></i><i style="left:24px;top:76px;width:90px;height:32px;background:var(--mag);animation:slide 3s cubic-bezier(.65,0,.35,1) infinite"></i><i style="right:24px;top:40px;width:70px;height:90px;border:2px solid var(--ink)"></i>`},
+  {n:3,t:'Editorial',href:'3-editorial.html',d:'La página como sistema: márgenes, retícula, anatomía de una nota y ritmo.',l:['Canon de página','Márgenes','Doble página','Retícula modular','Anatomía de una nota','Composición','Línea base','Paginación','Entradas de texto','Sangrado','Portada'],
+   pv:`<i style="left:50%;top:14px;bottom:14px;width:1px;background:var(--rule)"></i><i style="left:20%;top:14px;width:30%;bottom:14px;background:var(--sheet);border:1px solid var(--rule);transform-origin:right;animation:flip 3.2s ease-in-out infinite"></i><i style="left:50%;top:14px;width:30%;bottom:14px;background:var(--sheet);border:1px solid var(--rule)"></i><i style="left:54%;top:26px;width:22%;height:40px;background:var(--cyan)"></i>`},
+  {n:4,t:'Identidad de marca',href:'4-identidad.html',d:'De un logo a un sistema, con una marca de ejemplo de punta a punta.',l:['Tipos de marca','Reducción','Resguardo','Versiones de color','Usos incorrectos','Construcción','Color','Tipografía','Patrones','Voz y tono','Aplicaciones'],
+   pv:`<i style="left:30px;top:36px;width:70px;height:56px;border-radius:35px 35px 0 0;background:#C9861E"></i><i style="left:54px;top:68px;width:22px;height:24px;border-radius:11px 11px 0 0;background:var(--paper)"></i><i style="left:26px;top:96px;width:78px;height:6px;background:#2B1E16"></i><i style="left:122px;top:58px;width:120px;height:22px;background:var(--ink)"></i><i style="right:24px;bottom:18px;width:30px;height:30px;border:2px dashed var(--mag);animation:spin 6s linear infinite"></i>`},
+  {n:5,t:'Motion design',href:'5-motion.html',d:'El diseño en el tiempo: curvas, anticipación, ritmo, tipografía cinética y transiciones.',l:['Timing y spacing','Editor de curvas','Squash y stretch','Anticipación','Superposición','Arcos','Escalonamiento','Fotogramas clave','Ritmo','Tipografía cinética','Transiciones'],
+   pv:`<i style="left:0;right:0;bottom:24px;height:2px;background:var(--ink)"></i>${[0,1,2,3,4,5].map(i=>`<i style="left:${26+i*36}px;bottom:26px;width:20px;height:80px;background:${i%2?'var(--ink)':'var(--mag)'};transform-origin:bottom;animation:grow 1.2s ${i*.12}s ease-in-out infinite"></i>`).join('')}`}
+];
+$('#mods').innerHTML=MODS.map(m=>`<a class="mod" href="${m.href}"><div class="mv" aria-hidden="true">${m.pv}</div><div class="mod-b"><div class="mod-n mono"><span>Módulo ${m.n}</span><span>${m.l.length} láminas</span></div><h2>${m.t}</h2><p>${m.d}</p><ul>${m.l.map(x=>`<li>${x}</li>`).join('')}</ul><span class="go">Abrir módulo →</span></div></a>`).join('');
+
+const Q={
+1:[['¿Cuál es una forma rápida de comprobar la jerarquía de una pieza?',['Medir los tamaños con regla','Entrecerrar los ojos y ver qué sigue visible','Contar cuántos colores tiene','Pasarla a blanco y negro y contar los grises'],1,'Lo que sobrevive con la vista desenfocada es tu nivel 1.'],
+   ['Según el principio de proximidad, el espacio dentro de un grupo debería ser…',['Igual al espacio entre grupos','Como mucho la mitad del espacio entre grupos','El doble del espacio entre grupos','Irrelevante si hay recuadros'],1,'Si los espacios son parejos, nada se agrupa.'],
+   ['¿Qué tiene de especial la proporción 1 : √2 de la serie ISO A?',['Es la sección áurea','Al doblar la hoja por la mitad se conserva la proporción','Es la proporción de las pantallas','Es la más barata de imprimir'],1,'Por eso un A4 doblado da un A5 con la misma forma.'],
+   ['¿Qué contraste mínimo pide WCAG (nivel AA) para texto normal?',['2:1','3:1','4,5:1','10:1'],2,'Para títulos grandes alcanza con 3:1.'],
+   ['¿Cuál es la medida cómoda para texto corrido?',['20 a 30 caracteres por línea','45 a 75 caracteres por línea','90 a 120 caracteres por línea','No influye en la lectura'],1,'Líneas muy largas hacen perder el regreso; muy cortas cortan el ritmo.']],
+2:[['La ley de Fitts relaciona el tiempo para alcanzar un objetivo con…',['Su color y su forma','Su distancia y su tamaño','La cantidad de opciones','La velocidad del procesador'],1,'Lo importante va grande y cerca de donde ya está la mano.'],
+   ['La ley de Hick dice que el tiempo de decisión…',['Crece de forma lineal con las opciones','Crece de forma logarítmica con las opciones','No depende de las opciones','Baja cuando hay más opciones'],1,'Agrupar convierte una elección grande en dos chicas.'],
+   ['Si una acción tarda más de 10 segundos, ¿qué feedback corresponde?',['Ninguno','Solo cambiar el color del botón','Un spinner sin texto','Barra de progreso con estimación y opción de cancelar'],3,'10 s es el límite de atención según Nielsen.'],
+   ['¿Qué curva conviene para un elemento que entra en pantalla?',['Lineal','Ease-in','Ease-out','Paso (steps)'],2,'Llega rápido y frena: se siente natural al aparecer.'],
+   ['¿Qué dice la ley de Jakob?',['Los usuarios leen en patrón F','Los usuarios esperan que tu sitio funcione como los que ya conocen','Siete elementos es el máximo de un menú','El rojo es para errores'],1,'Innová en la marca, sé convencional en la navegación.']],
+3:[['En el canon de Van de Graaf, la relación de márgenes interior : superior : exterior : inferior es…',['1 : 1 : 1 : 1','1 : 1 : 2 : 2','2 : 3 : 4 : 6','1 : 2 : 1 : 2'],1,'Y la caja de texto ocupa 2/3 de la página con su misma proporción.'],
+   ['En el vocabulario periodístico argentino, la volanta es…',['El resumen bajo el título','El texto que acompaña la foto','El antetítulo que va arriba del título','El número de página'],2,'El resumen es el copete; el texto de la foto, el epígrafe.'],
+   ['¿Cuánto sangrado (demasía) se deja habitualmente?',['0 mm','1 mm','3 mm','10 mm'],2,'La guillotina se desvía; los 3 mm evitan el filete blanco.'],
+   ['En una columna de menos de 40 caracteres, conviene…',['Justificar sin división silábica','Alinear en bandera a la izquierda','Centrar el texto','Aumentar el tracking'],1,'Justificar en columnas angostas produce ríos de blanco.'],
+   ['En una publicación impresa encuadernada, ¿qué conviene revisar antes de cerrar una composición?',['Solo cada página por separado','Solo la tapa y contratapa','La relación entre páginas enfrentadas y el recorrido de lectura','Únicamente la cantidad de columnas'],2,'La doble página importa en publicaciones que se leen abiertas. En soportes digitales o piezas sueltas, el criterio cambia.']],
+4:[['¿Qué es un imagotipo?',['Solo el nombre escrito','Solo el símbolo','Símbolo y nombre juntos pero separables','Todo encerrado en un sello'],2,'El isologotipo, en cambio, los fusiona y no se separan.'],
+   ['El área de resguardo de un logo se mide…',['En centímetros fijos','Con una unidad que sale del propio logo','En porcentaje de la página','A ojo, según el caso'],1,'Así escala junto con el logo a cualquier tamaño.'],
+   ['¿Por qué un círculo se dibuja un poco más grande que un cuadrado de la misma altura?',['Por un error de construcción','Porque ópticamente parece más chico','Para que ocupe más espacio','Por convención de imprenta'],1,'Es el rebase o compensación óptica.'],
+   ['¿Cuál es la diferencia entre voz y tono de marca?',['Son lo mismo','La voz cambia según el canal, el tono nunca','La voz es la personalidad constante; el tono se adapta a la situación','El tono es solo para redes sociales'],2,'La misma persona habla distinto en un reclamo y en un festejo.'],
+   ['Una marca usa tres familias tipográficas. ¿Cómo evaluás si es un problema?',['Siempre es incorrecto superar dos','Importa si tienen funciones claras y un uso consistente','Hay que sumar una cuarta para equilibrarlas','Solo importa si son tipografías gratuitas'],1,'Dos familias suelen bastar, pero no son una ley: lo importante es que el sistema tenga jerarquía y coherencia.']],
+5:[['¿Qué es el spacing en animación?',['La duración total del movimiento','Cómo se distribuyen los fotogramas en el recorrido','El espacio entre dos objetos','La cantidad de fotogramas por segundo'],1,'El timing es cuánto dura; el spacing, cómo se reparte.'],
+   ['En un cubic-bezier, si un valor de la curva supera 1, el objeto…',['Se detiene','Se pasa del destino y vuelve','Retrocede antes de arrancar','Se mueve más lento'],1,'Si baja de 0, retrocede antes de arrancar: anticipación.'],
+   ['Al aplicar squash y stretch, ¿qué se conserva?',['La altura','El ancho','El volumen','El color'],2,'Si se aplasta hacia abajo, se ensancha hacia los costados.'],
+   ['A 120 BPM y 24 fps, ¿cuántos fotogramas dura cada tiempo?',['6','12','24','48'],1,'60 ÷ 120 × 24 = 12 fotogramas.'],
+   ['¿Qué ritmo de lectura es cómodo en tipografía cinética?',['Unas 3 palabras por segundo','Unas 8 palabras por segundo','Una palabra cada 3 segundos','Depende solo del efecto'],0,'Primero se tiene que leer, después moverse.']]
+};
+const QUIZ_KEY='laboratorio-quiz-v2';
+ const loaded=(()=>{try{return JSON.parse(localStorage.getItem(QUIZ_KEY)||'{}')}catch{return {}}})();
+ const state={};for(const k in Q)state[k]=Array.isArray(loaded[k])&&loaded[k].length===Q[k].length?loaded[k]:Q[k].map(()=>null);
+ const saveQuiz=()=>{try{localStorage.setItem(QUIZ_KEY,JSON.stringify(state))}catch{}};
+let cur=1;
+function tabs(){$('#qtabs').innerHTML=MODS.map(m=>{const s=state[m.n],ok=s.filter((v,i)=>v===Q[m.n][i][2]).length,done=s.filter(v=>v!==null).length;return `<button role="tab" aria-selected="${m.n===cur}" data-m="${m.n}" type="button"><span>${m.n} · ${m.t}</span><small>${done?ok+'/5':'—'}</small></button>`;}).join('');
+  $$('#qtabs button').forEach(b=>b.addEventListener('click',()=>{cur=+b.dataset.m;render(true);}));}
+function render(anim){
+  tabs();const qs=Q[cur],s=state[cur];
+  $('#qbody').innerHTML=qs.map((q,i)=>`<div class="q" style="${anim?`animation-delay:${i*50}ms`:"animation:none"}"><h3><span>${String(i+1).padStart(2,'0')}</span>${q[0]}</h3><div class="opts">${q[1].map((o,j)=>{let c='';if(s[i]!==null){if(j===q[2])c='right';else if(j===s[i])c='wrong';}return `<button type="button" class="${c}" data-q="${i}" data-o="${j}" ${s[i]!==null?'disabled':''}>${o}</button>`;}).join('')}</div>${s[i]!==null?`<p class="why">${s[i]===q[2]?'Correcto. ':'No. '}${q[3]}</p>`:''}</div>`).join('')+
+  `<div class="qfoot"><span class="score">Puntaje: <b>${s.filter((v,i)=>v===qs[i][2]).length}</b> / 5 · respondidas ${s.filter(v=>v!==null).length}</span><span style="display:flex;gap:6px"><a class="btn" href="${MODS[cur-1].href}" style="text-decoration:none">Repasar el módulo</a><button class="btn" id="qReset" type="button">Reiniciar</button></span></div>`;
+  $$('.opts button',$('#qbody')).forEach(b=>b.addEventListener('click',()=>{state[cur][+b.dataset.q]=+b.dataset.o;saveQuiz();render();}));
+  $('#qReset').addEventListener('click',()=>{state[cur]=Q[cur].map(()=>null);saveQuiz();render(true);});
+}
+render(true);
+})();
+</script>
+
+<script src="laboratorio.js" defer></script>
+</body>
+</html>

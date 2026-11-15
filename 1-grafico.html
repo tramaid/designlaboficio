@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Principios del diseño</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: pliego de imprenta — láminas numeradas con escenario interactivo, barra de control CMYK y marcas de corte */
+:root{
+  --paper:#ECEFF2;
+  --sheet:#FFFFFF;
+  --ink:#14161B;
+  --ink-2:#4B525E;
+  --rule:#C9D0D8;
+  --dot:#B7BEC8;
+  --mag:#D4006A;
+  --cyan:#008DC4;
+  --yel:#EFBE00;
+  --f-display:"Archivo","Arial Narrow",Arial,sans-serif;
+  --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --s-1:12px; --s-2:14px; --s-3:17px; --s-4:22px; --s-5:34px; --s-6:clamp(44px,8vw,104px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#101215; --sheet:#181B20; --ink:#ECEEF1; --ink-2:#A2A9B4; --rule:#2D323A; --dot:#4A515C;
+  --mag:#FF4D9B; --cyan:#3DB6E6; --yel:#FFD43F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#101215; --sheet:#181B20; --ink:#ECEEF1; --ink-2:#A2A9B4; --rule:#2D323A; --dot:#4A515C;
+  --mag:#FF4D9B; --cyan:#3DB6E6; --yel:#FFD43F; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:var(--s-3);line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+em,i{font-style:normal}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-family:var(--f-display);margin:0;text-wrap:balance}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-size:var(--s-1);letter-spacing:.06em;text-transform:uppercase}
+:focus-visible{outline:2px solid var(--mag);outline-offset:3px}
+
+/* ---------- Hero ---------- */
+.hero{padding-block:48px 56px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:center}
+.hero-kicker{display:flex;gap:14px;align-items:center;color:var(--ink-2);margin-bottom:20px}
+.hero-kicker .chip{background:var(--ink);color:var(--paper);padding:4px 8px}
+.hero h1{font-size:var(--s-6);font-stretch:118%;font-weight:850;line-height:.9;letter-spacing:-.02em}
+.hero h1 .l2{display:block;font-stretch:72%;font-weight:300;letter-spacing:0;color:var(--mag)}
+.hero-lede{margin-top:24px;max-width:52ch;color:var(--ink-2)}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:28px;color:var(--ink-2)}
+.hero-meta b{color:var(--ink);font-weight:600}
+.hero-side{display:flex;flex-direction:column;gap:12px}
+.hero-stage{position:relative;aspect-ratio:4/3;max-width:100%;background:var(--sheet);border:1px solid var(--rule);overflow:hidden}
+.hero-grid{position:absolute;inset:0 6%;display:grid;grid-template-columns:repeat(6,1fr);gap:2%;opacity:0;transition:opacity .8s ease .6s;pointer-events:none}
+.hero-grid span{background:color-mix(in oklab,var(--cyan) 9%,transparent);border-inline:1px solid color-mix(in oklab,var(--cyan) 30%,transparent)}
+.hero-stage.ordered .hero-grid{opacity:1}
+.h-el{position:absolute;transition:transform 1.1s cubic-bezier(.2,.8,.2,1),border-radius 1.1s}
+.c-ink{background:var(--ink)} .c-ink2{background:var(--ink-2)} .c-mag{background:var(--mag)} .c-cyan{background:var(--cyan)} .c-yel{background:var(--yel)}
+.c-line{border:2px solid var(--ink)}
+.hero-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.hero-state{color:var(--ink-2)}
+
+/* ---------- Layout ---------- */
+.layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:56px;padding-bottom:80px}
+.index{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start}
+.index h3{font-family:var(--f-mono);font-size:var(--s-1);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin-bottom:12px}
+.index ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.index a{display:flex;gap:10px;align-items:baseline;padding:5px 8px;color:var(--ink-2);text-decoration:none;font-family:var(--f-display);font-size:15px;font-weight:500;border-left:2px solid transparent;transition:color .2s,border-color .2s,background .2s}
+.index a span{font-family:var(--f-mono);font-size:11px;font-variant-numeric:tabular-nums}
+.index a:hover{color:var(--ink)}
+.index a.on{color:var(--ink);border-left-color:var(--mag);background:var(--sheet)}
+.plates{display:flex;flex-direction:column;gap:96px;min-width:0}
+
+/* ---------- Plate ---------- */
+.plate{scroll-margin-top:24px;min-width:0}
+.plate-head{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-bottom:24px}
+.plate-no{display:flex;gap:12px;align-items:center;color:var(--mag)}
+.plate-no::after{content:"";flex:1;height:1px;background:var(--rule)}
+.plate h2{font-size:var(--s-5);font-stretch:112%;font-weight:800;letter-spacing:-.01em;line-height:1.05}
+.lede{max-width:66ch;color:var(--ink-2)}
+.lede strong{color:var(--ink);font-weight:600}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:0;border:1px solid var(--rule);background:var(--sheet)}
+.stage{position:relative;min-height:340px;overflow:hidden;min-width:0;display:flex;align-items:center;justify-content:center;padding:24px}
+.stage svg{display:block;max-width:100%;height:auto}
+.crop{position:absolute;width:14px;height:14px;pointer-events:none}
+.crop.tl{top:8px;left:8px;border-top:1px solid var(--ink-2);border-left:1px solid var(--ink-2)}
+.crop.tr{top:8px;right:8px;border-top:1px solid var(--ink-2);border-right:1px solid var(--ink-2)}
+.crop.bl{bottom:8px;left:8px;border-bottom:1px solid var(--ink-2);border-left:1px solid var(--ink-2)}
+.crop.br{bottom:8px;right:8px;border-bottom:1px solid var(--ink-2);border-right:1px solid var(--ink-2)}
+.controls{border-left:1px solid var(--rule);padding:20px;display:flex;flex-direction:column;gap:18px;background:color-mix(in oklab,var(--paper) 45%,var(--sheet));min-width:0}
+.ctl{display:flex;flex-direction:column;gap:6px}
+.ctl label,.ctl .lbl{display:flex;justify-content:space-between;gap:8px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.ctl output{color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--mag);margin:0}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button,.btn{font-family:var(--f-display);font-size:13px;font-weight:600;padding:6px 10px;background:var(--sheet);color:var(--ink);border:1px solid var(--rule);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.seg button:hover,.btn:hover{border-color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.btn.prime{background:var(--mag);border-color:var(--mag);color:#fff}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.checks label{display:flex;gap:6px;align-items:center;font-family:var(--f-display);font-size:13px;text-transform:none;letter-spacing:0;color:var(--ink);cursor:pointer}
+.checks input{accent-color:var(--mag)}
+.readout{font-family:var(--f-mono);font-size:12px;line-height:1.5;color:var(--ink-2);border-top:1px dashed var(--rule);padding-top:12px;font-variant-numeric:tabular-nums}
+.readout b{color:var(--ink);font-weight:600}
+.pill{display:inline-block;padding:1px 7px;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.04em}
+.pill.ok{background:color-mix(in oklab,#1F9D55 18%,transparent);color:#1C8A4B}
+.pill.mid{background:color-mix(in oklab,var(--yel) 30%,transparent);color:color-mix(in oklab,var(--yel) 40%,var(--ink))}
+.pill.bad{background:color-mix(in oklab,var(--mag) 16%,transparent);color:var(--mag)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill.ok{color:#5FD08F}}
+:root[data-theme="dark"] .pill.ok{color:#5FD08F}
+
+.strip{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 12px;border:1px solid var(--rule);border-top:0;background:var(--sheet);color:var(--ink-2);flex-wrap:wrap}
+.patches{display:flex;gap:3px}
+.patches i{width:14px;height:10px;display:block}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}
+.notes h4{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.notes .do h4{color:var(--cyan)} .notes .dont h4{color:var(--mag)}
+.notes p{font-size:16px;color:var(--ink-2);max-width:60ch}
+
+@media (max-width:980px){
+  .bench{grid-template-columns:minmax(0,1fr)}
+  .controls{border-left:0;border-top:1px solid var(--rule)}
+}
+@media (max-width:900px){
+  .hero{grid-template-columns:minmax(0,1fr);gap:32px;padding-block:32px 40px}
+  .layout{grid-template-columns:minmax(0,1fr);gap:24px}
+  .index{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding-block:8px;border-bottom:1px solid var(--rule)}
+  .index h3{display:none}
+  .index ol{flex-direction:row;overflow-x:auto;gap:4px;scrollbar-width:none}
+  .index a{white-space:nowrap;border-left:0;border-bottom:2px solid transparent}
+  .index a.on{border-bottom-color:var(--mag)}
+  .plate{scroll-margin-top:64px}
+  .notes{grid-template-columns:1fr}
+  .plates{gap:72px}
+}
+@media (max-width:560px){ .stage{min-height:280px;padding:16px} }
+
+/* ---------- Demos ---------- */
+/* Jerarquía */
+.poster{width:min(100%,420px);aspect-ratio:3/4;background:var(--paper);padding:8%;display:flex;flex-direction:column;justify-content:flex-start;gap:4%;border:1px solid var(--rule);overflow:hidden}
+.poster > *{transition:font-size .25s,font-weight .25s,letter-spacing .25s,color .25s,margin .25s;font-family:var(--f-display);line-height:1.05}
+.poster .p-foot{margin-top:auto}
+/* Contraste / proximidad / etc. SVG tokens */
+.f-ink{fill:var(--ink)} .f-ink2{fill:var(--ink-2)} .f-mag{fill:var(--mag)} .f-cyan{fill:var(--cyan)} .f-yel{fill:var(--yel)} .f-dot{fill:var(--dot)} .f-sheet{fill:var(--sheet)} .f-paper{fill:var(--paper)}
+.s-ink{stroke:var(--ink)} .s-mag{stroke:var(--mag)} .s-cyan{stroke:var(--cyan)} .s-rule{stroke:var(--rule)}
+svg text{font-family:var(--f-mono);font-size:12px;fill:var(--ink-2)}
+.tr{transition:transform .6s cubic-bezier(.2,.8,.2,1),fill .4s,opacity .4s,rx .4s}
+.tbox{transform-box:fill-box}
+
+/* Alineación */
+.align-card{position:relative;width:min(100%,460px);background:var(--paper);border:1px solid var(--rule);padding:28px 24px;display:flex;flex-direction:column;gap:12px}
+.align-card .ai{transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.align-guide{position:absolute;top:0;bottom:0;width:0;border-left:1px dashed var(--mag);transition:left .7s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.ai-tag{width:96px;height:10px;background:var(--mag)}
+.ai-title{width:280px;height:26px;background:var(--ink)}
+.ai-img{width:200px;height:110px;background:var(--cyan)}
+.ai-l1{width:240px;height:8px;background:var(--ink-2)}
+.ai-l2{width:180px;height:8px;background:var(--ink-2)}
+.ai-btn{width:120px;height:32px;border:2px solid var(--ink)}
+
+/* Proximidad */
+.prox{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px;width:100%;align-items:center}
+.form{display:flex;flex-direction:column;font-family:var(--f-display);font-size:13px}
+.form .fl{color:var(--ink-2);font-weight:600;transition:margin .3s}
+.form .fi{height:30px;border:1px solid var(--ink-2);background:var(--sheet);transition:margin .3s}
+@media (max-width:560px){.prox{grid-template-columns:minmax(0,1fr)}}
+
+/* Espacio */
+.air{width:min(100%,440px);aspect-ratio:4/3;background:var(--paper);border:1px solid var(--rule);display:flex;transition:padding .3s}
+.air-in{display:flex;flex-direction:column;transition:gap .3s;width:100%}
+.air-logo{width:28px;height:28px;background:var(--mag);border-radius:50%;flex:none}
+.air h5{font-family:var(--f-display);font-weight:800;font-stretch:110%;font-size:22px;margin:0;line-height:1.05}
+.air p{font-size:13px;line-height:1.45;color:var(--ink-2)}
+.air .air-cta{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--ink);text-transform:uppercase}
+
+/* Proporción */
+.ratio-wrap{width:100%;height:340px;display:flex;align-items:center;justify-content:center}
+.ratio-box{position:relative;background:var(--paper);border:1px solid var(--ink);transition:width .7s cubic-bezier(.2,.8,.2,1),height .7s cubic-bezier(.2,.8,.2,1);max-width:100%}
+.ratio-box svg{position:absolute;inset:0;width:100%;height:100%}
+.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .9s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.fadein{opacity:0;animation:fade .6s ease forwards}
+@keyframes fade{to{opacity:1}}
+
+/* Color */
+.color-lab{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:center;width:100%}
+.wheel{position:relative;width:200px;height:200px;border-radius:50%;flex:none}
+.wheel::after{content:"";position:absolute;inset:28%;border-radius:50%;background:var(--sheet)}
+.mk{position:absolute;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;border:3px solid var(--sheet);box-shadow:0 0 0 1px var(--ink);transition:left .5s cubic-bezier(.2,.8,.2,1),top .5s cubic-bezier(.2,.8,.2,1),background .3s;z-index:1}
+.mk.base{width:26px;height:26px;margin:-13px 0 0 -13px}
+.swatches{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.swatches div{width:44px;height:44px;transition:background .3s;position:relative}
+.cposter{aspect-ratio:4/3;max-width:100%;display:grid;grid-template-columns:3fr 2fr;transition:background .3s;border:1px solid var(--rule)}
+.cposter .cp-a{padding:16px;display:flex;flex-direction:column;justify-content:space-between;transition:color .3s}
+.cposter .cp-b{transition:background .3s;display:flex;align-items:flex-end;padding:14px}
+.cposter h5{margin:0;font-family:var(--f-display);font-weight:850;font-stretch:115%;font-size:clamp(20px,3vw,30px);line-height:.95}
+.cposter .acc{width:40%;height:10px;transition:background .3s}
+.ratio606{display:flex;height:10px;margin-top:10px}
+.ratio606 span{transition:background .3s}
+@media (max-width:640px){.color-lab{grid-template-columns:minmax(0,1fr);justify-items:center}.color-lab>div:last-child{width:100%}}
+
+/* Tipografía */
+.typo{max-width:100%;color:var(--ink);transition:font-size .2s,line-height .2s,letter-spacing .2s,max-width .3s;border-left:2px solid var(--mag);padding-left:16px}
+.typo-wrap{width:100%;display:flex;justify-content:center}
+.measure-ruler{height:6px;margin-top:10px;background:repeating-linear-gradient(90deg,var(--rule) 0 1px,transparent 1px 1ch)}
+
+/* Grilla */
+.gdemo{position:relative;width:100%;background:var(--paper);border:1px solid var(--rule);transition:padding .3s}
+.gcols,.gcontent{display:grid;transition:gap .3s}
+.gcols{position:absolute;inset:0;pointer-events:none;transition:padding .3s,opacity .3s}
+.gcols span{background:color-mix(in oklab,var(--mag) 12%,transparent);border-inline:1px solid color-mix(in oklab,var(--mag) 35%,transparent)}
+.gcontent{position:relative;row-gap:12px}
+.gb{min-height:24px;transition:all .4s}
+.gb.h{background:var(--ink);height:28px}
+.gb.img{background:var(--cyan);height:120px}
+.gb.txt{display:flex;flex-direction:column;gap:7px;padding-top:4px}
+.gb.txt i{height:7px;background:var(--ink-2)}
+.gb.card{height:70px;border:2px solid var(--ink)}
+
+/* Recorrido */
+.path-dot{transition:opacity .3s}
+</style>
+<link rel="stylesheet" href="laboratorio.css">
+<link rel="stylesheet" href="oficio.css">
+<script src="oficio-datos.js"></script>
+<script src="oficio.js"></script>
+
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <div class="hero-kicker mono"><span class="chip">Módulo 1</span><span>Diseño gráfico · Fundamentos</span></div>
+      <h1>Principios<span class="l2">del diseño</span></h1>
+      <p class="hero-lede">Trece láminas para entender por qué una pieza funciona antes de saber cómo hacerla. Cada principio tiene un banco de pruebas: mové los controles, rompelo a propósito y mirá qué pasa.</p>
+      <div class="hero-meta mono"><a href="index.html" style="color:var(--ink);font-weight:600;text-decoration:none;border-bottom:1px solid var(--mag)">← Índice del curso</a><span><b>13</b> láminas</span><span><b>Gráfico</b> → <a href="2-web.html" style="color:inherit">Web</a> → <a href="3-editorial.html" style="color:inherit">Editorial</a> → <a href="4-identidad.html" style="color:inherit">Identidad</a> → <a href="5-motion.html" style="color:inherit">Motion</a></span><span>Interactivo</span></div>
+    </div>
+    <div class="hero-side">
+      <div class="hero-stage" id="heroStage" aria-label="Composición que pasa del desorden al orden">
+        <div class="hero-grid"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="hero-bar">
+        <span class="hero-state mono" id="heroState">Con principios: grilla, alineación, contraste</span>
+        <button class="btn" id="heroBtn" type="button">Desordenar</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="index" aria-label="Índice de láminas">
+      <h3>Láminas</h3>
+      <ol id="indexList"></ol>
+    </aside>
+
+    <main class="plates" id="plates">
+
+      <!-- 01 JERARQUÍA -->
+      <section class="plate" id="jerarquia" data-name="Jerarquía">
+        <div class="plate-head">
+          <div class="plate-no mono">Lámina 01</div>
+          <h2>Jerarquía</h2>
+          <p class="lede">Ordena la información por importancia para que el ojo sepa qué leer primero, qué después y qué puede ignorar. Se construye con <strong>tamaño, peso, color, posición y espacio</strong>. Si todo grita igual, nadie escucha nada.</p>
+        </div>
+        <div class="bench">
+          <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+            <div class="poster" id="hPoster">
+              <div class="p-kicker">Ciclo de verano</div>
+              <div class="p-title">Cine al aire libre</div>
+              <div class="p-sub">Viernes de febrero · Plaza central · 21 h</div>
+              <div class="p-body">Entrada libre. Traé reposera y abrigo liviano. Si llueve, se pasa al sábado.</div>
+              <div class="p-foot">Organiza: Centro Cultural Municipal</div>
+            </div>
+          </div>
+          <div class="controls">
+            <div class="ctl"><label for="hRange">Jerarquía <output id="hOut">80</output></label><input id="hRange" type="range" min="0" max="100" value="80"></div>
+            <button class="btn prime" id="hPlay" type="button">Animar de 0 a 100</button>
+            <div class="readout" id="hRead"></div>
+          </div>
+        </div>
+        <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>01 / 13 · Jerarquía</span></div>
+        <div class="notes"><div class="do"><h4>En la práctica</h4><p>Definí tres o cuatro niveles como máximo y usalos siempre igual. Probá entrecerrando los ojos: lo que sigue visible es tu nivel 1.</p></div><div class="dont"><h4>Error común</h4><p>Agrandar todo lo que el cliente considera importante. Cuando cinco cosas son nivel 1, en realidad no hay jerarquía.</p></div></div>
+      </section>
+
+      <!-- 02 CONTRASTE -->
+      <section class="plate" id="contraste" data-name="Contraste">
+        <div class="plate-head">
+          <div class="plate-no mono">Lámina 02</div>
+          <h2>Contraste</h2>
+          <p class="lede">La diferencia es lo que el ojo detecta primero. El contraste puede ser de <strong>tamaño, valor (claro/oscuro), color o forma</strong>, y funciona mejor cuando es decidido. Un contraste tímido parece un error, no una intención.</p>
+        </div>
+        <div class="bench">
+          <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+            <svg id="cSvg" viewBox="0 0 700 500" width="700" aria-label="Retícula de puntos con un elemento distinto"></svg>
+          </div>
+          <div class="controls">
+            <div class="ctl"><span class="lbl">Dimensiones</span>
+              <div class="checks">
+                <label><input type="checkbox" id="cSize" checked> Tamaño</label>
+                <label><input type="checkbox" id="cVal"> Valor</label>
+                <label><input type="checkbox" id="cCol" checked> Color</label>
+                <label><input type="checkbox" id="cShape"> Forma</label>
+              </div></div>
+            <div class="ctl"><label for="cRange">Intensidad <output id="cOut">60</output></label><input id="cRange" type="range" min="0" max="100" value="60"></div>
+            <button class="btn" id="cShuffle" type="button">Mover el distinto</button>
+            <div class="readout" id="cRead"></div>
+          </div>
+        </div>
+        <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>02 / 13 · Contraste</span></div>
+        <div class="notes"><div class="do"><h4>En la práctica</h4><p>Combiná dos dimensiones para el elemento clave (por ejemplo tamaño + color) y dejá el resto neutro. El contraste necesita calma alrededor.</p></div><div class="dont"><h4>Error común</h4><p>Diferencias del 10 o 20 %: un título apenas más grande que el texto, un gris apenas distinto. Si dudás, duplicalo.</p></div></div>
+      </section>
+
+      <!-- 03 ALINEACIÓN -->
+      <section class="plate" id="alineacion" data-name="Alineación">
+        <div class="plate-head">
+          <div class="plate-no mono">Lámina 03</div>
+          <h2>Alineación</h2>
+          <p class="lede">Nada debería estar ubicado al azar: cada elemento se conecta visualmente con otro a través de un <strong>eje invisible</strong>. Esa línea es la que da sensación de orden y profesionalismo, aunque nadie la vea.</p>
+        </div>
+        <div class="bench">
+          <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+            <div class="align-card" id="aCard">
+              <span class="align-guide" id="aGuide"></span>
+              <div class="ai ai-tag"></div><div class="ai ai-title"></div><div class="ai ai-img"></div><div class="ai ai-l1"></div><div class="ai ai-l2"></div><div class="ai ai-btn"></div>
+            </div>
+          </div>
+          <div class="controls">
+            <div class="ctl"><span class="lbl">Eje</span>
+              <div class="seg" id="aSeg"><button type="button" data-m="none">Sin eje</button><button type="button" data-m="left" aria-pressed="true">Izquierda</button><button type="button" data-m="center">Centro</button><button type="button" data-m="right">Derecha</button></div></div>
+            <div class="readout" id="aRead"></div>
+          </div>
+        </div>
+        <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>03 / 13 · Alineación</span></div>
+        <div class="notes"><div class="do"><h4>En la práctica</h4><p>La alineación a la izquierda es la más legible para texto largo en idiomas occidentales. El centrado sirve para piezas cortas y formales: invitaciones, carátulas, placas.</p></div><div class="dont"><h4>Error común</h4><p>Mezclar ejes en la misma pieza (título centrado, texto a la izquierda, botón a la derecha) sin una razón clara.</p></div></div>
+      </section>
+
+      <!-- 04 PROXIMIDAD -->
+      <section class="plate" id="proximidad" data-name="Proximidad">
+        <div class="plate-head">
+          <div class="plate-no mono">Lámina 04</div>
+          <h2>Proximidad</h2>
+          <p class="lede">Lo que está cerca se percibe como parte de lo mismo. Agrupar es <strong>la forma más barata de organizar</strong>: no necesitás líneas, cajas ni colores si el espacio ya dice qué va con qué.</p>
+        </div>
+        <div class="bench">
+          <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+            <div class="prox">
+              <svg id="pSvg" viewBox="0 0 600 280" width="600" aria-label="Puntos que se agrupan"></svg>
+              <div class="form" id="pForm">
+                <span class="fl">Nombre</span><span class="fi"></span>
+                <span class="fl">Correo</span><span class="fi"></span>
+                <span class="fl">Teléfono</span><span class="fi"></span>
+              </div>
+            </div>
+          </div>
+          <div class="controls">
+            <div class="ctl"><label for="pRange">Agrupación <output id="pOut">85</output></label><input id="pRange" type="range" min="0" max="100" value="85"></div>
+            <div class="readout" id="pRead"></div>
+          </div>
+        </div>
+        <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>04 / 13 · Proximidad</span></div>
+        <div class="notes"><div class="do"><h4>En la práctica</h4><p>Regla útil: el espacio dentro de un grupo debería ser como mucho la mitad del espacio entre grupos. En formularios, la etiqueta va pegada a su campo.</p></div><div class="dont"><h4>Error común</h4><p>Repartir el espacio en partes iguales "para que quede prolijo". Así todo queda a la misma distancia y nada se agrupa.</p></div></div>
+      </section>
+
+      <!-- 05 REPETICIÓN Y RITMO -->
+      <section class="plate" id="ritmo" data-name="Repetición y ritmo">
+        <div class="plate-head">
+          <div class="plate-no mono">Lámina 05</div>
+          <h2>Repetición y ritmo</h2>
+          <p class="lede">Repetir colores, formas, tipografías y espacios da <strong>unidad y reconocimiento</strong>. Cuando esa repetición tiene un patrón temporal o espacial, aparece el ritmo: igual que en música, puede ser regular, alternado, progresivo o fluido.</p>
+        </div>
+        <div class="bench">
+          <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+            <svg id="rSvg" viewBox="0 0 620 260" width="620" aria-label="Barras con distintos ritmos"></svg>
+          </div>
+          <div class="controls">
+            <div class="ctl"><span class="lbl">Tipo de ritmo</span>
+              <div class="seg" id="rSeg"><button type="button" data-m="regular">Regular</button><button type="button" data-m="alt" aria-pressed="true">Alternado</button><button type="button" data-m="prog">Progresivo</button><button type="button" data-m="fluid">Fluido</button></div></div>
+            <div class="readout" id="rRead"></div>
+          </div>
+        </div>
+        <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>05 / 13 · Repetición y ritmo</span></div>
+        <div class="notes"><div class="do"><h4>En la práctica</h4><p>En una pieza de varias páginas o pantallas, repetí posiciones fijas (folio, logo, títulos). La repetición es lo que hace que algo se sienta como un sistema.</p></div><div class="dont"><h4>Error común</h4><p>Repetir sin variación durante demasiado tiempo. El ritmo regular puro cansa; una pausa o un acento cada tanto lo mantiene vivo.</p></div></div>
+      </section>
+
+      <!-- 06 EQUILIBRIO -->
+      <section class="plate" id="equilibrio" data-name="Equilibrio">
+        <div class="plate-head">
+          <div class="plate-no mono">Lámina 06</div>
+          <h2>Equilibrio</h2>
+          <p class="lede">Cada elemento tiene un <strong>peso visual</strong> según su tamaño, color y valor, y su posición actúa como una palanca. El equilibrio simétrico es estable y formal; el asimétrico es más dinámico: un elemento chico lejos del centro puede compensar uno grande cerca.</p>
+        </div>
+        <div class="bench">
+          <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+            <svg id="eSvg" viewBox="0 0 600 320" width="600" aria-label="Balanza de peso visual">
+              <g id="eBeam" class="tr" style="transform-origin:300px 244px;transform-box:view-box">
+                <rect x="30" y="240" width="540" height="8" class="f-ink"/>
+                <rect id="eBig" class="f-cyan" x="0" y="0" width="70" height="70"/>
+                <rect id="eSmall" class="f-mag" x="0" y="194" width="46" height="46"/>
+                <line x1="300" y1="232" x2="300" y2="256" class="s-rule" stroke-width="1"/>
+              </g>
+              <path d="M300 248 L276 292 L324 292 Z" class="f-ink2"/>
+              <rect x="220" y="292" width="160" height="4" class="f-ink2"/>
+            </svg>
+          </div>
+          <div class="controls">
+            <div class="ctl"><label for="eSize">Tamaño del bloque grande <output id="eSizeO">70</output></label><input id="eSize" type="range" min="40" max="90" value="70"></div>
+            <div class="ctl"><label for="ePos">Distancia del bloque chico <output id="ePosO">110</output></label><input id="ePos" type="range" min="40" max="260" value="110"></div>
+            <div class="ctl"><span class="lbl">Probar</span><div class="seg"><button type="button" id="eSym">Simétrico</button><button type="button" id="eAsym">Asimétrico resuelto</button></div></div>
+            <div class="readout" id="eRead"></div>
+          </div>
+        </div>
+        <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>06 / 13 · Equilibrio</span></div>
+        <div class="notes"><div class="do"><h4>En la práctica</h4><p>Un color saturado o un negro pleno pesan más que un gris del mismo tamaño. Usalo: un detalle chico de color en la esquina opuesta equilibra una foto grande.</p></div><div class="dont"><h4>Error común</h4><p>Confundir equilibrio con simetría y centrar todo por miedo. La pieza queda estable pero quieta, sin tensión.</p></div></div>
+      </section>
+
+      <!-- 07 ESPACIO NEGATIVO -->
+      <section class="plate" id="espacio" data-name="Espacio negativo">
+        <div class="plate-head">
+          <div class="plate-no mono">Lámina 07</div>
+          <h2>Espacio negativo</h2>
+          <p class="lede">El blanco no es espacio vacío: es un material más. Da <strong>respiración, foco y sensación de calidad</strong>. Cuanto más aire rodea a un elemento, más importante parece.</p>
+        </div>
+        <div class="bench">
+          <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+            <div class="air" id="sAir"><div class="air-in" id="sIn">
+              <span class="air-logo"></span>
+              <h5>Vinos de altura</h5>
+              <p>Viñedos a 1.800 metros sobre el nivel del mar. Cosecha manual, crianza en barrica de roble francés durante doce meses.</p>
+              <span class="air-cta">Ver la cava →</span>
+            </div></div>
+          </div>
+          <div class="controls">
+            <div class="ctl"><label for="sRange">Aire <output id="sOut">70</output></label><input id="sRange" type="range" min="0" max="100" value="70"></div>
+            <div class="readout" id="sRead"></div>
+          </div>
+        </div>
+        <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>07 / 13 · Espacio negativo</span></div>
+        <div class="notes"><div class="do"><h4>En la práctica</h4><p>Empezá con márgenes generosos y achicá solo si hace falta. Las marcas premium usan el aire como señal de precio: menos cosas, más espacio.</p></div><div class="dont"><h4>Error común</h4><p>Llenar cada hueco "porque está vacío". El horror vacui transmite ansiedad y baja el valor percibido.</p></div></div>
+      </section>
+
+      <!-- 08 PROPORCIÓN -->
+      <section class="plate" id="proporcion" data-name="Proporción">
+        <div class="plate-head">
+          <div class="plate-no mono">Lámina 08</div>
+          <h2>Escala y proporción</h2>
+          <p class="lede">La proporción es la relación entre las partes y el todo. Algunas relaciones se repiten en la historia del diseño porque <strong>se subdividen bien</strong>: la serie A de papel, la sección áurea, los tercios. Elegí un formato y mirá cómo se divide.</p>
+        </div>
+        <div class="bench">
+          <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+            <div class="ratio-wrap" id="qWrap"><div class="ratio-box" id="qBox"><svg id="qSvg" preserveAspectRatio="none"></svg></div></div>
+          </div>
+          <div class="controls">
+            <div class="ctl"><span class="lbl">Formato</span>
+              <div class="seg" id="qSeg">
+                <button type="button" data-r="1">1:1</button>
+                <button type="button" data-r="1.5">3:2</button>
+                <button type="button" data-r="1.41421356">√2 · ISO A</button>
+                <button type="button" data-r="1.61803399" aria-pressed="true">φ · áurea</button>
+                <button type="button" data-r="1.77777778">16:9</button>
+                <button type="button" data-r="0.5625">9:16</button>
+              </div></div>
+            <div class="readout" id="qRead"></div>
+          </div>
+        </div>
+        <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>08 / 13 · Escala y proporción</span></div>
+        <div class="notes"><div class="do"><h4>En la práctica</h4><p>Usá una escala de tamaños con una razón fija (1,25 · 1,333 · 1,5 · 1,618) para tipografías y espacios. Si todo sale de la misma razón, todo combina.</p></div><div class="dont"><h4>Error común</h4><p>Tratar la sección áurea como fórmula mágica. Es una herramienta de subdivisión, no una garantía de belleza; los tercios y la serie A son igual de útiles.</p></div></div>
+      </section>
+
+      <!-- 09 GESTALT -->
+      <section class="plate" id="gestalt" data-name="Gestalt">
+        <div class="plate-head">
+          <div class="plate-no mono">Lámina 09</div>
+          <h2>Leyes de la Gestalt</h2>
+          <p class="lede">La psicología de la percepción explica cómo el cerebro <strong>completa, agrupa y separa</strong> lo que ve. No es teoría decorativa: describe lo que tu público va a hacer con tu diseño, quieras o no.</p>
+        </div>
+        <div class="bench">
+          <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+            <svg id="gSvg" viewBox="0 0 400 320" width="460" aria-label="Demostración de la ley seleccionada"></svg>
+          </div>
+          <div class="controls">
+            <div class="ctl"><span class="lbl">Ley</span>
+              <div class="seg" id="gSeg"><button type="button" data-m="cierre" aria-pressed="true">Cierre</button><button type="button" data-m="semejanza">Semejanza</button><button type="button" data-m="continuidad">Continuidad</button><button type="button" data-m="figura">Figura y fondo</button><button type="button" data-m="destino">Destino común</button></div></div>
+            <div class="ctl" id="gCtl"></div>
+            <div class="readout" id="gRead"></div>
+          </div>
+        </div>
+        <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>09 / 13 · Gestalt</span></div>
+        <div class="notes"><div class="do"><h4>En la práctica</h4><p>El cierre permite logos que sugieren en lugar de dibujar todo. La semejanza te deja marcar qué es clickeable sin explicarlo: todo lo que se ve igual, funciona igual.</p></div><div class="dont"><h4>Error común</h4><p>Dar el mismo estilo a cosas que hacen cosas distintas. Si un título y un botón comparten color y peso, el usuario los va a confundir.</p></div></div>
+      </section>
+
+      <!-- 10 COLOR -->
+      <section class="plate" id="color" data-name="Color">
+        <div class="plate-head">
+          <div class="plate-no mono">Lámina 10</div>
+          <h2>Color</h2>
+          <p class="lede">El color organiza, emociona y comunica estado. Las armonías del círculo cromático son un punto de partida; la regla <strong>60-30-10</strong> reparte las proporciones, y el contraste de luminancia decide si se puede leer.</p>
+        </div>
+        <div class="bench">
+          <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+            <div class="color-lab">
+              <div><div class="wheel" id="kWheel"></div><div class="swatches" id="kSw"></div></div>
+              <div>
+                <div class="cposter" id="kPoster"><div class="cp-a" id="kA"><span class="mono">Festival · 2027</span><h5>Ruido de verano</h5><span class="acc" id="kAcc"></span></div><div class="cp-b" id="kB"></div></div>
+                <div class="ratio606" id="k606"><span style="flex:6"></span><span style="flex:3"></span><span style="flex:1"></span></div>
+                <div class="mono" style="display:flex;justify-content:space-between;margin-top:6px;color:var(--ink-2)"><span>60 dominante</span><span>30 secundario</span><span>10 acento</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="controls">
+            <div class="ctl"><span class="lbl">Armonía</span>
+              <div class="seg" id="kSeg"><button type="button" data-m="comp" aria-pressed="true">Complementaria</button><button type="button" data-m="ana">Análoga</button><button type="button" data-m="tri">Tríada</button><button type="button" data-m="split">Compl. dividida</button><button type="button" data-m="tetra">Tetrádica</button></div></div>
+            <div class="ctl"><label for="kHue">Tono base <output id="kHueO">340°</output></label><input id="kHue" type="range" min="0" max="359" value="340"></div>
+            <div class="ctl"><label for="kSat">Saturación <output id="kSatO">80%</output></label><input id="kSat" type="range" min="10" max="100" value="80"></div>
+            <div class="readout" id="kRead"></div>
+          </div>
+        </div>
+        <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>10 / 13 · Color</span></div>
+        <div class="notes"><div class="do"><h4>En la práctica</h4><p>Elegí primero los neutros (fondo y texto) y después el color. Para texto, la norma WCAG pide al menos 4,5:1; para títulos grandes alcanza 3:1.</p></div><div class="dont"><h4>Error común</h4><p>Usar todos los colores de la armonía en partes iguales. Una paleta funciona cuando uno domina y los otros acompañan.</p></div></div>
+      </section>
+
+      <!-- 11 TIPOGRAFÍA -->
+      <section class="plate" id="tipografia" data-name="Tipografía">
+        <div class="plate-head">
+          <div class="plate-no mono">Lámina 11</div>
+          <h2>Tipografía legible</h2>
+          <p class="lede">Un texto se lee bien cuando cuatro variables están en equilibrio: <strong>cuerpo, interlineado, tracking y medida</strong> (cuántos caracteres entran por línea). Si una se va de rango, la lectura se cansa aunque la fuente sea hermosa.</p>
+        </div>
+        <div class="bench">
+          <div class="stage" style="align-items:flex-start"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+            <div class="typo-wrap"><div><p class="typo" id="tText">Leer es reconocer formas de palabras, no letras sueltas. El ojo avanza a saltos y, al final de cada línea, tiene que volver al principio de la siguiente sin perderse. Si la línea es muy larga, ese regreso falla; si es muy corta, el ritmo se corta a cada rato. El interlineado guía ese viaje de vuelta y el espacio entre letras decide si las palabras se leen como bloques o se desarman. Por eso la tipografía de texto no busca llamar la atención: busca desaparecer.</p><div class="measure-ruler" id="tRuler"></div></div></div>
+          </div>
+          <div class="controls">
+            <div class="ctl"><span class="lbl">Familia</span><div class="seg" id="tSeg"><button type="button" data-f="serif" aria-pressed="true">Serif</button><button type="button" data-f="sans">Sans</button></div></div>
+            <div class="ctl"><label for="tSize">Cuerpo <output id="tSizeO">17 px</output></label><input id="tSize" type="range" min="11" max="24" value="17"></div>
+            <div class="ctl"><label for="tLh">Interlineado <output id="tLhO">1,55</output></label><input id="tLh" type="range" min="100" max="220" value="155"></div>
+            <div class="ctl"><label for="tTr">Tracking <output id="tTrO">0,00 em</output></label><input id="tTr" type="range" min="-6" max="15" value="0"></div>
+            <div class="ctl"><label for="tMe">Medida <output id="tMeO">62 car.</output></label><input id="tMe" type="range" min="20" max="110" value="62"></div>
+            <div class="readout" id="tRead"></div>
+          </div>
+        </div>
+        <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>11 / 13 · Tipografía</span></div>
+        <div class="notes"><div class="do"><h4>En la práctica</h4><p>Medida de 45 a 75 caracteres, interlineado de 1,4 a 1,65 para texto corrido. Cuanto más larga la línea, más interlineado necesita.</p></div><div class="dont"><h4>Error común</h4><p>Abrir el tracking en minúsculas de texto. Se usa en mayúsculas y versalitas; en minúsculas rompe la forma de la palabra.</p></div></div>
+      </section>
+
+      <!-- 12 GRILLA -->
+      <section class="plate" id="grilla" data-name="Grilla">
+        <div class="plate-head">
+          <div class="plate-no mono">Lámina 12</div>
+          <h2>Grilla</h2>
+          <p class="lede">La grilla es la alineación convertida en sistema: <strong>columnas, medianiles y márgenes</strong> que deciden de antemano dónde puede caer cada cosa. Te libera de decidir posición por posición y hace que varias piezas parezcan de la misma familia.</p>
+        </div>
+        <div class="bench">
+          <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+            <div class="gdemo" id="gdDemo">
+              <div class="gcols" id="gdCols"></div>
+              <div class="gcontent" id="gdContent">
+                <div class="gb h" data-k="h"></div>
+                <div class="gb img" data-k="img"></div>
+                <div class="gb txt" data-k="txt"><i style="width:100%"></i><i style="width:92%"></i><i style="width:96%"></i><i style="width:70%"></i></div>
+                <div class="gb card" data-k="c"></div><div class="gb card" data-k="c"></div><div class="gb card" data-k="c"></div>
+              </div>
+            </div>
+          </div>
+          <div class="controls">
+            <div class="ctl"><label for="gdN">Columnas <output id="gdNO">6</output></label><input id="gdN" type="range" min="1" max="12" value="6"></div>
+            <div class="ctl"><label for="gdG">Medianil <output id="gdGO">16 px</output></label><input id="gdG" type="range" min="0" max="40" value="16"></div>
+            <div class="ctl"><label for="gdM">Margen <output id="gdMO">24 px</output></label><input id="gdM" type="range" min="0" max="56" value="24"></div>
+            <div class="ctl"><span class="lbl">Columnas visibles</span><div class="seg"><button type="button" id="gdShow" aria-pressed="true">Mostrar</button></div></div>
+            <div class="readout" id="gdRead"></div>
+          </div>
+        </div>
+        <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>12 / 13 · Grilla</span></div>
+        <div class="notes"><div class="do"><h4>En la práctica</h4><p>Doce columnas es el estándar web porque se divide en 2, 3, 4 y 6. En editorial, una grilla de 5 o 7 columnas da composiciones asimétricas más interesantes.</p></div><div class="dont"><h4>Error común</h4><p>Dibujar la grilla y después ignorarla "por esta vez". Romperla está bien, pero solo si es una decisión visible y aislada.</p></div></div>
+      </section>
+
+      <!-- 13 RECORRIDO -->
+      <section class="plate" id="recorrido" data-name="Recorrido visual">
+        <div class="plate-head">
+          <div class="plate-no mono">Lámina 13</div>
+          <h2>Recorrido visual</h2>
+          <p class="lede">El ojo no lee una pieza: la escanea siguiendo patrones aprendidos. Conocerlos te permite <strong>ubicar cada cosa donde la mirada ya va a pasar</strong>, en lugar de pelear contra ella.</p>
+        </div>
+        <div class="bench">
+          <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+            <svg id="vSvg" viewBox="0 0 600 400" width="600" aria-label="Maqueta con el recorrido del ojo"></svg>
+          </div>
+          <div class="controls">
+            <div class="ctl"><span class="lbl">Patrón</span>
+              <div class="seg" id="vSeg"><button type="button" data-m="z" aria-pressed="true">Z</button><button type="button" data-m="f">F</button><button type="button" data-m="g">Diagrama de Gutenberg</button></div></div>
+            <button class="btn prime" id="vPlay" type="button">Recorrer</button>
+            <div class="readout" id="vRead"></div>
+          </div>
+        </div>
+        <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>13 / 13 · Recorrido visual</span></div>
+        <div class="notes"><div class="do"><h4>En la práctica</h4><p>En piezas con poco texto (afiche, portada, landing), el llamado a la acción va al final de la Z: abajo a la derecha. En páginas con mucho texto, lo importante va en las primeras palabras de cada línea.</p></div><div class="dont"><h4>Error común</h4><p>Poner la información clave en la esquina inferior izquierda de una pieza con poco texto: es la zona que el ojo atraviesa más rápido.</p></div></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = (s,c=document)=>c.querySelector(s);
+const $$ = (s,c=document)=>[...c.querySelectorAll(s)];
+const lerp=(a,b,t)=>a+(b-a)*t;
+const NS='http://www.w3.org/2000/svg';
+const el=(tag,attrs={},parent)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;};
+const fmt=(n,d=2)=>n.toFixed(d).replace('.',',');
+function seg(container,cb){
+  $$('button',container).forEach(b=>b.addEventListener('click',()=>{
+    $$('button',container).forEach(x=>x.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true');cb(b);
+  }));
+}
+// Run rAF loops only while visible
+function visLoop(target,fn){
+  let on=false,raf=0,active=()=>true;
+  const tick=t=>{if(!on)return;fn(t);raf=requestAnimationFrame(tick);};
+  const start=()=>{if(on||RM||!active())return;on=true;raf=requestAnimationFrame(tick);};
+  const stop=()=>{on=false;cancelAnimationFrame(raf);};
+  let vis=false;
+  new IntersectionObserver(es=>{vis=es[0].isIntersecting;vis?start():stop();}).observe(target);
+  return {setActive(f){active=f;stop();if(vis)start();},start:()=>{if(vis)start();},stop};
+}
+
+/* ---------- Índice ---------- */
+const list=$('#indexList');
+$$('.plate').forEach((p,i)=>{
+  const li=document.createElement('li');
+  li.innerHTML=`<a href="#${p.id}"><span>${String(i+1).padStart(2,'0')}</span>${p.dataset.name}</a>`;
+  list.appendChild(li);
+});
+const links=$$('a',list);
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));const on=links.find(a=>a.classList.contains('on'));if(on&&window.innerWidth<=900){const ol=list;ol.scrollTo({left:on.offsetLeft-ol.clientWidth/2+on.offsetWidth/2,behavior:RM?'auto':'smooth'});}}});},{rootMargin:'-40% 0px -55% 0px'});
+$$('.plate').forEach(p=>io.observe(p));
+
+/* ---------- Hero ---------- */
+(function(){
+  const stage=$('#heroStage');
+  const items=[
+    {x:6,y:7,w:58,h:11,c:'ink'},{x:70,y:7,w:24,h:5,c:'mag'},
+    {x:6,y:22,w:40,h:3.5,c:'ink2'},{x:6,y:28,w:30,h:3.5,c:'ink2'},
+    {x:6,y:37,w:46,h:36,c:'cyan'},{x:58,y:28,w:36,h:48,c:'mag',r:'50%'},
+    {x:6,y:79,w:88,h:1.5,c:'ink'},{x:6,y:85,w:18,h:8,c:'yel'},{x:28,y:85,w:18,h:8,c:'line'},
+    {x:62,y:85,w:32,h:2.5,c:'ink2'},{x:62,y:90,w:22,h:2.5,c:'ink2'}
+  ];
+  const els=items.map(it=>{const d=document.createElement('div');d.className='h-el c-'+it.c;Object.assign(d.style,{left:it.x+'%',top:it.y+'%',width:it.w+'%',height:it.h+'%',borderRadius:it.r||'0'});stage.appendChild(d);return d;});
+  let ordered=true;
+  function scatter(){els.forEach(d=>{const tx=(Math.random()-.5)*50,ty=(Math.random()-.5)*60,r=(Math.random()-.5)*70,s=.55+Math.random()*.8;d.style.transform=`translate(${tx}%,${ty}%) rotate(${r}deg) scale(${s})`;});}
+  function order(){els.forEach(d=>d.style.transform='none');}
+  function apply(){ordered?order():scatter();stage.classList.toggle('ordered',ordered);
+    $('#heroState').textContent=ordered?'Con principios: grilla, alineación, contraste':'Sin principios: los mismos elementos, sin relación';
+    $('#heroBtn').textContent=ordered?'Desordenar':'Ordenar';}
+  $('#heroBtn').addEventListener('click',()=>{ordered=!ordered;apply();});
+  if(!RM){els.forEach(d=>d.style.transition='none');ordered=false;apply();void stage.offsetWidth;els.forEach(d=>d.style.transition='');setTimeout(()=>{ordered=true;apply();},350);}
+  else apply();
+})();
+
+/* ---------- 01 Jerarquía ---------- */
+(function(){
+  const P=$('#hPoster'),r=$('#hRange'),k=$('.p-kicker',P),t=$('.p-title',P),s=$('.p-sub',P),b=$('.p-body',P),f=$('.p-foot',P);
+  function render(v){
+    const x=v/100;
+    $('#hOut').textContent=v;
+    const W=P.clientWidth||380,u=W/380;
+    t.style.fontSize=lerp(15,58,x)*u+'px';t.style.fontWeight=Math.round(lerp(400,880,x));t.style.fontStretch=lerp(100,112,x)+'%';t.style.lineHeight=lerp(1.3,.95,x);
+    k.style.fontSize=lerp(15,11,x)*u+'px';k.style.letterSpacing=lerp(0,.16,x)+'em';k.style.textTransform=x>.35?'uppercase':'none';k.style.color=x>.35?'var(--mag)':'var(--ink)';k.style.fontWeight=x>.35?700:400;
+    s.style.fontSize=lerp(15,16,x)*u+'px';s.style.fontWeight=Math.round(lerp(400,600,x));
+    b.style.fontSize=lerp(15,13,x)*u+'px';b.style.color=x>.5?'var(--ink-2)':'var(--ink)';b.style.fontFamily=x>.5?'var(--f-body)':'var(--f-display)';b.style.lineHeight=lerp(1.3,1.45,x);
+    f.style.fontSize=lerp(15,10,x)*u+'px';f.style.color=x>.4?'var(--ink-2)':'var(--ink)';f.style.fontFamily=x>.4?'var(--f-mono)':'var(--f-display)';
+    const lv=x<.15?1:x<.4?2:x<.7?3:4;
+    const ratio=lerp(15,58,x)/lerp(15,13,x);
+    $('#hRead').innerHTML=`Niveles legibles: <b>${lv}</b><br>Título / texto: <b>${fmt(ratio,1)}×</b><br>${x<.15?'<span class="pill bad">Todo igual</span>':x<.7?'<span class="pill mid">Jerarquía parcial</span>':'<span class="pill ok">Jerarquía clara</span>'}`;
+  }
+  r.addEventListener('input',()=>render(+r.value));
+  $('#hPlay').addEventListener('click',()=>{
+    if(RM){r.value=100;render(100);return;}
+    const t0=performance.now();const step=now=>{const p=Math.min(1,(now-t0)/2200);const v=Math.round(100*(p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2));r.value=v;render(v);if(p<1)requestAnimationFrame(step);};requestAnimationFrame(step);
+  });
+  new ResizeObserver(()=>render(+r.value)).observe(P);
+  render(80);
+})();
+
+/* ---------- 02 Contraste ---------- */
+(function(){
+  const svg=$('#cSvg'),C=7,R=5,cell=100,base=20;let target=17;
+  const nodes=[];
+  for(let i=0;i<C*R;i++){const cx=50+(i%C)*cell,cy=50+Math.floor(i/C)*cell;const rc=el('rect',{x:cx-base,y:cy-base,width:base*2,height:base*2,rx:base,class:'tr tbox'},svg);rc.style.transformOrigin='center';rc.style.fill='var(--dot)';nodes.push(rc);}
+  function render(){
+    const k=+$('#cRange').value/100;$('#cOut').textContent=Math.round(k*100);
+    const dims={size:$('#cSize').checked,val:$('#cVal').checked,col:$('#cCol').checked,shape:$('#cShape').checked};
+    nodes.forEach((n,i)=>{
+      if(i!==target){n.style.transform='scale(1)';n.style.fill='var(--dot)';n.setAttribute('rx',base);return;}
+      n.style.transform=`scale(${dims.size?1+1.1*k:1})`;
+      let c='var(--dot)';
+      if(dims.val)c=`color-mix(in oklab, var(--ink) ${Math.round(k*100)}%, ${c})`;
+      if(dims.col)c=`color-mix(in oklab, var(--mag) ${Math.round(k*100)}%, ${c})`;
+      n.style.fill=c;
+      n.setAttribute('rx',dims.shape?lerp(base,2,k):base);
+    });
+    const n=Object.values(dims).filter(Boolean).length;
+    const score=n*k;
+    $('#cRead').innerHTML=`Dimensiones activas: <b>${n}</b><br>Detección: ${score===0?'<span class="pill bad">Invisible</span>':score<.5?'<span class="pill bad">Hay que buscarlo</span>':score<1.1?'<span class="pill mid">Se encuentra</span>':'<span class="pill ok">Inmediata</span>'}`;
+  }
+  ['#cSize','#cVal','#cCol','#cShape','#cRange'].forEach(s=>$(s).addEventListener('input',render));
+  $('#cShuffle').addEventListener('click',()=>{let t;do{t=Math.floor(Math.random()*C*R);}while(t===target);target=t;render();});
+  render();
+})();
+
+/* ---------- 03 Alineación ---------- */
+(function(){
+  const card=$('#aCard'),items=$$('.ai',card),guide=$('#aGuide');let mode='left';
+  const rnd=items.map(()=>Math.random());
+  function render(){
+    const cs=getComputedStyle(card);const pl=parseFloat(cs.paddingLeft),W=card.clientWidth-pl-parseFloat(cs.paddingRight);
+    items.forEach((it,i)=>{
+      const w=Math.min(it.offsetWidth,W);it.style.maxWidth='100%';
+      let x=0;
+      if(mode==='center')x=(W-w)/2;else if(mode==='right')x=W-w;else if(mode==='none')x=rnd[i]*(W-w);
+      it.style.transform=`translateX(${x}px)`;
+    });
+    guide.style.opacity=mode==='none'?0:1;
+    guide.style.left=(mode==='left'?pl:mode==='right'?pl+W:pl+W/2)+'px';
+    const txt={none:['Sin eje','Cada elemento está ubicado a ojo. Nada se relaciona con nada, aunque los elementos sean los mismos.'],left:['Izquierda','Un borde firme a la izquierda: el inicio de lectura es siempre el mismo. La opción más versátil.'],center:['Centro','Simétrico y formal. Los bordes quedan irregulares, por eso conviene para pocas líneas.'],right:['Derecha','Poco natural para leer texto largo. Útil para cifras, fechas o elementos que acompañan a otra columna.']}[mode];
+    $('#aRead').innerHTML=`<b>${txt[0]}</b><br>${txt[1]}`;
+  }
+  seg($('#aSeg'),b=>{mode=b.dataset.m;render();});
+  new ResizeObserver(render).observe(card);render();
+})();
+
+/* ---------- 04 Proximidad ---------- */
+(function(){
+  const svg=$('#pSvg'),dots=[],labels=[];
+  for(let r=0;r<4;r++)for(let c=0;c<6;c++){const d=el('circle',{cx:0,cy:0,r:11,class:'f-ink tr'},svg);d.dataset.r=r;d.dataset.c=c;dots.push(d);}
+  ['Grupo A','Grupo B','Grupo C'].forEach((t,i)=>{const tx=el('text',{x:0,y:262,'text-anchor':'middle',class:'tr'},svg);tx.textContent=t;labels.push(tx);});
+  const fl=$$('#pForm .fl'),fi=$$('#pForm .fi');
+  function render(){
+    const t=+$('#pRange').value/100;$('#pOut').textContent=Math.round(t*100);
+    dots.forEach(d=>{const c=+d.dataset.c,r=+d.dataset.r;const ux=60+c*96;const g=Math.floor(c/2),j=c%2;const gx=80+g*220+j*36-18+ (g-1)*0;const x=lerp(ux,gx,t);const y=40+r*56;d.style.transform=`translate(${x}px,${y}px)`;});
+    labels.forEach((l,g)=>{l.setAttribute('x',80+g*220);l.style.opacity=Math.max(0,(t-.5)*2);});
+    fl.forEach((l,i)=>{l.style.marginBottom=lerp(14,5,t)+'px';});
+    fi.forEach((f,i)=>{if(i<fi.length-1)f.style.marginBottom=lerp(14,26,t)+'px';});
+    const inG=lerp(96,36,t),btwG=lerp(96,148,t);
+    $('#pRead').innerHTML=`Espacio dentro del grupo: <b>${Math.round(inG)}</b><br>Espacio entre grupos: <b>${Math.round(btwG)}</b><br>Relación: <b>1 : ${fmt(btwG/inG,1)}</b><br>${btwG/inG<1.3?'<span class="pill bad">No se agrupa</span>':btwG/inG<2?'<span class="pill mid">Agrupación débil</span>':'<span class="pill ok">Grupos claros</span>'}`;
+  }
+  $('#pRange').addEventListener('input',render);render();
+})();
+
+/* ---------- 05 Ritmo ---------- */
+(function(){
+  const svg=$('#rSvg'),N=14,bars=[];let mode='alt';
+  el('line',{x1:10,y1:230,x2:610,y2:230,class:'s-rule','stroke-width':1},svg);
+  for(let i=0;i<N;i++){const b=el('rect',{x:0,y:30,width:20,height:200,class:'f-ink'},svg);b.style.transformBox='fill-box';b.style.transformOrigin='center bottom';b.style.transition='transform .6s cubic-bezier(.2,.8,.2,1),fill .4s';bars.push(b);}
+  const label=el('text',{x:10,y:252},svg);
+  function layout(t=0){
+    let xs=[],hs=[],cl=[];
+    if(mode==='regular'){for(let i=0;i<N;i++){xs.push(22+i*42);hs.push(120);cl.push('ink');}}
+    if(mode==='alt'){for(let i=0;i<N;i++){xs.push(22+i*42);hs.push(i%2?70:170);cl.push(i%2?'ink':'mag');}}
+    if(mode==='prog'){let x=14;for(let i=0;i<N;i++){xs.push(x);hs.push(24+i*13.5);cl.push(i>N-4?'mag':'ink');x+=24+i*1.6;}}
+    if(mode==='fluid'){for(let i=0;i<N;i++){xs.push(22+i*42);hs.push(115+80*Math.sin(i*.55+t/600));cl.push('cyan');}}
+    bars.forEach((b,i)=>{b.setAttribute('class','f-'+cl[i]);b.style.transform=`translateX(${xs[i]}px) scaleY(${Math.max(.05,hs[i]/200)})`;});
+  }
+  const txt={regular:'Regular: mismo elemento, mismo intervalo. Estable, previsible, institucional.',alt:'Alternado: dos elementos que se turnan. Crea un pulso, como un compás de dos tiempos.',prog:'Progresivo: el tamaño o el intervalo cambia gradualmente. Sugiere crecimiento y dirección.',fluid:'Fluido: variación orgánica y continua. Da movimiento y naturalidad.'};
+  const loop=visLoop(svg,t=>layout(t));
+  loop.setActive(()=>mode==='fluid');
+  seg($('#rSeg'),b=>{mode=b.dataset.m;bars.forEach(x=>x.style.transitionDuration=mode==='fluid'?'0s':'.6s');layout(performance.now());$('#rRead').innerHTML=txt[mode];label.textContent=mode.toUpperCase();loop.setActive(()=>mode==='fluid');});
+  layout();$('#rRead').innerHTML=txt[mode];label.textContent='ALT';
+})();
+
+/* ---------- 06 Equilibrio ---------- */
+(function(){
+  const big=$('#eBig'),small=$('#eSmall'),beam=$('#eBeam');const dL=80,sm=46;
+  function render(){
+    const s=+$('#eSize').value,d=+$('#ePos').value;$('#eSizeO').textContent=s;$('#ePosO').textContent=d;
+    big.setAttribute('width',s);big.setAttribute('height',s);big.setAttribute('x',300-dL-s/2);big.setAttribute('y',240-s);
+    small.setAttribute('x',300+d-sm/2);
+    const ml=s*s*dL,mr=sm*sm*d,diff=mr-ml;
+    const ang=Math.max(-14,Math.min(14,diff/22000));
+    beam.style.transform=`rotate(${ang}deg)`;
+    const pct=Math.abs(diff)/Math.max(ml,mr)*100;
+    $('#eRead').innerHTML=`Peso × distancia izq.: <b>${Math.round(ml/1000)}k</b><br>Peso × distancia der.: <b>${Math.round(mr/1000)}k</b><br>${pct<6?'<span class="pill ok">En equilibrio</span>':pct<20?'<span class="pill mid">Casi</span>':'<span class="pill bad">Se cae hacia la '+(diff>0?'derecha':'izquierda')+'</span>'}`;
+  }
+  $('#eSize').addEventListener('input',render);$('#ePos').addEventListener('input',render);
+  $('#eSym').addEventListener('click',()=>{$('#eSize').value=46;$('#ePos').value=dL;render();});
+  $('#eAsym').addEventListener('click',()=>{const s=+$('#eSize').value;$('#ePos').value=Math.min(260,Math.round(s*s*dL/(sm*sm)));render();});
+  render();
+})();
+
+/* ---------- 07 Espacio negativo ---------- */
+(function(){
+  const air=$('#sAir'),inn=$('#sIn');
+  function render(){
+    const t=+$('#sRange').value/100;$('#sOut').textContent=Math.round(t*100);
+    const W=air.clientWidth;const pad=lerp(6,W*.13,t);
+    air.style.padding=`${pad*.8}px ${pad}px`;inn.style.gap=lerp(2,20,t)+'px';
+    inn.style.justifyContent=t>.3?'center':'flex-start';
+    requestAnimationFrame(()=>{
+      const kids=[...inn.children];const a=air.getBoundingClientRect();let area=0;
+      kids.forEach(k=>{const r=k.getBoundingClientRect();area+=r.width*r.height;});
+      const occ=Math.min(100,area/(a.width*a.height)*100);
+      $('#sRead').innerHTML=`Margen: <b>${Math.round(pad)} px</b><br>Superficie ocupada: <b>${Math.round(occ)} %</b><br>${t<.25?'<span class="pill bad">Asfixiado</span>':t<.55?'<span class="pill mid">Correcto</span>':'<span class="pill ok">Respira</span>'}`;
+    });
+  }
+  $('#sRange').addEventListener('input',render);
+  new ResizeObserver(render).observe(air);render();
+})();
+
+/* ---------- 08 Proporción ---------- */
+(function(){
+  const wrap=$('#qWrap'),box=$('#qBox'),svg=$('#qSvg');let ratio=1.61803399;
+  function size(){const mw=wrap.clientWidth-8,mh=wrap.clientHeight-20;let w=mw,h=w/ratio;if(h>mh){h=mh;w=h*ratio;}box.style.width=w+'px';box.style.height=h+'px';}
+  function line(x1,y1,x2,y2,i,cls='s-ink'){const p=el('path',{d:`M${x1} ${y1}L${x2} ${y2}`,class:cls+(RM?'':' draw'),fill:'none','stroke-width':1.5,'vector-effect':'non-scaling-stroke',pathLength:1},svg);p.style.animationDelay=i*90+'ms';return p;}
+  function label(x,y,t,i){const tx=el('text',{x,y,'text-anchor':'middle','dominant-baseline':'middle',class:RM?'':'fadein'},svg);tx.textContent=t;tx.style.animationDelay=(i*90+300)+'ms';}
+  function render(){
+    svg.innerHTML='';const W=1000,H=1000/ratio;svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+    // keep label text a readable size by counter-scaling via font-size in viewBox units
+    const fs=Math.max(W,H)/(box.clientWidth||400)*12;svg.style.fontSize=fs+'px';
+    let read='';
+    if(Math.abs(ratio-1.618)<.01){
+      let x=0,y=0,w=W,h=H,d='',i=0;
+      for(;i<9;i++){const k=i%4;
+        if(k===0){const s=h;line(x+s,y,x+s,y+h,i);if(i===0)d+=`M${x} ${y+h}`;d+=`A${s} ${s} 0 0 1 ${x+s} ${y}`;x+=s;w-=s;}
+        else if(k===1){const s=w;line(x,y+s,x+w,y+s,i);d+=`A${s} ${s} 0 0 1 ${x+w} ${y+s}`;y+=s;h-=s;}
+        else if(k===2){const s=h;line(x+w-s,y,x+w-s,y+h,i);d+=`A${s} ${s} 0 0 1 ${x+w-s} ${y+h}`;w-=s;}
+        else{const s=w;line(x,y+h-s,x+w,y+h-s,i);d+=`A${s} ${s} 0 0 1 ${x} ${y+h-s}`;h-=s;}
+      }
+      const sp=el('path',{d,fill:'none',class:'s-mag'+(RM?'':' draw'),'stroke-width':3,'vector-effect':'non-scaling-stroke',pathLength:1},svg);sp.style.animationDelay='500ms';sp.style.animationDuration='1.8s';
+      read='<b>1 : 1,618</b><br>Al quitar un cuadrado, lo que queda tiene la misma proporción que el original. Por eso se subdivide al infinito y genera la espiral.';
+    } else if(Math.abs(ratio-1.4142)<.01){
+      let x=0,y=0,w=W,h=H,n=4;label(x+w/2,y+h/2,'',0);
+      for(let i=0;i<6;i++){
+        if(w>=h){line(x+w/2,y,x+w/2,y+h,i);label(x+w/4,y+h/2,'A'+(n+1),i);x+=w/2;w/=2;}
+        else{line(x,y+h/2,x+w,y+h/2,i);label(x+w/2,y+h/4,'A'+(n+1),i);y+=h/2;h/=2;}
+        n++;
+      }
+      read='<b>1 : 1,414 (ISO 216)</b><br>Doblar una hoja A por la mitad da otra con la misma proporción: A4 → A5 → A6. Un A4 mide 210 × 297 mm.';
+    } else {
+      [1,2].forEach((k,i)=>{line(W*k/3,0,W*k/3,H,i,'s-cyan');line(0,H*k/3,W,H*k/3,i+2,'s-cyan');});
+      [[1,1],[2,1],[1,2],[2,2]].forEach(([a,b],i)=>{const c=el('circle',{cx:W*a/3,cy:H*b/3,r:Math.max(W,H)*.012,class:'f-mag'+(RM?'':' fadein')},svg);c.style.animationDelay=(500+i*80)+'ms';});
+      const name={1:'1 : 1 · cuadrado',1.5:'3 : 2 · fotografía 35 mm','1.78':'16 : 9 · pantalla horizontal','0.56':'9 : 16 · historia vertical'}[ratio===1?1:ratio===1.5?1.5:ratio>1?'1.78':'0.56'];
+      read=`<b>${name}</b><br>Regla de tercios: los cuatro cruces son puntos de interés más dinámicos que el centro exacto. Útil para encuadrar fotos y ubicar el foco.`;
+    }
+    $('#qRead').innerHTML=read;
+  }
+  seg($('#qSeg'),b=>{ratio=+b.dataset.r;size();setTimeout(render,RM?0:120);});
+  new ResizeObserver(()=>{box.style.transition='none';size();void box.offsetWidth;box.style.transition='';}).observe(wrap);
+  size();render();
+})();
+
+/* ---------- 09 Gestalt ---------- */
+(function(){
+  const svg=$('#gSvg'),ctl=$('#gCtl');let mode='cierre';
+  const loop=visLoop(svg,t=>{if(mode==='destino')animDest(t);});
+  let dest=[];
+  const txt={
+    cierre:'El cerebro completa las figuras abiertas. No hay ningún triángulo dibujado: lo ponés vos.',
+    semejanza:'Lo que se parece se agrupa. Probá el modo conflicto: el color le gana a la forma.',
+    continuidad:'El ojo sigue la línea más suave. Se leen dos curvas que se cruzan, no cuatro trazos que se tocan.',
+    figura:'Una misma silueta puede leerse como figura o como fondo. ¿Ves la copa o los dos perfiles?',
+    destino:'Lo que se mueve junto se percibe como un grupo, aunque esté mezclado con el resto.'
+  };
+  function kanizsa(h){
+    svg.innerHTML='';
+    const V=[[200,40],[66,272],[334,272]],G=[200,195],r=46;
+    V.forEach(([cx,cy])=>{
+      const th=Math.atan2(G[1]-cy,G[0]-cx),hr=h*Math.PI/180;
+      if(h<.5){el('circle',{cx,cy,r,class:'f-ink'},svg);return;}
+      const p1=[cx+r*Math.cos(th+hr),cy+r*Math.sin(th+hr)],p2=[cx+r*Math.cos(th-hr),cy+r*Math.sin(th-hr)];
+      el('path',{d:`M${cx} ${cy}L${p1[0]} ${p1[1]}A${r} ${r} 0 1 1 ${p2[0]} ${p2[1]}Z`,class:'f-ink'},svg);
+    });
+  }
+  function semej(m){
+    svg.innerHTML='';
+    for(let r=0;r<6;r++)for(let c=0;c<6;c++){
+      const cx=75+c*50,cy=35+r*50;
+      let cls='f-ink',sq=false;
+      if(m==='color')cls=r%2?'f-cyan':'f-mag';
+      if(m==='forma')sq=c%2===1;
+      if(m==='conf'){cls=r%2?'f-cyan':'f-mag';sq=c%2===1;}
+      if(sq)el('rect',{x:cx-14,y:cy-14,width:28,height:28,class:cls},svg);else el('circle',{cx,cy,r:15,class:cls},svg);
+    }
+  }
+  function cont(){
+    svg.innerHTML='';
+    const a=el('path',{d:'M20 260 C120 260 140 60 380 60',fill:'none',class:'s-mag','stroke-width':8,'stroke-linecap':'round','stroke-dasharray':'0 16'},svg);
+    const b=el('path',{d:'M20 60 C160 60 220 280 380 250',fill:'none',class:'s-cyan','stroke-width':8,'stroke-linecap':'round','stroke-dasharray':'0 16'},svg);
+    if(!RM){[a,b].forEach((p,i)=>p.animate([{strokeDashoffset:0},{strokeDashoffset:-160}],{duration:2600,iterations:Infinity,easing:'linear',delay:i*200}));}
+  }
+  function figura(inv){
+    svg.innerHTML='';
+    const prof=[[10,124],[40,118],[70,104],[96,98],[110,82],[124,90],[146,50],[160,70],[176,62],[186,74],[198,60],[212,76],[236,90],[260,66],[300,52],[312,54]];
+    const L=prof.map(([y,w])=>[200-w*.9,y]),Rr=prof.map(([y,w])=>[200+w*.9,y]).reverse();
+    const vase='M'+L.map(p=>p.join(' ')).join('L')+'L'+Rr.map(p=>p.join(' ')).join('L')+'Z';
+    el('rect',{x:0,y:0,width:400,height:320,class:inv?'f-sheet':'f-ink'},svg);
+    el('path',{d:vase,class:inv?'f-ink':'f-sheet'},svg);
+  }
+  function destino(){
+    svg.innerHTML='';dest=[];
+    for(let i=0;i<34;i++){const g=i<9;const c=el('circle',{cx:0,cy:0,r:9,class:'f-ink'},svg);dest.push({c,g,x:30+Math.random()*340,y:30+Math.random()*260,p:Math.random()*6.28});}
+    animDest(0);
+  }
+  function animDest(t){dest.forEach(d=>{let x=d.x,y=d.y;if(d.g){x+=Math.sin(t/700)*40;y+=Math.cos(t/700)*14;}else{x+=Math.sin(t/900+d.p)*3;y+=Math.cos(t/1100+d.p)*3;}d.c.setAttribute('cx',x);d.c.setAttribute('cy',y);});}
+  function controls(){
+    ctl.innerHTML='';
+    if(mode==='cierre'){ctl.innerHTML='<label for="gH">Apertura <output id="gHO">30°</output></label><input id="gH" type="range" min="0" max="30" value="30">';$('#gH').addEventListener('input',e=>{$('#gHO').textContent=e.target.value*2+'°';kanizsa(+e.target.value);});$('#gHO').textContent='60°';}
+    if(mode==='semejanza'){ctl.innerHTML='<span class="lbl">Agrupar por</span><div class="seg" id="gS"><button type="button" data-m="color" aria-pressed="true">Color</button><button type="button" data-m="forma">Forma</button><button type="button" data-m="conf">Conflicto</button></div>';seg($('#gS'),b=>semej(b.dataset.m));}
+    if(mode==='figura'){ctl.innerHTML='<span class="lbl">Valores</span><div class="seg"><button type="button" id="gI" aria-pressed="false">Invertir</button></div>';let inv=false;$('#gI').addEventListener('click',e=>{inv=!inv;e.target.setAttribute('aria-pressed',inv);figura(inv);});}
+    if(mode==='destino'&&RM){ctl.innerHTML='<span class="lbl">Movimiento reducido activado en tu sistema</span>';}
+  }
+  function render(){
+    controls();
+    ({cierre:()=>kanizsa(30),semejanza:()=>semej('color'),continuidad:cont,figura:()=>figura(false),destino}[mode])();
+    $('#gRead').innerHTML=txt[mode];
+    loop.setActive(()=>mode==='destino');
+  }
+  seg($('#gSeg'),b=>{mode=b.dataset.m;render();});render();
+})();
+
+/* ---------- 10 Color ---------- */
+(function(){
+  const wheel=$('#kWheel');let mode='comp';
+  const offs={comp:[0,180],ana:[0,-30,30],tri:[0,120,240],split:[0,150,210],tetra:[0,90,180,270]};
+  const stops=[];for(let h=0;h<=360;h+=30)stops.push(`hsl(${h} 85% 55%) ${h}deg`);
+  wheel.style.background=`conic-gradient(${stops.join(',')})`;
+  const mks=[0,1,2,3].map(i=>{const m=document.createElement('span');m.className='mk'+(i===0?' base':'');wheel.appendChild(m);return m;});
+  function hsl2rgb(h,s,l){s/=100;l/=100;const k=n=>(n+h/30)%12,a=s*Math.min(l,1-l),f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));return[f(0),f(8),f(4)];}
+  function lum([r,g,b]){const c=v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);return .2126*c(r)+.7152*c(g)+.0722*c(b);}
+  function cr(a,b){const L1=lum(a),L2=lum(b);return (Math.max(L1,L2)+.05)/(Math.min(L1,L2)+.05);}
+  function grade(r,large){return r>=7?'<span class="pill ok">AAA</span>':r>=4.5?'<span class="pill ok">AA</span>':r>=3?'<span class="pill mid">Solo títulos</span>':'<span class="pill bad">No pasa</span>';}
+  function render(){
+    const H=+$('#kHue').value,S=+$('#kSat').value;$('#kHueO').textContent=H+'°';$('#kSatO').textContent=S+'%';
+    const hs=offs[mode].map(o=>(H+o+360)%360);
+    const R=86,c=100;
+    mks.forEach((m,i)=>{if(i<hs.length){const a=hs[i]*Math.PI/180;m.hidden=false;m.style.left=(c+R*Math.sin(a))+'px';m.style.top=(c-R*Math.cos(a))+'px';m.style.background=`hsl(${hs[i]} ${S}% 52%)`;}else m.hidden=true;});
+    const cols=hs.map(h=>[h,S,52]);
+    const light=[H,Math.min(30,S*.35),95],dark=[H,Math.min(25,S*.3),12];
+    const sw=$('#kSw');sw.innerHTML='';[light,...cols,dark].forEach(v=>{const d=document.createElement('div');d.style.background=`hsl(${v[0]} ${v[1]}% ${v[2]}%)`;d.style.border='1px solid var(--rule)';sw.appendChild(d);});
+    const css=v=>`hsl(${v[0]} ${v[1]}% ${v[2]}%)`;
+    const acc=cols[1]||cols[0];
+    $('#kPoster').style.background=css(light);$('#kA').style.color=css(dark);$('#kB').style.background=css(cols[0]);$('#kAcc').style.background=css(acc);
+    const sp=$$('#k606 span');sp[0].style.background=css(light);sp[0].style.outline='1px solid var(--rule)';sp[1].style.background=css(cols[0]);sp[2].style.background=css(acc);
+    const rgbL=hsl2rgb(...light),rgbD=hsl2rgb(...dark),rgbB=hsl2rgb(...cols[0]);
+    const r1=cr(rgbD,rgbL),rW=cr([1,1,1],rgbB),rK=cr(rgbD,rgbB);
+    $('#kRead').innerHTML=`Texto oscuro / fondo: <b>${fmt(r1,1)}:1</b> ${grade(r1)}<br>Blanco / color base: <b>${fmt(rW,1)}:1</b> ${grade(rW)}<br>Oscuro / color base: <b>${fmt(rK,1)}:1</b> ${grade(rK)}`;
+  }
+  seg($('#kSeg'),b=>{mode=b.dataset.m;render();});
+  $('#kHue').addEventListener('input',render);$('#kSat').addEventListener('input',render);render();
+})();
+
+/* ---------- 11 Tipografía ---------- */
+(function(){
+  const t=$('#tText'),ru=$('#tRuler');let fam='serif';
+  function render(){
+    const s=+$('#tSize').value,lh=+$('#tLh').value/100,tr=+$('#tTr').value/100,me=+$('#tMe').value;
+    $('#tSizeO').textContent=s+' px';$('#tLhO').textContent=fmt(lh);$('#tTrO').textContent=fmt(tr)+' em';$('#tMeO').textContent=me+' car.';
+    Object.assign(t.style,{fontSize:s+'px',lineHeight:lh,letterSpacing:tr+'em',maxWidth:me+'ch',fontFamily:fam==='serif'?'var(--f-body)':'var(--f-display)'});
+    Object.assign(ru.style,{fontSize:s+'px',width:'min(100%,'+me+'ch)',fontFamily:t.style.fontFamily,marginLeft:'18px'});
+    const okM=me>=45&&me<=75,okL=lh>=1.35&&lh<=1.7,okT=tr>=-.02&&tr<=.03,okS=s>=14&&s<=21;
+    const p=(ok,a)=>ok?'<span class="pill ok">OK</span>':`<span class="pill bad">${a}</span>`;
+    $('#tRead').innerHTML=`Medida ${p(okM,me<45?'Corta':'Larga')}<br>Interlineado ${p(okL,lh<1.35?'Apretado':'Suelto')}<br>Tracking ${p(okT,tr<0?'Cerrado':'Abierto')}<br>Cuerpo ${p(okS,s<14?'Chico':'Grande')}`;
+  }
+  ['#tSize','#tLh','#tTr','#tMe'].forEach(s=>$(s).addEventListener('input',render));
+  seg($('#tSeg'),b=>{fam=b.dataset.f;render();});render();
+})();
+
+/* ---------- 12 Grilla ---------- */
+(function(){
+  const demo=$('#gdDemo'),cols=$('#gdCols'),cont=$('#gdContent');let show=true;
+  function render(){
+    const n=+$('#gdN').value,g=+$('#gdG').value,m=+$('#gdM').value;
+    $('#gdNO').textContent=n;$('#gdGO').textContent=g+' px';$('#gdMO').textContent=m+' px';
+    demo.style.padding=`${Math.max(12,m)}px ${m}px`;
+    cols.style.padding=`0 ${m}px`;
+    [cols,cont].forEach(e=>{e.style.gridTemplateColumns=`repeat(${n},minmax(0,1fr))`;e.style.columnGap=g+'px';});
+    cols.innerHTML='';for(let i=0;i<n;i++)cols.appendChild(document.createElement('span'));
+    cols.style.opacity=show?1:0;
+    const imgS=n>=3?Math.round(n*2/3):n,txtS=n-imgS||n;
+    const per=n>=6?3:n>=4?2:1;const base=Math.floor(n/per);
+    $$('.gb',cont).forEach(b=>{
+      const k=b.dataset.k;let sp=n;
+      if(k==='img')sp=imgS;if(k==='txt')sp=txtS;if(k==='c'){sp=base;}
+      b.style.gridColumn=`span ${Math.max(1,sp)}`;
+    });
+    const W=demo.clientWidth-2*m;const colW=(W-g*(n-1))/n;
+    $('#gdRead').innerHTML=`Ancho de columna: <b>${Math.max(0,Math.round(colW))} px</b><br>Divisible por: <b>${[2,3,4,6].filter(d=>n%d===0&&d<n).join(', ')||'—'}</b><br>${n===12?'<span class="pill ok">Estándar web</span>':n===5||n===7?'<span class="pill mid">Editorial asimétrica</span>':''}`;
+  }
+  ['#gdN','#gdG','#gdM'].forEach(s=>$(s).addEventListener('input',render));
+  $('#gdShow').addEventListener('click',e=>{show=!show;e.target.setAttribute('aria-pressed',show);e.target.textContent=show?'Mostrar':'Ocultas';render();});
+  new ResizeObserver(render).observe(demo);render();
+})();
+
+/* ---------- 13 Recorrido ---------- */
+(function(){
+  const svg=$('#vSvg');let mode='z';
+  const paths={z:'M60 46 L540 46 L60 350 L540 350',f:'M50 120 L550 120 L50 172 L380 172 L50 172 L50 360',g:'M70 50 L530 360'};
+  const txt={
+    z:'<b>Patrón Z</b><br>Piezas con poco texto: logo arriba a la izquierda, navegación arriba a la derecha, diagonal hasta el llamado a la acción abajo a la derecha.',
+    f:'<b>Patrón F</b><br>Páginas con mucho texto: se leen las primeras líneas completas y después solo el comienzo de cada renglón. Lo importante va a la izquierda.',
+    g:'<b>Diagrama de Gutenberg</b><br>Texto parejo y homogéneo: el ojo baja en diagonal desde el área óptica primaria (arriba a la izquierda) al área terminal (abajo a la derecha).'
+  };
+  function mock(){
+    svg.innerHTML='';
+    el('rect',{x:0,y:0,width:600,height:400,class:'f-paper'},svg);
+    if(mode==='f'){
+      el('rect',{x:40,y:30,width:120,height:24,class:'f-ink'},svg);
+      el('rect',{x:40,y:76,width:380,height:22,class:'f-ink2'},svg);
+      for(let i=0;i<9;i++)el('rect',{x:40,y:118+i*28,width:[520,500,350,510,480,300,500,460,260][i],height:8,class:'f-dot'},svg);
+    } else {
+      el('rect',{x:40,y:32,width:70,height:28,class:'f-mag'},svg);
+      [0,1,2].forEach(i=>el('rect',{x:420+i*44,y:40,width:34,height:8,class:'f-ink2'},svg));
+      el('rect',{x:40,y:100,width:300,height:28,class:'f-ink'},svg);
+      el('rect',{x:40,y:140,width:240,height:8,class:'f-ink2'},svg);el('rect',{x:40,y:156,width:200,height:8,class:'f-ink2'},svg);
+      el('rect',{x:370,y:96,width:190,height:200,class:'f-cyan'},svg);
+      el('rect',{x:40,y:330,width:200,height:8,class:'f-dot'},svg);
+      el('rect',{x:420,y:326,width:140,height:40,class:'f-mag'},svg);
+      if(mode==='g'){
+        [['Área óptica primaria',140,30],['Área fuerte de barrido',460,30],['Área débil de barrido',140,390],['Área terminal',460,390]].forEach(([t,x,y])=>{const tx=el('text',{x,y,'text-anchor':'middle'},svg);tx.textContent=t;});
+        el('line',{x1:300,y1:10,x2:300,y2:390,class:'s-rule','stroke-dasharray':'4 4'},svg);el('line',{x1:10,y1:200,x2:590,y2:200,class:'s-rule','stroke-dasharray':'4 4'},svg);
+      }
+    }
+  }
+  let anim=0;
+  function play(){
+    cancelAnimationFrame(anim);mock();
+    const p=el('path',{d:paths[mode],fill:'none',class:'s-mag','stroke-width':4,'stroke-linejoin':'round','stroke-linecap':'round',opacity:.85},svg);
+    const L=p.getTotalLength();
+    const dot=el('circle',{r:12,class:'f-mag path-dot'},svg);
+    const head=p.getPointAtLength(0);
+    el('circle',{cx:head.x,cy:head.y,r:6,class:'f-ink'},svg);
+    if(RM){p.style.strokeDasharray='none';const e=p.getPointAtLength(L);dot.setAttribute('cx',e.x);dot.setAttribute('cy',e.y);return;}
+    p.style.strokeDasharray=L;p.style.strokeDashoffset=L;
+    const t0=performance.now(),D=2400;
+    const step=now=>{const k=Math.min(1,(now-t0)/D),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;p.style.strokeDashoffset=L*(1-e);const pt=p.getPointAtLength(L*e);dot.setAttribute('cx',pt.x);dot.setAttribute('cy',pt.y);if(k<1)anim=requestAnimationFrame(step);};
+    anim=requestAnimationFrame(step);
+  }
+  seg($('#vSeg'),b=>{mode=b.dataset.m;$('#vRead').innerHTML=txt[mode];play();});
+  $('#vPlay').addEventListener('click',play);
+  $('#vRead').innerHTML=txt[mode];
+  let played=false;
+  new IntersectionObserver(es=>{if(es[0].isIntersecting&&!played){played=true;play();}},{threshold:.4}).observe(svg);
+  mock();
+  // initial resting path
+  const p=el('path',{d:paths[mode],fill:'none',class:'s-mag','stroke-width':4,'stroke-linejoin':'round',opacity:.85},svg);
+})();
+})();
+</script>
+
+<script src="laboratorio.js" defer></script>
+</body>
+</html>

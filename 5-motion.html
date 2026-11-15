@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Principios del motion design</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+
+/* Layout: pliego de imprenta — láminas numeradas con escenario interactivo, barra de control CMYK y marcas de corte */
+:root{
+  --paper:#ECEFF2;
+  --sheet:#FFFFFF;
+  --ink:#14161B;
+  --ink-2:#4B525E;
+  --rule:#C9D0D8;
+  --dot:#B7BEC8;
+  --mag:#D4006A;
+  --cyan:#008DC4;
+  --yel:#EFBE00;
+  --f-display:"Archivo","Arial Narrow",Arial,sans-serif;
+  --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --s-1:12px; --s-2:14px; --s-3:17px; --s-4:22px; --s-5:34px; --s-6:clamp(44px,8vw,104px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#101215; --sheet:#181B20; --ink:#ECEEF1; --ink-2:#A2A9B4; --rule:#2D323A; --dot:#4A515C;
+  --mag:#FF4D9B; --cyan:#3DB6E6; --yel:#FFD43F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#101215; --sheet:#181B20; --ink:#ECEEF1; --ink-2:#A2A9B4; --rule:#2D323A; --dot:#4A515C;
+  --mag:#FF4D9B; --cyan:#3DB6E6; --yel:#FFD43F; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:var(--s-3);line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+em,i{font-style:normal}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-family:var(--f-display);margin:0;text-wrap:balance}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-size:var(--s-1);letter-spacing:.06em;text-transform:uppercase}
+:focus-visible{outline:2px solid var(--mag);outline-offset:3px}
+
+/* ---------- Hero ---------- */
+.hero{padding-block:48px 56px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:center}
+.hero-kicker{display:flex;gap:14px;align-items:center;color:var(--ink-2);margin-bottom:20px}
+.hero-kicker .chip{background:var(--ink);color:var(--paper);padding:4px 8px}
+.hero h1{font-size:var(--s-6);font-stretch:118%;font-weight:850;line-height:.9;letter-spacing:-.02em}
+.hero h1 .l2{display:block;font-stretch:72%;font-weight:300;letter-spacing:0;color:var(--mag)}
+.hero-lede{margin-top:24px;max-width:52ch;color:var(--ink-2)}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:28px;color:var(--ink-2)}
+.hero-meta b{color:var(--ink);font-weight:600}
+.hero-side{display:flex;flex-direction:column;gap:12px}
+.hero-stage{position:relative;aspect-ratio:4/3;max-width:100%;background:var(--sheet);border:1px solid var(--rule);overflow:hidden}
+.hero-grid{position:absolute;inset:0 6%;display:grid;grid-template-columns:repeat(6,1fr);gap:2%;opacity:0;transition:opacity .8s ease .6s;pointer-events:none}
+.hero-grid span{background:color-mix(in oklab,var(--cyan) 9%,transparent);border-inline:1px solid color-mix(in oklab,var(--cyan) 30%,transparent)}
+.hero-stage.ordered .hero-grid{opacity:1}
+.h-el{position:absolute;transition:transform 1.1s cubic-bezier(.2,.8,.2,1),border-radius 1.1s}
+.c-ink{background:var(--ink)} .c-ink2{background:var(--ink-2)} .c-mag{background:var(--mag)} .c-cyan{background:var(--cyan)} .c-yel{background:var(--yel)}
+.c-line{border:2px solid var(--ink)}
+.hero-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.hero-state{color:var(--ink-2)}
+
+/* ---------- Layout ---------- */
+.layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:56px;padding-bottom:80px}
+.index{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start}
+.index h3{font-family:var(--f-mono);font-size:var(--s-1);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin-bottom:12px}
+.index ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.index a{display:flex;gap:10px;align-items:baseline;padding:5px 8px;color:var(--ink-2);text-decoration:none;font-family:var(--f-display);font-size:15px;font-weight:500;border-left:2px solid transparent;transition:color .2s,border-color .2s,background .2s}
+.index a span{font-family:var(--f-mono);font-size:11px;font-variant-numeric:tabular-nums}
+.index a:hover{color:var(--ink)}
+.index a.on{color:var(--ink);border-left-color:var(--mag);background:var(--sheet)}
+.plates{display:flex;flex-direction:column;gap:96px;min-width:0}
+
+/* ---------- Plate ---------- */
+.plate{scroll-margin-top:24px;min-width:0}
+.plate-head{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-bottom:24px}
+.plate-no{display:flex;gap:12px;align-items:center;color:var(--mag)}
+.plate-no::after{content:"";flex:1;height:1px;background:var(--rule)}
+.plate h2{font-size:var(--s-5);font-stretch:112%;font-weight:800;letter-spacing:-.01em;line-height:1.05}
+.lede{max-width:66ch;color:var(--ink-2)}
+.lede strong{color:var(--ink);font-weight:600}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:0;border:1px solid var(--rule);background:var(--sheet)}
+.stage{position:relative;min-height:340px;overflow:hidden;min-width:0;display:flex;align-items:center;justify-content:center;padding:24px}
+.stage svg{display:block;max-width:100%;height:auto}
+.crop{position:absolute;width:14px;height:14px;pointer-events:none}
+.crop.tl{top:8px;left:8px;border-top:1px solid var(--ink-2);border-left:1px solid var(--ink-2)}
+.crop.tr{top:8px;right:8px;border-top:1px solid var(--ink-2);border-right:1px solid var(--ink-2)}
+.crop.bl{bottom:8px;left:8px;border-bottom:1px solid var(--ink-2);border-left:1px solid var(--ink-2)}
+.crop.br{bottom:8px;right:8px;border-bottom:1px solid var(--ink-2);border-right:1px solid var(--ink-2)}
+.controls{border-left:1px solid var(--rule);padding:20px;display:flex;flex-direction:column;gap:18px;background:color-mix(in oklab,var(--paper) 45%,var(--sheet));min-width:0}
+.ctl{display:flex;flex-direction:column;gap:6px}
+.ctl label,.ctl .lbl{display:flex;justify-content:space-between;gap:8px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.ctl output{color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--mag);margin:0}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button,.btn{font-family:var(--f-display);font-size:13px;font-weight:600;padding:6px 10px;background:var(--sheet);color:var(--ink);border:1px solid var(--rule);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.seg button:hover,.btn:hover{border-color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.btn.prime{background:var(--mag);border-color:var(--mag);color:#fff}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.checks label{display:flex;gap:6px;align-items:center;font-family:var(--f-display);font-size:13px;text-transform:none;letter-spacing:0;color:var(--ink);cursor:pointer}
+.checks input{accent-color:var(--mag)}
+.readout{font-family:var(--f-mono);font-size:12px;line-height:1.5;color:var(--ink-2);border-top:1px dashed var(--rule);padding-top:12px;font-variant-numeric:tabular-nums}
+.readout b{color:var(--ink);font-weight:600}
+.pill{display:inline-block;padding:1px 7px;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.04em}
+.pill.ok{background:color-mix(in oklab,#1F9D55 18%,transparent);color:#1C8A4B}
+.pill.mid{background:color-mix(in oklab,var(--yel) 30%,transparent);color:color-mix(in oklab,var(--yel) 40%,var(--ink))}
+.pill.bad{background:color-mix(in oklab,var(--mag) 16%,transparent);color:var(--mag)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill.ok{color:#5FD08F}}
+:root[data-theme="dark"] .pill.ok{color:#5FD08F}
+
+.strip{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 12px;border:1px solid var(--rule);border-top:0;background:var(--sheet);color:var(--ink-2);flex-wrap:wrap}
+.patches{display:flex;gap:3px}
+.patches i{width:14px;height:10px;display:block}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}
+.notes h4{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.notes .do h4{color:var(--cyan)} .notes .dont h4{color:var(--mag)}
+.notes p{font-size:16px;color:var(--ink-2);max-width:60ch}
+
+@media (max-width:980px){
+  .bench{grid-template-columns:minmax(0,1fr)}
+  .controls{border-left:0;border-top:1px solid var(--rule)}
+}
+@media (max-width:900px){
+  .hero{grid-template-columns:minmax(0,1fr);gap:32px;padding-block:32px 40px}
+  .layout{grid-template-columns:minmax(0,1fr);gap:24px}
+  .index{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding-block:8px;border-bottom:1px solid var(--rule)}
+  .index h3{display:none}
+  .index ol{flex-direction:row;overflow-x:auto;gap:4px;scrollbar-width:none}
+  .index a{white-space:nowrap;border-left:0;border-bottom:2px solid transparent}
+  .index a.on{border-bottom-color:var(--mag)}
+  .plate{scroll-margin-top:64px}
+  .notes{grid-template-columns:1fr}
+  .plates{gap:72px}
+}
+@media (max-width:560px){ .stage{min-height:280px;padding:16px} }
+
+/* ---------- Demos ---------- */
+/* Jerarquía */
+.poster{width:min(100%,420px);aspect-ratio:3/4;background:var(--paper);padding:8%;display:flex;flex-direction:column;justify-content:flex-start;gap:4%;border:1px solid var(--rule);overflow:hidden}
+.poster > *{transition:font-size .25s,font-weight .25s,letter-spacing .25s,color .25s,margin .25s;font-family:var(--f-display);line-height:1.05}
+.poster .p-foot{margin-top:auto}
+/* Contraste / proximidad / etc. SVG tokens */
+.f-ink{fill:var(--ink)} .f-ink2{fill:var(--ink-2)} .f-mag{fill:var(--mag)} .f-cyan{fill:var(--cyan)} .f-yel{fill:var(--yel)} .f-dot{fill:var(--dot)} .f-sheet{fill:var(--sheet)} .f-paper{fill:var(--paper)}
+.s-ink{stroke:var(--ink)} .s-mag{stroke:var(--mag)} .s-cyan{stroke:var(--cyan)} .s-rule{stroke:var(--rule)}
+svg text{font-family:var(--f-mono);font-size:12px;fill:var(--ink-2)}
+.tr{transition:transform .6s cubic-bezier(.2,.8,.2,1),fill .4s,opacity .4s,rx .4s}
+.tbox{transform-box:fill-box}
+
+/* Alineación */
+.align-card{position:relative;width:min(100%,460px);background:var(--paper);border:1px solid var(--rule);padding:28px 24px;display:flex;flex-direction:column;gap:12px}
+.align-card .ai{transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.align-guide{position:absolute;top:0;bottom:0;width:0;border-left:1px dashed var(--mag);transition:left .7s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.ai-tag{width:96px;height:10px;background:var(--mag)}
+.ai-title{width:280px;height:26px;background:var(--ink)}
+.ai-img{width:200px;height:110px;background:var(--cyan)}
+.ai-l1{width:240px;height:8px;background:var(--ink-2)}
+.ai-l2{width:180px;height:8px;background:var(--ink-2)}
+.ai-btn{width:120px;height:32px;border:2px solid var(--ink)}
+
+/* Proximidad */
+.prox{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px;width:100%;align-items:center}
+.form{display:flex;flex-direction:column;font-family:var(--f-display);font-size:13px}
+.form .fl{color:var(--ink-2);font-weight:600;transition:margin .3s}
+.form .fi{height:30px;border:1px solid var(--ink-2);background:var(--sheet);transition:margin .3s}
+@media (max-width:560px){.prox{grid-template-columns:minmax(0,1fr)}}
+
+/* Espacio */
+.air{width:min(100%,440px);aspect-ratio:4/3;background:var(--paper);border:1px solid var(--rule);display:flex;transition:padding .3s}
+.air-in{display:flex;flex-direction:column;transition:gap .3s;width:100%}
+.air-logo{width:28px;height:28px;background:var(--mag);border-radius:50%;flex:none}
+.air h5{font-family:var(--f-display);font-weight:800;font-stretch:110%;font-size:22px;margin:0;line-height:1.05}
+.air p{font-size:13px;line-height:1.45;color:var(--ink-2)}
+.air .air-cta{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--ink);text-transform:uppercase}
+
+/* Proporción */
+.ratio-wrap{width:100%;height:340px;display:flex;align-items:center;justify-content:center}
+.ratio-box{position:relative;background:var(--paper);border:1px solid var(--ink);transition:width .7s cubic-bezier(.2,.8,.2,1),height .7s cubic-bezier(.2,.8,.2,1);max-width:100%}
+.ratio-box svg{position:absolute;inset:0;width:100%;height:100%}
+.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .9s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.fadein{opacity:0;animation:fade .6s ease forwards}
+@keyframes fade{to{opacity:1}}
+
+/* Color */
+.color-lab{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:center;width:100%}
+.wheel{position:relative;width:200px;height:200px;border-radius:50%;flex:none}
+.wheel::after{content:"";position:absolute;inset:28%;border-radius:50%;background:var(--sheet)}
+.mk{position:absolute;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;border:3px solid var(--sheet);box-shadow:0 0 0 1px var(--ink);transition:left .5s cubic-bezier(.2,.8,.2,1),top .5s cubic-bezier(.2,.8,.2,1),background .3s;z-index:1}
+.mk.base{width:26px;height:26px;margin:-13px 0 0 -13px}
+.swatches{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.swatches div{width:44px;height:44px;transition:background .3s;position:relative}
+.cposter{aspect-ratio:4/3;max-width:100%;display:grid;grid-template-columns:3fr 2fr;transition:background .3s;border:1px solid var(--rule)}
+.cposter .cp-a{padding:16px;display:flex;flex-direction:column;justify-content:space-between;transition:color .3s}
+.cposter .cp-b{transition:background .3s;display:flex;align-items:flex-end;padding:14px}
+.cposter h5{margin:0;font-family:var(--f-display);font-weight:850;font-stretch:115%;font-size:clamp(20px,3vw,30px);line-height:.95}
+.cposter .acc{width:40%;height:10px;transition:background .3s}
+.ratio606{display:flex;height:10px;margin-top:10px}
+.ratio606 span{transition:background .3s}
+@media (max-width:640px){.color-lab{grid-template-columns:minmax(0,1fr);justify-items:center}.color-lab>div:last-child{width:100%}}
+
+/* Tipografía */
+.typo{max-width:100%;color:var(--ink);transition:font-size .2s,line-height .2s,letter-spacing .2s,max-width .3s;border-left:2px solid var(--mag);padding-left:16px}
+.typo-wrap{width:100%;display:flex;justify-content:center}
+.measure-ruler{height:6px;margin-top:10px;background:repeating-linear-gradient(90deg,var(--rule) 0 1px,transparent 1px 1ch)}
+
+/* Grilla */
+.gdemo{position:relative;width:100%;background:var(--paper);border:1px solid var(--rule);transition:padding .3s}
+.gcols,.gcontent{display:grid;transition:gap .3s}
+.gcols{position:absolute;inset:0;pointer-events:none;transition:padding .3s,opacity .3s}
+.gcols span{background:color-mix(in oklab,var(--mag) 12%,transparent);border-inline:1px solid color-mix(in oklab,var(--mag) 35%,transparent)}
+.gcontent{position:relative;row-gap:12px}
+.gb{min-height:24px;transition:all .4s}
+.gb.h{background:var(--ink);height:28px}
+.gb.img{background:var(--cyan);height:120px}
+.gb.txt{display:flex;flex-direction:column;gap:7px;padding-top:4px}
+.gb.txt i{height:7px;background:var(--ink-2)}
+.gb.card{height:70px;border:2px solid var(--ink)}
+
+/* Recorrido */
+.path-dot{transition:opacity .3s}
+
+/* ---------- Módulo 5: motion ---------- */
+.back{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--rule)}
+.back:hover{color:var(--ink);border-color:var(--ink)}
+.hero-bar .btns{display:flex;gap:6px;flex-wrap:wrap}
+.svgw{width:100%;display:flex;justify-content:center}
+.svgw svg{width:100%;height:auto}
+.ghost{fill:none;stroke:var(--ink-2);stroke-width:1;opacity:.45}
+.floor{stroke:var(--ink);stroke-width:2}
+.bz{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:24px;align-items:center;width:100%}
+.bz svg{touch-action:none;width:100%;height:auto;display:block}
+.handle{cursor:grab;fill:var(--mag);stroke:var(--sheet);stroke-width:3}
+.handle:active{cursor:grabbing}
+.track{position:relative;height:56px;background:var(--paper);border:1px solid var(--rule)}
+.track i{position:absolute;top:8px;left:8px;width:38px;height:38px;background:var(--ink)}
+.track.lin i{background:var(--dot)}
+.bz-tracks{display:flex;flex-direction:column;gap:8px}
+@media (max-width:640px){.bz{grid-template-columns:minmax(0,1fr)}.bz svg{max-width:260px;margin:0 auto}}
+.stg{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;width:100%}
+.stg i{aspect-ratio:1;background:var(--ink);display:block}
+.stg i:nth-child(5n+2){background:var(--mag)}
+.stg i:nth-child(7n+3){background:var(--cyan)}
+.tl{width:100%;display:flex;flex-direction:column;gap:14px}
+.tl-stage{position:relative;height:150px;background:var(--paper);border:1px solid var(--rule);overflow:hidden}
+.tl-obj{position:absolute;top:50%;left:0;width:56px;height:56px;margin-top:-28px;background:var(--mag)}
+.tl-tracks{display:flex;flex-direction:column;gap:2px;position:relative;font-family:var(--f-mono);font-size:11px}
+.tl-row{display:grid;grid-template-columns:90px 1fr;align-items:center;gap:8px;height:34px}
+.tl-row span{color:var(--ink-2)}
+.tl-row svg{width:100%;height:34px;display:block;background:var(--paper);border:1px solid var(--rule)}
+.kf{fill:var(--ink);stroke:var(--sheet);stroke-width:1.5}
+.ph{position:absolute;top:0;bottom:0;width:2px;background:var(--mag);pointer-events:none}
+.beat{width:100%;display:flex;flex-direction:column;gap:14px;align-items:center}
+.beat-stage{width:100%;height:220px;display:flex;align-items:center;justify-content:center;gap:18px;transition:background .05s;border:1px solid var(--rule)}
+.beat-stage i{width:52px;height:52px;background:var(--ink);display:block}
+.beat-stage i:nth-child(2){border-radius:50%;background:var(--mag)}
+.beat-stage i:nth-child(3){background:var(--cyan)}
+.beat-stage i:nth-child(4){border-radius:50%;background:var(--yel)}
+.counter{display:flex;gap:6px}
+.counter b{width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:12px;border:1px solid var(--rule);color:var(--ink-2);transition:background .08s,color .08s}
+.counter b.on{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.kt{width:100%;min-height:220px;display:flex;align-items:center;justify-content:center;background:var(--ink);color:var(--sheet);padding:24px;overflow:hidden}
+.kt-line{font-family:var(--f-display);font-weight:850;font-stretch:115%;font-size:clamp(28px,5vw,52px);line-height:1.05;text-align:center;text-transform:uppercase;letter-spacing:-.01em}
+.kt-line .w{display:inline-block;overflow:hidden;vertical-align:bottom;margin:0 .14em}
+.kt-line .w > span{display:inline-block}
+.kt-line .acc{color:var(--mag)}
+.txtin{width:100%;font:inherit;font-family:var(--f-display);font-size:14px;padding:8px 10px;border:1px solid var(--rule);background:var(--sheet);color:var(--ink)}
+.scene-wrap{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;overflow:hidden;border:1px solid var(--rule)}
+.scene{position:absolute;inset:0;display:flex;padding:6%;gap:5%}
+.sA{background:var(--paper);align-items:center}
+.sB{background:var(--ink);color:var(--sheet);flex-direction:column;justify-content:flex-end}
+.sA h5,.sB h5{margin:0;font-family:var(--f-display);font-weight:850;font-stretch:115%;font-size:clamp(18px,3.4vw,32px);line-height:1}
+.sA p,.sB p{font-family:var(--f-mono);font-size:11px;margin-top:8px;opacity:.75}
+.thumb{width:28%;aspect-ratio:1;border-radius:50%;background:var(--mag);flex:none}
+.shared{position:absolute;background:var(--mag);z-index:3;pointer-events:none}
+.wipe{position:absolute;inset:0;background:var(--cyan);z-index:4;transform:scaleX(0);transform-origin:left}
+.arc-legend{display:flex;gap:16px;font-family:var(--f-mono);font-size:11px;color:var(--ink-2)}
+</style>
+<link rel="stylesheet" href="laboratorio.css">
+<link rel="stylesheet" href="oficio.css">
+<script src="oficio-datos.js"></script>
+<script src="oficio.js"></script>
+
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <div class="hero-kicker mono"><span class="chip">Módulo 5</span><span>Motion design</span></div>
+      <h1>Movimiento<span class="l2">el diseño en el tiempo</span></h1>
+      <p class="hero-lede">Todo lo anterior agregando una dimensión. Los principios de animación que Disney sistematizó en los años 30 siguen siendo la base: tiempo y espaciado, curvas, anticipación, arcos, superposición. Después vienen los del motion gráfico: escalonamiento, fotogramas clave, ritmo, tipografía cinética y transiciones.</p>
+      <div class="hero-meta mono"><a href="index.html" style="color:var(--ink);font-weight:600;text-decoration:none;border-bottom:1px solid var(--mag)">← Índice del curso</a><span><b>11</b> láminas</span><a class="back" href="1-grafico.html">1 · Gráfico</a><a class="back" href="2-web.html">2 · Web</a><a class="back" href="3-editorial.html">3 · Editorial</a><a class="back" href="4-identidad.html">4 · Identidad</a></div>
+    </div>
+    <div class="hero-side">
+      <div class="hero-stage ordered" id="heroStage" aria-label="Composición que entra con o sin principios de animación">
+        <div class="hero-grid"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="hero-bar">
+        <span class="hero-state mono" id="heroState">Tocá para comparar la misma entrada</span>
+        <span class="btns"><button class="btn" id="heroLin" type="button">Sin principios</button><button class="btn prime" id="heroPro" type="button">Con principios</button></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="index" aria-label="Índice de láminas"><h3>Láminas</h3><ol id="indexList"></ol></aside>
+    <main class="plates" id="plates">
+
+<section class="plate" id="timing" data-name="Timing y spacing">
+  <div class="plate-head"><div class="plate-no mono">Lámina 01</div><h2>Timing y spacing</h2>
+  <p class="lede">El <strong>timing</strong> es cuánto dura un movimiento (cuántos fotogramas); el <strong>spacing</strong> es cómo se reparten esos fotogramas en el recorrido. Mismo timing con distinto spacing da movimientos completamente distintos. Los círculos grises son cada fotograma, como en papel cebolla.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="svgw"><svg id="tsSvg" viewBox="0 0 600 220" aria-label="Pelota con papel cebolla"></svg></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="tsD">Duración <output id="tsDO">1,0 s</output></label><input id="tsD" type="range" min="250" max="2500" step="50" value="1000"></div>
+      <div class="ctl"><span class="lbl">Cuadros por segundo</span><div class="seg" id="tsF"><button type="button" data-f="12">12 · en dos</button><button type="button" data-f="24" aria-pressed="true">24 · cine</button><button type="button" data-f="60">60 · pantalla</button></div></div>
+      <div class="ctl"><span class="lbl">Spacing</span><div class="seg" id="tsE"><button type="button" data-e="lin">Parejo</button><button type="button" data-e="in">Arranca lento</button><button type="button" data-e="out">Frena al final</button><button type="button" data-e="inout" aria-pressed="true">Lento-rápido-lento</button></div></div>
+      <div class="readout" id="tsRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>01 / 11 · Timing y spacing</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Fotogramas juntos significan lento; separados, rápido. Antes de tocar curvas, decidí cuántos cuadros dura cada acción: a 24 fps, 12 cuadros es medio segundo y ya se siente pausado.</p></div><div class="dont"><h4>Error común</h4><p>Pensar en segundos redondos. Una animación de 1 segundo exacto para todo hace que todo tenga el mismo peso; los objetos livianos tardan menos que los pesados.</p></div></div>
+</section>
+
+<section class="plate" id="curvas" data-name="Editor de curvas">
+  <div class="plate-head"><div class="plate-no mono">Lámina 02</div><h2>Editor de curvas</h2>
+  <p class="lede">La curva de velocidad es el pulso del movimiento. Es lo que en After Effects se edita en el Graph Editor y en CSS se escribe como <strong>cubic-bezier()</strong>. Arrastrá los dos puntos rosados: el cuadrado negro sigue tu curva, el gris va lineal para comparar.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="bz">
+        <svg id="bzSvg" viewBox="-60 -110 320 420" aria-label="Editor de curva bezier"></svg>
+        <div class="bz-tracks"><div class="track" id="bzT1"><i></i></div><div class="track lin" id="bzT2"><i></i></div>
+          <div class="cl-code" style="font-family:var(--f-mono);font-size:12px;background:var(--paper);border:1px solid var(--rule);padding:10px 12px;display:flex;justify-content:space-between;gap:10px;align-items:center;overflow-x:auto"><code id="bzCode" style="white-space:nowrap"></code><button class="btn" id="bzCopy" type="button">Copiar</button></div></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Punto de partida</span><div class="seg" id="bzSeg"><button type="button" data-p=".25,.1,.25,1">ease</button><button type="button" data-p="0,0,.2,1" aria-pressed="true">Salida suave</button><button type="button" data-p=".65,0,.35,1">Ambos lados</button><button type="button" data-p=".34,1.56,.64,1">Rebote</button><button type="button" data-p=".7,-.4,.3,1.4">Anticipa y rebota</button></div></div>
+      <div class="ctl"><label for="bzD">Duración <output id="bzDO">800 ms</output></label><input id="bzD" type="range" min="200" max="2000" step="50" value="800"></div>
+      <div class="readout" id="bzRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>02 / 11 · Curvas</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Leé la pendiente: inclinada es rápido, plana es lento. Si la curva sube por arriba de 1, el objeto se pasa y vuelve (rebote); si baja de 0, retrocede antes de arrancar (anticipación).</p></div><div class="dont"><h4>Error común</h4><p>Dejar los fotogramas clave en lineal, que es como vienen por defecto en muchos programas. Es la razón número uno de que una animación "se vea de computadora".</p></div></div>
+</section>
+
+<section class="plate" id="squash" data-name="Squash y stretch">
+  <div class="plate-head"><div class="plate-no mono">Lámina 03</div><h2>Squash y stretch</h2>
+  <p class="lede">Aplastar y estirar le da a un objeto <strong>peso y elasticidad</strong>. La regla es que el volumen se mantiene: si se aplasta hacia abajo, se ensancha hacia los costados. Una pelota de goma se deforma mucho; una bola de bowling, nada.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="svgw"><svg id="sqSvg" viewBox="0 0 600 260" aria-label="Pelota que rebota"></svg></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="sqK">Deformación <output id="sqKO">35 %</output></label><input id="sqK" type="range" min="0" max="60" value="35"></div>
+      <div class="ctl"><span class="lbl">Material</span><div class="seg" id="sqSeg"><button type="button" data-k="50">Goma</button><button type="button" data-k="35" aria-pressed="true">Pelota de tenis</button><button type="button" data-k="12">Básquet</button><button type="button" data-k="0">Bowling</button></div></div>
+      <div class="readout" id="sqRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>03 / 11 · Squash y stretch</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>En motion gráfico se aplica a íconos, botones y letras: un leve aplastamiento al tocar un botón o al aterrizar un título le da materialidad sin que se note el truco.</p></div><div class="dont"><h4>Error común</h4><p>Escalar en un solo eje. Si el objeto se aplasta sin ensancharse, parece que pierde masa en vez de deformarse.</p></div></div>
+</section>
+
+<section class="plate" id="anticipacion" data-name="Anticipación">
+  <div class="plate-head"><div class="plate-no mono">Lámina 04</div><h2>Anticipación y asentamiento</h2>
+  <p class="lede">Antes de saltar, uno se agacha. La <strong>anticipación</strong> prepara al espectador para lo que va a pasar y hace creíble la fuerza del movimiento. Del otro lado, el <strong>asentamiento</strong>: al aterrizar, el cuerpo no se detiene en seco.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="svgw"><svg id="anSvg" viewBox="0 0 600 260" aria-label="Bloque que salta"></svg></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="anA">Anticipación <output id="anAO">30 %</output></label><input id="anA" type="range" min="0" max="50" value="30"></div>
+      <div class="ctl"><label for="anS">Asentamiento <output id="anSO">25 %</output></label><input id="anS" type="range" min="0" max="50" value="25"></div>
+      <div class="readout" id="anRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>04 / 11 · Anticipación</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>En interfaz y motion gráfico, una anticipación mínima (el elemento retrocede unos píxeles antes de salir disparado) hace que una entrada se sienta intencional. Probala con la curva "Anticipa y rebota" de la lámina anterior.</p></div><div class="dont"><h4>Error común</h4><p>Anticipar movimientos que el espectador ya espera o que se repiten mucho. La anticipación demora la acción; en una interfaz se vuelve lentitud.</p></div></div>
+</section>
+
+<section class="plate" id="superposicion" data-name="Superposición">
+  <div class="plate-head"><div class="plate-no mono">Lámina 05</div><h2>Acción continuada y superposición</h2>
+  <p class="lede">No todas las partes de algo se mueven al mismo tiempo. El pelo, la ropa o una cola <strong>arrastran y siguen</strong> al cuerpo con retraso, y cuando el cuerpo se frena, siguen moviéndose un poco. Eso es lo que separa lo vivo de lo rígido.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="svgw"><svg id="ovSvg" viewBox="0 0 600 260" aria-label="Cadena que sigue a una cabeza"></svg></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="ovK">Flexibilidad <output id="ovKO">60 %</output></label><input id="ovK" type="range" min="0" max="95" value="60"></div>
+      <div class="ctl"><span class="lbl">Movimiento</span><div class="seg" id="ovSeg"><button type="button" data-m="wave" aria-pressed="true">Vaivén</button><button type="button" data-m="stop">Arranca y frena</button></div></div>
+      <div class="readout" id="ovRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>05 / 11 · Superposición</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>En motion gráfico se logra desfasando las partes de un mismo elemento: primero el contenedor, unos cuadros después el texto, después el ícono. En After Effects, con expresiones de retraso o resortes.</p></div><div class="dont"><h4>Error común</h4><p>Agrupar todo y animar el grupo. Más rápido de hacer, pero el resultado se mueve como un bloque de madera.</p></div></div>
+</section>
+
+<section class="plate" id="arcos" data-name="Arcos">
+  <div class="plate-head"><div class="plate-no mono">Lámina 06</div><h2>Arcos</h2>
+  <p class="lede">Casi nada en la naturaleza se mueve en línea recta: brazos, cabezas, objetos lanzados, todo traza <strong>curvas</strong>. Un movimiento en línea recta entre dos puntos se lee mecánico; el mismo recorrido en arco se lee natural.</p></div>
+  <div class="bench">
+    <div class="stage" style="flex-direction:column;gap:10px"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="svgw"><svg id="arSvg" viewBox="0 0 600 260" aria-label="Recorrido recto y en arco"></svg></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="arH">Altura del arco <output id="arHO">70 %</output></label><input id="arH" type="range" min="0" max="100" value="70"></div>
+      <div class="ctl"><span class="lbl">Rastro</span><div class="seg"><button type="button" id="arTr" aria-pressed="true">Visible</button></div></div>
+      <div class="readout" id="arRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>06 / 11 · Arcos</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>En After Effects, los trayectos de posición se pueden curvar con las manijas del trazado de movimiento. Para elementos de interfaz que vuelan a otro lugar (un producto al carrito), un arco leve se siente mucho mejor.</p></div><div class="dont"><h4>Error común</h4><p>Animar X e Y con la misma curva: el resultado siempre es una recta. Para lograr un arco, una de las dos dimensiones tiene que acelerar distinto que la otra.</p></div></div>
+</section>
+
+<section class="plate" id="escalonado" data-name="Escalonamiento">
+  <div class="plate-head"><div class="plate-no mono">Lámina 07</div><h2>Escalonamiento</h2>
+  <p class="lede">Cuando entran muchos elementos, hacerlos aparecer juntos es abrumador. <strong>Escalonarlos</strong> (stagger) con un pequeño retraso entre cada uno crea un recorrido que el ojo puede seguir. El orden del escalonado también comunica: secuencial, desde el centro, en diagonal.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="stg" id="sgGrid"></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="sgD">Retraso entre elementos <output id="sgDO">40 ms</output></label><input id="sgD" type="range" min="0" max="150" step="5" value="40"></div>
+      <div class="ctl"><span class="lbl">Orden</span><div class="seg" id="sgSeg"><button type="button" data-o="seq">Secuencial</button><button type="button" data-o="diag" aria-pressed="true">Diagonal</button><button type="button" data-o="center">Desde el centro</button><button type="button" data-o="rand">Al azar</button></div></div>
+      <button class="btn prime" id="sgPlay" type="button">Reproducir</button>
+      <div class="readout" id="sgRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>07 / 11 · Escalonamiento</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Retrasos de 20 a 60 ms entre elementos. Controlá la duración total: si hay muchos, achicá el retraso o escalonalos por filas, no de a uno.</p></div><div class="dont"><h4>Error común</h4><p>Escalonar 40 elementos con 100 ms cada uno: el último aparece a los 4 segundos y el usuario ya se fue.</p></div></div>
+</section>
+
+<section class="plate" id="keyframes" data-name="Fotogramas clave">
+  <div class="plate-head"><div class="plate-no mono">Lámina 08</div><h2>Fotogramas clave e interpolación</h2>
+  <p class="lede">El animador define <strong>fotogramas clave</strong> (dónde está algo y cuándo); la computadora calcula los intermedios. Cómo los calcula depende de la interpolación: lineal, con curva (bezier) o mantenida, que salta de un valor al siguiente sin transición.</p></div>
+  <div class="bench">
+    <div class="stage" style="align-items:stretch"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="tl">
+        <div class="tl-stage" id="kfStage"><div class="tl-obj" id="kfObj"></div></div>
+        <div class="tl-tracks" id="kfTracks"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Interpolación</span><div class="seg" id="kfSeg"><button type="button" data-i="lin">Lineal</button><button type="button" data-i="bez" aria-pressed="true">Bezier</button><button type="button" data-i="hold">Mantener</button></div></div>
+      <div class="ctl"><label for="kfT">Cabezal <output id="kfTO">0 f</output></label><input id="kfT" type="range" min="0" max="72" value="0"></div>
+      <button class="btn prime" id="kfPlay" type="button">Reproducir</button>
+      <div class="readout" id="kfRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>08 / 11 · Fotogramas clave</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Pocos fotogramas clave, bien ubicados. Empezá por las poses principales (pose a pose) y después refiná. La interpolación mantenida sirve para cambios de estado y efectos "stop motion".</p></div><div class="dont"><h4>Error común</h4><p>Llenar la línea de tiempo de claves para corregir un movimiento. Casi siempre el problema está en la curva, no en la cantidad de claves.</p></div></div>
+</section>
+
+<section class="plate" id="ritmo" data-name="Ritmo y música">
+  <div class="plate-head"><div class="plate-no mono">Lámina 09</div><h2>Ritmo y sincronía</h2>
+  <p class="lede">Cuando hay música, el montaje se apoya en el pulso: <strong>cortes y acentos en el beat</strong>. Conviene convertir los BPM a fotogramas para editar con precisión. Activá el metrónomo para escuchar el tiempo.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="beat"><div class="beat-stage" id="btStage"><i></i><i></i><i></i><i></i></div><div class="counter" id="btCount"><b>1</b><b>2</b><b>3</b><b>4</b></div></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="btB">Tempo <output id="btBO">120 BPM</output></label><input id="btB" type="range" min="60" max="180" value="120"></div>
+      <div class="ctl"><span class="lbl">Corte de fondo cada</span><div class="seg" id="btSeg"><button type="button" data-c="1">Tiempo</button><button type="button" data-c="2">2 tiempos</button><button type="button" data-c="4" aria-pressed="true">Compás</button></div></div>
+      <div class="ctl"><span class="lbl">Sonido</span><div class="seg"><button type="button" id="btSnd" aria-pressed="false">Metrónomo apagado</button></div></div>
+      <div class="readout" id="btRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>09 / 11 · Ritmo</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Fórmula: fotogramas por tiempo = 60 ÷ BPM × fps. A 120 BPM y 24 fps, cada tiempo dura 12 cuadros: cortá en múltiplos de 12. Marcá los tiempos en la línea de tiempo antes de animar.</p></div><div class="dont"><h4>Error común</h4><p>Cortar en todos los tiempos durante toda la pieza. El ritmo necesita variación: alterná cortes en el beat con planos que duran varios compases.</p></div></div>
+</section>
+
+<section class="plate" id="cinetica" data-name="Tipografía cinética">
+  <div class="plate-head"><div class="plate-no mono">Lámina 10</div><h2>Tipografía cinética</h2>
+  <p class="lede">La palabra animada tiene que <strong>leerse primero y moverse después</strong>. Cada palabra necesita tiempo suficiente en pantalla y el movimiento debe acompañar el sentido de la frase, no competir con él. Escribí tu propia frase.</p></div>
+  <div class="bench">
+    <div class="stage" style="flex-direction:column;gap:12px;align-items:stretch"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="kt"><div class="kt-line" id="ktLine"></div></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="ktIn">Frase</label><input class="txtin" id="ktIn" type="text" value="Lo que no se mueve también comunica" maxlength="80"></div>
+      <div class="ctl"><span class="lbl">Entrada</span><div class="seg" id="ktSeg"><button type="button" data-s="mask" aria-pressed="true">Máscara</button><button type="button" data-s="fade">Fundido</button><button type="button" data-s="scale">Escala</button><button type="button" data-s="track">Tracking</button><button type="button" data-s="type">Máquina</button></div></div>
+      <div class="ctl"><label for="ktS">Tiempo por palabra <output id="ktSO">220 ms</output></label><input id="ktS" type="range" min="60" max="600" step="20" value="220"></div>
+      <button class="btn prime" id="ktPlay" type="button">Reproducir</button>
+      <div class="readout" id="ktRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>10 / 11 · Tipografía cinética</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Regla útil para subtítulos y tipografía cinética: unas 3 palabras por segundo para que se pueda leer cómodo. La palabra clave de la frase puede recibir un acento (color, escala, una pausa).</p></div><div class="dont"><h4>Error común</h4><p>Animar letra por letra con efectos distintos en cada palabra. Se ve el efecto, pero no se lee el mensaje.</p></div></div>
+</section>
+
+<section class="plate" id="transiciones" data-name="Transiciones">
+  <div class="plate-head"><div class="plate-no mono">Lámina 11</div><h2>Transiciones y continuidad</h2>
+  <p class="lede">Pasar de una escena a otra también es diseño. El corte es invisible, el fundido sugiere tiempo, el barrido es gráfico. La más poderosa es la de <strong>elemento compartido</strong>: algo de la primera escena se transforma en algo de la segunda y el ojo nunca pierde el hilo, igual que un match cut en cine.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="scene-wrap" id="trWrap">
+        <div class="scene sA" id="trA"><span class="thumb" id="trThumb"></span><div><h5>Hornear lleva tiempo</h5><p>Capítulo 1 · La masa</p></div></div>
+        <div class="scene sB" id="trB" style="opacity:0"><div id="trBimg" style="position:absolute;left:0;right:0;top:0;height:62%;background:var(--mag)"></div><div style="position:relative"><h5>48 horas de fermentación</h5><p>Capítulo 2 · El tiempo</p></div></div>
+        <div class="wipe" id="trWipe"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Transición</span><div class="seg" id="trSeg"><button type="button" data-t="cut">Corte</button><button type="button" data-t="fade">Fundido</button><button type="button" data-t="wipe">Barrido</button><button type="button" data-t="push">Empuje</button><button type="button" data-t="shared" aria-pressed="true">Elemento compartido</button></div></div>
+      <button class="btn prime" id="trGo" type="button">Pasar a la escena 2</button>
+      <div class="readout" id="trRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>11 / 11 · Transiciones</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Elegí una o dos transiciones para toda la pieza y usalas con criterio. En interfaz, el elemento compartido (una foto que se agranda hasta ser la cabecera del detalle) explica la navegación sin palabras.</p></div><div class="dont"><h4>Error común</h4><p>Una transición distinta entre cada escena. Es el equivalente animado de usar cuatro tipografías.</p></div></div>
+</section>
+
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+const RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $=(s,c=document)=>c.querySelector(s);
+const $$=(s,c=document)=>[...c.querySelectorAll(s)];
+const lerp=(a,b,t)=>a+(b-a)*t;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const NS='http://www.w3.org/2000/svg';
+const el=(tag,attrs={},parent)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;};
+const fmt=(n,d=2)=>n.toFixed(d).replace('.',',');
+const pill=(cls,t)=>`<span class="pill ${cls}">${t}</span>`;
+function seg(container,cb){$$('button',container).forEach(b=>b.addEventListener('click',()=>{$$('button',container).forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');cb(b);}));}
+const E={lin:t=>t,in:t=>t*t*t,out:t=>1-Math.pow(1-t,3),inout:t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2};
+function bez(p,t){const [x1,y1,x2,y2]=p;const c=(a,b,u)=>3*a*u*(1-u)**2+3*b*u*u*(1-u)+u**3;let lo=0,hi=1,u=t;for(let i=0;i<28;i++){u=(lo+hi)/2;c(x1,x2,u)<t?lo=u:hi=u;}return c(y1,y2,u);}
+// Bucle que corre solo mientras el elemento está visible (y nunca con movimiento reducido salvo pedido explícito)
+function loop(target,fn){let on=false,raf=0,vis=false,t0=0,forced=false;
+  const tick=now=>{if(!on)return;fn(now-t0,now);raf=requestAnimationFrame(tick);};
+  const start=()=>{if(on||!vis||(RM&&!forced))return;on=true;t0=performance.now();raf=requestAnimationFrame(tick);};
+  const stop=()=>{on=false;cancelAnimationFrame(raf);};
+  new IntersectionObserver(es=>{vis=es[0].isIntersecting;vis?start():stop();}).observe(target);
+  return{restart(){stop();start();},force(){forced=true;stop();start();},stop};}
+
+/* Índice */
+const list=$('#indexList');
+$$('.plate').forEach((p,i)=>{const li=document.createElement('li');li.innerHTML=`<a href="#${p.id}"><span>${String(i+1).padStart(2,'0')}</span>${p.dataset.name}</a>`;list.appendChild(li);});
+const links=$$('a',list);
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));const on=links.find(a=>a.classList.contains('on'));if(on&&window.innerWidth<=900)list.scrollTo({left:on.offsetLeft-list.clientWidth/2+on.offsetWidth/2,behavior:RM?'auto':'smooth'});}});},{rootMargin:'-40% 0px -55% 0px'});
+$$('.plate').forEach(p=>io.observe(p));
+
+/* Hero */
+(function(){
+  const stage=$('#heroStage');
+  const items=[{x:6,y:8,w:58,h:12,c:'ink'},{x:6,y:24,w:36,h:3.5,c:'ink2'},{x:6,y:36,w:40,h:40,c:'mag',r:'50%'},{x:52,y:36,w:42,h:40,c:'cyan'},{x:6,y:82,w:20,h:9,c:'yel'},{x:30,y:82,w:20,h:9,c:'line'},{x:70,y:8,w:24,h:12,c:'mag'}];
+  const els=items.map(it=>{const d=document.createElement('div');d.className='h-el c-'+it.c;Object.assign(d.style,{left:it.x+'%',top:it.y+'%',width:it.w+'%',height:it.h+'%',borderRadius:it.r||'0',transition:'none'});stage.appendChild(d);return d;});
+  function play(pro){
+    els.forEach((d,i)=>{d.getAnimations().forEach(a=>a.cancel());
+      const from=pro?{transform:'translateY(40px) scale(.6)',opacity:0}:{transform:'translateX(-120%)',opacity:0};
+      d.animate([from,{transform:'none',opacity:1}],pro?{duration:700,delay:i*70,easing:'cubic-bezier(.34,1.56,.64,1)',fill:'backwards'}:{duration:900,easing:'linear',fill:'backwards'});});
+    $('#heroState').textContent=pro?'Escalonado, curva con rebote, escala y opacidad':'Todo junto, lineal, desde el mismo lado';
+  }
+  $('#heroLin').addEventListener('click',()=>play(false));$('#heroPro').addEventListener('click',()=>play(true));
+  if(!RM)setTimeout(()=>play(true),300);
+})();
+
+/* 01 Timing */
+(function(){
+  const svg=$('#tsSvg');let fps=24,ez='inout';
+  el('line',{x1:20,y1:170,x2:580,y2:170,class:'floor'},svg);
+  const ghosts=el('g',{},svg),ball=el('circle',{r:18,cy:140,cx:50,class:'f-mag'},svg);
+  const x=t=>lerp(50,550,E[ez](t));
+  function draw(){
+    const D=+$('#tsD').value,n=Math.max(2,Math.round(D/1000*fps));
+    $('#tsDO').textContent=fmt(D/1000,1)+' s';ghosts.innerHTML='';
+    for(let i=0;i<=n;i++){const t=i/n;el('circle',{cx:x(t),cy:140,r:18,class:'ghost'},ghosts);el('line',{x1:x(t),y1:176,x2:x(t),y2:186,class:'s-ink'},ghosts);}
+    const tt=el('text',{x:20,y:206},ghosts);tt.textContent=`${n} fotogramas`;
+    $('#tsRead').innerHTML=`Fotogramas: <b>${n}</b> a ${fps} fps<br>${fps===12?'Animar "en dos": cada dibujo dura 2 cuadros a 24 fps. Más entrecortado, más artesanal.':fps===24?'El estándar del cine. Fluido, con algo de textura.':'La frecuencia de la pantalla. Lo más suave posible; usual en interfaz.'}`;
+  }
+  const L=loop(svg,ms=>{const D=+$('#tsD').value,cyc=D*2+600,k=ms%cyc;let t=k<D?k/D:k<D+300?1:k<2*D+300?1-(k-D-300)/D:0;
+    const step=1/Math.round(D/1000*fps);t=Math.round(t/step)*step;ball.setAttribute('cx',x(t));});
+  $('#tsD').addEventListener('input',draw);seg($('#tsF'),b=>{fps=+b.dataset.f;draw();});seg($('#tsE'),b=>{ez=b.dataset.e;draw();});draw();
+})();
+
+/* 02 Bezier */
+(function(){
+  const svg=$('#bzSvg');let p=[0,0,.2,1];const S=200;
+  const X=v=>v*S,Y=v=>S-v*S;
+  function draw(){
+    svg.innerHTML='';
+    el('rect',{x:0,y:0,width:S,height:S,fill:'none',class:'s-rule'},svg);
+    [.25,.5,.75].forEach(v=>{el('line',{x1:X(v),y1:0,x2:X(v),y2:S,class:'s-rule',opacity:.5},svg);el('line',{x1:0,y1:Y(v),x2:S,y2:Y(v),class:'s-rule',opacity:.5},svg);});
+    el('line',{x1:0,y1:S,x2:S,y2:0,class:'s-rule','stroke-dasharray':'3 4'},svg);
+    el('line',{x1:0,y1:S,x2:X(p[0]),y2:Y(p[1]),class:'s-mag','stroke-width':1.5},svg);
+    el('line',{x1:S,y1:0,x2:X(p[2]),y2:Y(p[3]),class:'s-mag','stroke-width':1.5},svg);
+    el('path',{d:`M0 ${S} C${X(p[0])} ${Y(p[1])} ${X(p[2])} ${Y(p[3])} ${S} 0`,fill:'none',class:'s-ink','stroke-width':3},svg);
+    [[0,1],[2,3]].forEach(([a,b],i)=>{const h=el('circle',{cx:X(p[a]),cy:Y(p[b]),r:10,class:'handle',tabindex:0,role:'slider','aria-label':'Manija '+(i+1)},svg);drag(h,a,b);});
+    const t1=el('text',{x:0,y:S+22},svg);t1.textContent='tiempo →';const t2=el('text',{x:-52,y:10},svg);t2.textContent='valor';
+    const code=`cubic-bezier(${p.map(v=>+v.toFixed(2)).join(', ')})`;$('#bzCode').textContent=code;
+    const over=p[1]>1||p[3]>1,under=p[1]<0||p[3]<0;
+    $('#bzRead').innerHTML=`${under?'Baja de 0: retrocede antes de arrancar. ':''}${over?'Supera 1: se pasa del destino y vuelve. ':''}${!over&&!under?'Se mantiene entre 0 y 1: no se pasa del destino.':''}<br><br>${p[0]<p[1]&&p[2]<=.4?'Arranque rápido, llegada suave.':p[0]>.4&&p[2]>.4?'Arranque lento, llegada brusca.':'Combinada.'}`;
+  }
+  function drag(h,a,b){
+    const mv=e=>{const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const q=pt.matrixTransform(svg.getScreenCTM().inverse());p[a]=+clamp(q.x/S,0,1).toFixed(2);p[b]=+clamp((S-q.y)/S,-.5,1.5).toFixed(2);draw();$$('#bzSeg button').forEach(x=>x.setAttribute('aria-pressed','false'));};
+    h.addEventListener('pointerdown',e=>{e.preventDefault();const up=()=>{window.removeEventListener('pointermove',mv);window.removeEventListener('pointerup',up);};window.addEventListener('pointermove',mv);window.addEventListener('pointerup',up);});
+    h.addEventListener('keydown',e=>{const d=.05;if(e.key==='ArrowUp')p[b]=+clamp(p[b]+d,-.5,1.5).toFixed(2);else if(e.key==='ArrowDown')p[b]=+clamp(p[b]-d,-.5,1.5).toFixed(2);else if(e.key==='ArrowRight')p[a]=+clamp(p[a]+d,0,1).toFixed(2);else if(e.key==='ArrowLeft')p[a]=+clamp(p[a]-d,0,1).toFixed(2);else return;e.preventDefault();draw();svg.querySelectorAll('.handle')[a===0?0:1].focus();});
+  }
+  const t1=$('#bzT1 i'),t2=$('#bzT2 i');
+  const L=loop(svg,ms=>{const D=+$('#bzD').value,cyc=D+700,k=ms%cyc,t=Math.min(1,k/D);const W=$('#bzT1').clientWidth-54;t1.style.transform=`translateX(${bez(p,t)*W}px)`;t2.style.transform=`translateX(${t*W}px)`;});
+  $('#bzD').addEventListener('input',()=>{$('#bzDO').textContent=$('#bzD').value+' ms';});
+  seg($('#bzSeg'),b=>{p=b.dataset.p.split(',').map(Number);draw();});
+  $('#bzCopy').addEventListener('click',e=>{const b=e.currentTarget;navigator.clipboard.writeText($('#bzCode').textContent).then(()=>{b.textContent='Copiado';setTimeout(()=>b.textContent='Copiar',1400);}).catch(()=>{const r=document.createRange();r.selectNodeContents($('#bzCode'));const s=getSelection();s.removeAllRanges();s.addRange(r);});});
+  draw();
+})();
+
+/* 03 Squash */
+(function(){
+  const svg=$('#sqSvg');el('line',{x1:20,y1:230,x2:580,y2:230,class:'floor'},svg);
+  const shadow=el('ellipse',{cy:232,rx:22,ry:4,class:'f-ink',opacity:.15},svg);
+  const ball=el('ellipse',{rx:24,ry:24,class:'f-mag'},svg);
+  function read(){const k=+$('#sqK').value/100;$('#sqKO').textContent=Math.round(k*100)+' %';$('#sqRead').innerHTML=`Al impacto: alto <b>${Math.round((1-k)*100)} %</b>, ancho <b>${Math.round(1/(1-k||1)*100)} %</b><br>Volumen: <b>${fmt((1-k)*(1/(1-k||1)),2)}</b> (se conserva)<br>${k===0?'Rígido, sin vida.':k<.2?'Firme y pesado.':k<.4?'Elástico.':'Muy blando, caricaturesco.'}`;
+    $$('#sqSeg button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.k===+$('#sqK').value)));}
+  function frame(ms){
+    const k=+$('#sqK').value/100,P=1400,t=(ms%P)/P;const h=150*(1-Math.pow(2*t-1,2));const y=230-24-h;
+    const v=Math.abs(2*t-1);let sy=1+k*.6*Math.pow(v,3),sx=1/sy;
+    const impact=Math.min(t,1-t)<.035;if(impact){sy=1-k;sx=1/(1-k||1);}
+    const x=lerp(80,520,((ms/P)%4)/4);
+    ball.setAttribute('cx',x);ball.setAttribute('cy',impact?230-24*sy:y);ball.setAttribute('rx',24*sx);ball.setAttribute('ry',24*sy);
+    shadow.setAttribute('cx',x);shadow.setAttribute('rx',22*(1-h/300));
+  }
+  const L=loop(svg,frame);frame(700);
+  $('#sqK').addEventListener('input',read);seg($('#sqSeg'),b=>{$('#sqK').value=b.dataset.k;read();});read();
+})();
+
+/* 04 Anticipación */
+(function(){
+  const svg=$('#anSvg');el('line',{x1:20,y1:220,x2:580,y2:220,class:'floor'},svg);
+  const ghost=el('rect',{x:420,width:60,height:60,y:160,fill:'none',class:'s-rule','stroke-dasharray':'3 3'},svg);
+  const g=el('g',{},svg);const box=el('rect',{x:-30,y:-60,width:60,height:60,class:'f-ink'},g);const eye=el('rect',{x:6,y:-46,width:10,height:10,class:'f-sheet'},g);
+  const g2=el('g',{},svg);el('rect',{x:-30,y:-60,width:60,height:60,class:'f-dot'},g2);
+  const lab1=el('text',{x:150,y:246,'text-anchor':'middle'},svg);lab1.textContent='con tus valores';
+  const lab2=el('text',{x:420,y:246,'text-anchor':'middle'},svg);lab2.textContent='sin anticipación ni asentamiento';ghost.remove();
+  function pose(ms,a,s){
+    const P=2000,t=ms%P;let y=0,sy=1,lean=0;
+    if(t<400){const k=t/400;sy=1-a*Math.sin(k*Math.PI/2);lean=-a*20*Math.sin(k*Math.PI/2);}
+    else if(t<1000){const k=(t-400)/600;y=-130*4*k*(1-k);sy=1+.15*Math.abs(1-2*k)*(a>0?1:0);lean=0;}
+    else if(t<1300){const k=(t-1000)/300;sy=1-s*Math.sin(k*Math.PI)*Math.exp(-k*2);}
+    return{y,sy,lean};
+  }
+  function frame(ms){
+    const a=+$('#anA').value/100,s=+$('#anS').value/100;const p=pose(ms,a,s),q=pose(ms,0,0);
+    g.setAttribute('transform',`translate(150 220) translate(0 ${p.y}) skewX(${p.lean}) scale(${1/p.sy} ${p.sy})`);
+    g2.setAttribute('transform',`translate(420 220) translate(0 ${q.y})`);
+  }
+  function read(){const a=+$('#anA').value,s=+$('#anS').value;$('#anAO').textContent=a+' %';$('#anSO').textContent=s+' %';
+    $('#anRead').innerHTML=`El bloque negro usa tus valores; el gris, ninguno. Los dos saltan en el mismo momento y a la misma altura.<br><br>${a===0?pill('bad','El salto no tiene impulso'):a>40?pill('mid','Exagerada'):pill('ok','Creíble')}`;}
+  const L=loop(svg,frame);frame(250);['#anA','#anS'].forEach(x=>$(x).addEventListener('input',read));read();
+})();
+
+/* 05 Superposición */
+(function(){
+  const svg=$('#ovSvg');let mode='wave';const N=9,seg_=24;let pts=Array.from({length:N},(_,i)=>({x:300,y:50+i*seg_}));
+  const line=el('polyline',{fill:'none',class:'s-mag','stroke-width':6,'stroke-linecap':'round','stroke-linejoin':'round'},svg);
+  const dots=pts.map((_,i)=>el('circle',{r:i===0?16:7-i*.4,class:i===0?'f-ink':'f-mag'},svg));
+  let last=0;
+  function frame(ms){
+    const f=+$('#ovK').value/100;
+    let hx;if(mode==='wave')hx=300+180*Math.sin(ms/700);else{const P=3000,t=(ms%P)/P;hx=t<.25?lerp(120,480,E.inout(t/.25)):t<.5?480:t<.75?lerp(480,120,E.inout((t-.5)/.25)):120;}
+    pts[0].x=hx;pts[0].y=50;
+    for(let i=1;i<N;i++){const k=1-f*.92;const tx=pts[i-1].x,ty=pts[i-1].y+seg_;pts[i].x+= (tx-pts[i].x)*k;pts[i].y+=(ty-pts[i].y)*k;
+      const dx=pts[i].x-pts[i-1].x,dy=pts[i].y-pts[i-1].y,d=Math.hypot(dx,dy)||1;pts[i].x=pts[i-1].x+dx/d*seg_;pts[i].y=pts[i-1].y+dy/d*seg_;}
+    line.setAttribute('points',pts.map(p=>p.x+','+p.y).join(' '));dots.forEach((d,i)=>{d.setAttribute('cx',pts[i].x);d.setAttribute('cy',pts[i].y);});
+  }
+  function read(){const f=+$('#ovK').value;$('#ovKO').textContent=f+' %';$('#ovRead').innerHTML=`${f===0?'Rígido: toda la cadena se mueve junta, como una regla.':f<50?'Leve retraso: tela pesada, cuerda gruesa.':'Mucho retraso: pelo, cinta, cola.'}<br><br>En "Arranca y frena" mirá cómo la cola sigue moviéndose cuando la cabeza ya se detuvo.`;}
+  const L=loop(svg,frame);frame(0);$('#ovK').addEventListener('input',read);seg($('#ovSeg'),b=>{mode=b.dataset.m;});read();
+})();
+
+/* 06 Arcos */
+(function(){
+  const svg=$('#arSvg');let trail=true;
+  const A=[70,210],B=[530,210];
+  const gl=el('g',{},svg),ga=el('g',{},svg);
+  const pl=el('path',{fill:'none',class:'s-rule','stroke-dasharray':'4 4'},svg),pa=el('path',{fill:'none',class:'s-rule','stroke-dasharray':'4 4'},svg);
+  const dl=el('circle',{r:14,class:'f-dot'},svg),da=el('circle',{r:14,class:'f-mag'},svg);
+  [A,B].forEach(p=>el('circle',{cx:p[0],cy:p[1],r:4,class:'f-ink'},svg));
+  function arc(t,h){const c=[300,210-2*h];const u=1-t;return[u*u*A[0]+2*u*t*c[0]+t*t*B[0],u*u*A[1]+2*u*t*c[1]+t*t*B[1]];}
+  function draw(){const h=+$('#arH').value*1.6;$('#arHO').textContent=$('#arH').value+' %';
+    pl.setAttribute('d',`M${A} L${B}`);pa.setAttribute('d',`M${A} Q300 ${210-2*h} ${B}`);
+    gl.innerHTML='';ga.innerHTML='';if(trail)for(let i=0;i<=14;i++){const t=E.inout(i/14);el('circle',{cx:lerp(A[0],B[0],t),cy:A[1],r:14,class:'ghost'},gl);const q=arc(t,h);el('circle',{cx:q[0],cy:q[1],r:14,class:'ghost'},ga);}
+    $('#arRead').innerHTML=`Gris: en línea recta. Rosa: en arco. Mismo origen, mismo destino, misma duración y misma curva de velocidad.<br><br>${h===0?pill('mid','Sin arco: mecánico'):pill('ok','Natural')}`;}
+  const L=loop(svg,ms=>{const P=2200,k=(ms%P)/P;const t=E.inout(k<.75?k/.75:1);const h=+$('#arH').value*1.6;dl.setAttribute('cx',lerp(A[0],B[0],t));dl.setAttribute('cy',A[1]);const q=arc(t,h);da.setAttribute('cx',q[0]);da.setAttribute('cy',q[1]);});
+  dl.setAttribute('cx',A[0]);dl.setAttribute('cy',A[1]);da.setAttribute('cx',A[0]);da.setAttribute('cy',A[1]);
+  $('#arH').addEventListener('input',draw);$('#arTr').addEventListener('click',e=>{trail=!trail;e.target.setAttribute('aria-pressed',trail);e.target.textContent=trail?'Visible':'Oculto';draw();});draw();
+})();
+
+/* 07 Stagger */
+(function(){
+  const grid=$('#sgGrid'),C=8,R=4,N=C*R;let order='diag';
+  grid.innerHTML='<i></i>'.repeat(N);const cells=$$('i',grid);
+  const rnd=cells.map(()=>Math.random());
+  function idx(i){const c=i%C,r=Math.floor(i/C);if(order==='seq')return i;if(order==='diag')return c+r;if(order==='center')return Math.hypot(c-(C-1)/2,r-(R-1)/2)*1.4;return rnd[i]*N;}
+  function play(){const d=+$('#sgD').value;cells.forEach((c,i)=>{c.getAnimations().forEach(a=>a.cancel());c.animate([{opacity:0,transform:'translateY(14px) scale(.7)'},{opacity:1,transform:'none'}],{duration:RM?1:420,delay:RM?0:idx(i)*d,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'});});read();}
+  function read(){const d=+$('#sgD').value;$('#sgDO').textContent=d+' ms';const mx=Math.max(...cells.map((_,i)=>idx(i)));const tot=Math.round(mx*d+420);$('#sgRead').innerHTML=`Duración total: <b>${tot} ms</b><br>${d===0?pill('bad','Todo junto'):tot>1600?pill('bad','Demasiado larga'):pill('ok','Se sigue con la vista')}`;}
+  $('#sgD').addEventListener('input',read);seg($('#sgSeg'),b=>{order=b.dataset.o;play();});$('#sgPlay').addEventListener('click',play);read();
+  let done=false;new IntersectionObserver(es=>{if(es[0].isIntersecting&&!done){done=true;play();}},{threshold:.5}).observe(grid);
+})();
+
+/* 08 Keyframes */
+(function(){
+  const obj=$('#kfObj'),stage=$('#kfStage'),tracks=$('#kfTracks'),T=72;let interp='bez',raf=0;
+  const K={pos:[[0,0],[30,.75],[72,.25]],esc:[[0,1],[30,.6],[50,1.4],[72,1]],rot:[[0,0],[50,180],[72,180]]};
+  const names={pos:'Posición X',esc:'Escala',rot:'Rotación'};
+  function val(keys,f){if(f<=keys[0][0])return keys[0][1];for(let i=0;i<keys.length-1;i++){const [f0,v0]=keys[i],[f1,v1]=keys[i+1];if(f<=f1){const t=(f-f0)/(f1-f0);const e=interp==='lin'?t:interp==='hold'?0:E.inout(t);return lerp(v0,v1,e);}}return keys[keys.length-1][1];}
+  const ranges={pos:[0,1],esc:[.5,1.5],rot:[0,180]};
+  function build(){tracks.innerHTML='';for(const k in K){const row=document.createElement('div');row.className='tl-row';row.innerHTML=`<span>${names[k]}</span>`;const s=el('svg',{viewBox:`0 0 ${T} 34`,preserveAspectRatio:'none'});const [lo,hi]=ranges[k];const Y=v=>30-(v-lo)/(hi-lo)*26;let d='';for(let f=0;f<=T;f+=.5)d+=(f?'L':'M')+f+' '+Y(val(K[k],f));el('path',{d,fill:'none',class:'s-cyan','stroke-width':1.2,'vector-effect':'non-scaling-stroke'},s);row.appendChild(s);tracks.appendChild(row);
+      K[k].forEach(([f,v])=>{const dm=document.createElement('span');dm.style.cssText=`position:absolute;width:9px;height:9px;background:var(--ink);transform:translate(-50%,-50%) rotate(45deg);top:50%;left:${f/T*100}%;border:1.5px solid var(--sheet)`;row.querySelector('svg').parentElement.style.position='relative';const wrap=document.createElement('div');wrap.style.cssText='position:absolute;left:98px;right:0;top:0;bottom:0;pointer-events:none';wrap.appendChild(dm);row.appendChild(wrap);});}
+    const ph=document.createElement('div');ph.className='ph';ph.id='kfPh';tracks.appendChild(ph);}
+  function set(f){const W=stage.clientWidth-56;obj.style.transform=`translateX(${val(K.pos,f)*W}px) scale(${val(K.esc,f)}) rotate(${val(K.rot,f)}deg)`;
+    const ph=$('#kfPh');if(ph){const left=98,w=tracks.clientWidth-left;ph.style.left=(left+f/T*w)+'px';}
+    $('#kfTO').textContent=Math.round(f)+' f';
+    $('#kfRead').innerHTML=`Fotograma <b>${Math.round(f)}</b> de ${T} (3 s a 24 fps)<br>${interp==='lin'?'Lineal: velocidad constante entre claves y cambios bruscos al pasar por cada una.':interp==='bez'?'Bezier: acelera y frena en cada clave. Movimiento orgánico.':'Mantener: el valor salta al llegar a la clave siguiente. Sin intermedios.'}`;}
+  $('#kfT').addEventListener('input',()=>{cancelAnimationFrame(raf);set(+$('#kfT').value);});
+  $('#kfPlay').addEventListener('click',()=>{cancelAnimationFrame(raf);const t0=performance.now();const step=now=>{const f=Math.min(T,(now-t0)/1000*24);$('#kfT').value=f;set(f);if(f<T)raf=requestAnimationFrame(step);};raf=requestAnimationFrame(step);});
+  seg($('#kfSeg'),b=>{interp=b.dataset.i;build();set(+$('#kfT').value);});
+  build();set(0);new ResizeObserver(()=>set(+$('#kfT').value)).observe(stage);
+})();
+
+/* 09 Ritmo */
+(function(){
+  const stage=$('#btStage'),shapes=$$('i',stage),cnt=$$('#btCount b');let every=4,snd=false,ac=null,lastBeat=-1;
+  const bgs=['var(--paper)','color-mix(in oklab,var(--cyan) 22%,var(--sheet))','color-mix(in oklab,var(--mag) 18%,var(--sheet))','color-mix(in oklab,var(--yel) 30%,var(--sheet))'];
+  function click(acc){if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=acc?1500:1000;g.gain.setValueAtTime(.25,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.06);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.07);}
+  function read(){const b=+$('#btB').value,ms=60000/b;$('#btBO').textContent=b+' BPM';$('#btRead').innerHTML=`Un tiempo: <b>${Math.round(ms)} ms</b><br>A 24 fps: <b>${fmt(ms/1000*24,1)} fotogramas</b><br>A 30 fps: <b>${fmt(ms/1000*30,1)} fotogramas</b><br>Compás de 4: <b>${fmt(ms*4/1000,2)} s</b>${Number.isInteger(+(ms/1000*24).toFixed(3))?'<br>'+pill('ok','Cae justo en fotogramas a 24'):''}`;}
+  const L=loop(stage,ms=>{const b=+$('#btB').value,per=60000/b,beat=Math.floor(ms/per),ph=(ms%per)/per;
+    shapes.forEach((s,i)=>{const on=beat%4===i;const k=Math.exp(-ph*6);s.style.transform=`scale(${1+(on?.55:.12)*k})`;});
+    if(beat!==lastBeat){lastBeat=beat;const pos=beat%4;cnt.forEach((c,i)=>c.classList.toggle('on',i===pos));if(beat%every===0)stage.style.background=bgs[(beat/every)%bgs.length|0];if(snd)click(pos===0);}});
+  $('#btB').addEventListener('input',()=>{read();L.restart();lastBeat=-1;});
+  seg($('#btSeg'),b=>{every=+b.dataset.c;});
+  $('#btSnd').addEventListener('click',e=>{snd=!snd;if(snd&&!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)();}catch(_){snd=false;}}if(ac&&ac.state==='suspended')ac.resume();e.target.setAttribute('aria-pressed',snd);e.target.textContent=snd?'Metrónomo encendido':'Metrónomo apagado';if(RM)L.force();});
+  stage.style.background=bgs[0];cnt[0].classList.add('on');read();
+})();
+
+/* 10 Cinética */
+(function(){
+  const line=$('#ktLine');let style='mask',timer=0;
+  function build(){const words=$('#ktIn').value.trim().split(/\s+/).filter(Boolean);const longest=words.reduce((a,w,i)=>w.length>words[a].length?i:a,0);
+    line.innerHTML=words.map((w,i)=>`<span class="w"><span class="${i===longest?'acc':''}">${w.replace(/[<>&]/g,'')}</span></span>`).join(' ');return words.length;}
+  function play(){
+    clearTimeout(timer);const n=build(),ms=+$('#ktS').value;const inner=$$('.w > span',line);
+    inner.forEach((s,i)=>{const d=RM?0:i*ms;let kf;
+      if(style==='mask')kf=[{transform:'translateY(110%)'},{transform:'none'}];
+      if(style==='fade')kf=[{opacity:0,filter:'blur(6px)'},{opacity:1,filter:'none'}];
+      if(style==='scale')kf=[{opacity:0,transform:'scale(2.2)'},{opacity:1,transform:'none'}];
+      if(style==='track')kf=[{opacity:0,letterSpacing:'.6em'},{opacity:1,letterSpacing:'0em'}];
+      if(style==='type'){s.style.clipPath='inset(0 100% 0 0)';s.animate([{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0 0 0)'}],{duration:RM?1:Math.max(60,ms*.9),delay:d,easing:`steps(${s.textContent.length})`,fill:'forwards'});return;}
+      s.style.clipPath='';s.animate(kf,{duration:RM?1:Math.max(300,ms*1.6),delay:d,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'});});
+    const wps=1000/ms;$('#ktRead').innerHTML=`Palabras: <b>${n}</b><br>Ritmo: <b>${fmt(wps,1)} palabras/s</b> ${wps>5?pill('bad','No se llega a leer'):wps<1.5?pill('mid','Lento'):pill('ok','Legible')}<br>La palabra más larga lleva el acento de color.`;
+  }
+  $('#ktS').addEventListener('input',()=>{$('#ktSO').textContent=$('#ktS').value+' ms';});
+  $('#ktIn').addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(play,500);});
+  seg($('#ktSeg'),b=>{style=b.dataset.s;play();});$('#ktPlay').addEventListener('click',play);
+  build();$('#ktSO').textContent='220 ms';
+  let done=false;new IntersectionObserver(es=>{if(es[0].isIntersecting&&!done){done=true;play();}},{threshold:.5}).observe(line);
+  const n=$('#ktIn').value.trim().split(/\s+/).length;$('#ktRead').innerHTML=`Palabras: <b>${n}</b><br>Tocá Reproducir o cambiá la entrada.`;
+})();
+
+/* 11 Transiciones */
+(function(){
+  const wrap=$('#trWrap'),A=$('#trA'),B=$('#trB'),wipe=$('#trWipe'),thumb=$('#trThumb'),bimg=$('#trBimg');let t='shared',atB=false,busy=false;
+  const info={cut:['Corte','Instantáneo e invisible. El más usado en cine: el espectador ni lo registra.'],fade:['Fundido','Una escena se disuelve en la otra. Sugiere paso del tiempo o un cambio de lugar.'],wipe:['Barrido','Un plano de color cruza la pantalla y tapa el cambio. Muy gráfico, típico del motion de marca.'],push:['Empuje','La escena nueva empuja a la anterior fuera de cuadro. Comunica dirección: adelante, atrás.'],shared:['Elemento compartido','El círculo de la primera escena se transforma en la imagen de la segunda. Continuidad total.']};
+  function go(){
+    if(busy)return;busy=true;const from=atB?B:A,to=atB?A:B,D=RM?1:700;
+    const done=()=>{atB=!atB;busy=false;$('#trGo').textContent=atB?'Volver a la escena 1':'Pasar a la escena 2';};
+    $$('.shared',wrap).forEach(n=>n.remove());
+    if(t==='cut'){from.style.opacity=0;to.style.opacity=1;to.style.transform='none';from.style.transform='none';done();return;}
+    if(t==='fade'){to.style.transform=from.style.transform='none';from.animate([{opacity:1},{opacity:0}],{duration:D,fill:'forwards'}).finished.then(()=>{from.style.opacity=0;from.getAnimations().forEach(a=>a.cancel());});to.animate([{opacity:0},{opacity:1}],{duration:D,fill:'forwards'}).finished.then(()=>{to.style.opacity=1;to.getAnimations().forEach(a=>a.cancel());done();});return;}
+    if(t==='wipe'){wipe.animate([{transform:'scaleX(0)',transformOrigin:'left'},{transform:'scaleX(1)',transformOrigin:'left',offset:.5},{transform:'scaleX(0)',transformOrigin:'right'}],{duration:D*1.4,easing:'cubic-bezier(.65,0,.35,1)'});setTimeout(()=>{from.style.opacity=0;to.style.opacity=1;to.style.transform='none';},D*.7);setTimeout(done,D*1.4);return;}
+    if(t==='push'){const dir=atB?-1:1;to.style.opacity=1;const e={duration:D,easing:'cubic-bezier(.65,0,.35,1)'};from.animate([{transform:'none'},{transform:`translateX(${-100*dir}%)`}],e);to.animate([{transform:`translateX(${100*dir}%)`},{transform:'none'}],e).finished.then(()=>{from.style.opacity=0;done();});return;}
+    if(t==='shared'){
+      const wr=wrap.getBoundingClientRect(),ra=thumb.getBoundingClientRect();B.style.opacity=1;const rb=bimg.getBoundingClientRect();B.style.opacity=atB?1:0;
+      const s=document.createElement('div');s.className='shared';wrap.appendChild(s);
+      const box=(r,round)=>({left:r.left-wr.left+'px',top:r.top-wr.top+'px',width:r.width+'px',height:r.height+'px',borderRadius:round?'50%':'0'});
+      const f=atB?box(rb,false):box(ra,true),g=atB?box(ra,true):box(rb,false);
+      thumb.style.visibility='hidden';bimg.style.visibility='hidden';
+      s.animate([f,g],{duration:D*1.2,easing:'cubic-bezier(.65,0,.35,1)',fill:'forwards'}).finished.then(()=>{thumb.style.visibility='';bimg.style.visibility='';s.remove();done();});
+      from.animate([{opacity:1},{opacity:0}],{duration:D*.5,fill:'forwards'}).finished.then(()=>{from.style.opacity=0;from.getAnimations().forEach(a=>a.cancel());});
+      to.style.transform='none';to.animate([{opacity:0},{opacity:1}],{duration:D*.6,delay:D*.6,fill:'backwards'});to.style.opacity=1;
+    }
+  }
+  seg($('#trSeg'),b=>{t=b.dataset.t;$('#trRead').innerHTML=`<b>${info[t][0]}</b><br>${info[t][1]}`;});
+  $('#trGo').addEventListener('click',go);$('#trRead').innerHTML=`<b>${info.shared[0]}</b><br>${info.shared[1]}`;
+})();
+})();
+</script>
+
+<script src="laboratorio.js" defer></script>
+</body>
+</html>

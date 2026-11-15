@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Principios del diseño editorial</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+
+/* Layout: pliego de imprenta — láminas numeradas con escenario interactivo, barra de control CMYK y marcas de corte */
+:root{
+  --paper:#ECEFF2;
+  --sheet:#FFFFFF;
+  --ink:#14161B;
+  --ink-2:#4B525E;
+  --rule:#C9D0D8;
+  --dot:#B7BEC8;
+  --mag:#D4006A;
+  --cyan:#008DC4;
+  --yel:#EFBE00;
+  --f-display:"Archivo","Arial Narrow",Arial,sans-serif;
+  --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --s-1:12px; --s-2:14px; --s-3:17px; --s-4:22px; --s-5:34px; --s-6:clamp(44px,8vw,104px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#101215; --sheet:#181B20; --ink:#ECEEF1; --ink-2:#A2A9B4; --rule:#2D323A; --dot:#4A515C;
+  --mag:#FF4D9B; --cyan:#3DB6E6; --yel:#FFD43F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#101215; --sheet:#181B20; --ink:#ECEEF1; --ink-2:#A2A9B4; --rule:#2D323A; --dot:#4A515C;
+  --mag:#FF4D9B; --cyan:#3DB6E6; --yel:#FFD43F; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:var(--s-3);line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+em,i{font-style:normal}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-family:var(--f-display);margin:0;text-wrap:balance}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-size:var(--s-1);letter-spacing:.06em;text-transform:uppercase}
+:focus-visible{outline:2px solid var(--mag);outline-offset:3px}
+
+/* ---------- Hero ---------- */
+.hero{padding-block:48px 56px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:center}
+.hero-kicker{display:flex;gap:14px;align-items:center;color:var(--ink-2);margin-bottom:20px}
+.hero-kicker .chip{background:var(--ink);color:var(--paper);padding:4px 8px}
+.hero h1{font-size:var(--s-6);font-stretch:118%;font-weight:850;line-height:.9;letter-spacing:-.02em}
+.hero h1 .l2{display:block;font-stretch:72%;font-weight:300;letter-spacing:0;color:var(--mag)}
+.hero-lede{margin-top:24px;max-width:52ch;color:var(--ink-2)}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:28px;color:var(--ink-2)}
+.hero-meta b{color:var(--ink);font-weight:600}
+.hero-side{display:flex;flex-direction:column;gap:12px}
+.hero-stage{position:relative;aspect-ratio:4/3;max-width:100%;background:var(--sheet);border:1px solid var(--rule);overflow:hidden}
+.hero-grid{position:absolute;inset:0 6%;display:grid;grid-template-columns:repeat(6,1fr);gap:2%;opacity:0;transition:opacity .8s ease .6s;pointer-events:none}
+.hero-grid span{background:color-mix(in oklab,var(--cyan) 9%,transparent);border-inline:1px solid color-mix(in oklab,var(--cyan) 30%,transparent)}
+.hero-stage.ordered .hero-grid{opacity:1}
+.h-el{position:absolute;transition:transform 1.1s cubic-bezier(.2,.8,.2,1),border-radius 1.1s}
+.c-ink{background:var(--ink)} .c-ink2{background:var(--ink-2)} .c-mag{background:var(--mag)} .c-cyan{background:var(--cyan)} .c-yel{background:var(--yel)}
+.c-line{border:2px solid var(--ink)}
+.hero-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.hero-state{color:var(--ink-2)}
+
+/* ---------- Layout ---------- */
+.layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:56px;padding-bottom:80px}
+.index{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start}
+.index h3{font-family:var(--f-mono);font-size:var(--s-1);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin-bottom:12px}
+.index ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.index a{display:flex;gap:10px;align-items:baseline;padding:5px 8px;color:var(--ink-2);text-decoration:none;font-family:var(--f-display);font-size:15px;font-weight:500;border-left:2px solid transparent;transition:color .2s,border-color .2s,background .2s}
+.index a span{font-family:var(--f-mono);font-size:11px;font-variant-numeric:tabular-nums}
+.index a:hover{color:var(--ink)}
+.index a.on{color:var(--ink);border-left-color:var(--mag);background:var(--sheet)}
+.plates{display:flex;flex-direction:column;gap:96px;min-width:0}
+
+/* ---------- Plate ---------- */
+.plate{scroll-margin-top:24px;min-width:0}
+.plate-head{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-bottom:24px}
+.plate-no{display:flex;gap:12px;align-items:center;color:var(--mag)}
+.plate-no::after{content:"";flex:1;height:1px;background:var(--rule)}
+.plate h2{font-size:var(--s-5);font-stretch:112%;font-weight:800;letter-spacing:-.01em;line-height:1.05}
+.lede{max-width:66ch;color:var(--ink-2)}
+.lede strong{color:var(--ink);font-weight:600}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:0;border:1px solid var(--rule);background:var(--sheet)}
+.stage{position:relative;min-height:340px;overflow:hidden;min-width:0;display:flex;align-items:center;justify-content:center;padding:24px}
+.stage svg{display:block;max-width:100%;height:auto}
+.crop{position:absolute;width:14px;height:14px;pointer-events:none}
+.crop.tl{top:8px;left:8px;border-top:1px solid var(--ink-2);border-left:1px solid var(--ink-2)}
+.crop.tr{top:8px;right:8px;border-top:1px solid var(--ink-2);border-right:1px solid var(--ink-2)}
+.crop.bl{bottom:8px;left:8px;border-bottom:1px solid var(--ink-2);border-left:1px solid var(--ink-2)}
+.crop.br{bottom:8px;right:8px;border-bottom:1px solid var(--ink-2);border-right:1px solid var(--ink-2)}
+.controls{border-left:1px solid var(--rule);padding:20px;display:flex;flex-direction:column;gap:18px;background:color-mix(in oklab,var(--paper) 45%,var(--sheet));min-width:0}
+.ctl{display:flex;flex-direction:column;gap:6px}
+.ctl label,.ctl .lbl{display:flex;justify-content:space-between;gap:8px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.ctl output{color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--mag);margin:0}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button,.btn{font-family:var(--f-display);font-size:13px;font-weight:600;padding:6px 10px;background:var(--sheet);color:var(--ink);border:1px solid var(--rule);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.seg button:hover,.btn:hover{border-color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.btn.prime{background:var(--mag);border-color:var(--mag);color:#fff}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.checks label{display:flex;gap:6px;align-items:center;font-family:var(--f-display);font-size:13px;text-transform:none;letter-spacing:0;color:var(--ink);cursor:pointer}
+.checks input{accent-color:var(--mag)}
+.readout{font-family:var(--f-mono);font-size:12px;line-height:1.5;color:var(--ink-2);border-top:1px dashed var(--rule);padding-top:12px;font-variant-numeric:tabular-nums}
+.readout b{color:var(--ink);font-weight:600}
+.pill{display:inline-block;padding:1px 7px;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.04em}
+.pill.ok{background:color-mix(in oklab,#1F9D55 18%,transparent);color:#1C8A4B}
+.pill.mid{background:color-mix(in oklab,var(--yel) 30%,transparent);color:color-mix(in oklab,var(--yel) 40%,var(--ink))}
+.pill.bad{background:color-mix(in oklab,var(--mag) 16%,transparent);color:var(--mag)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill.ok{color:#5FD08F}}
+:root[data-theme="dark"] .pill.ok{color:#5FD08F}
+
+.strip{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 12px;border:1px solid var(--rule);border-top:0;background:var(--sheet);color:var(--ink-2);flex-wrap:wrap}
+.patches{display:flex;gap:3px}
+.patches i{width:14px;height:10px;display:block}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}
+.notes h4{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.notes .do h4{color:var(--cyan)} .notes .dont h4{color:var(--mag)}
+.notes p{font-size:16px;color:var(--ink-2);max-width:60ch}
+
+@media (max-width:980px){
+  .bench{grid-template-columns:minmax(0,1fr)}
+  .controls{border-left:0;border-top:1px solid var(--rule)}
+}
+@media (max-width:900px){
+  .hero{grid-template-columns:minmax(0,1fr);gap:32px;padding-block:32px 40px}
+  .layout{grid-template-columns:minmax(0,1fr);gap:24px}
+  .index{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding-block:8px;border-bottom:1px solid var(--rule)}
+  .index h3{display:none}
+  .index ol{flex-direction:row;overflow-x:auto;gap:4px;scrollbar-width:none}
+  .index a{white-space:nowrap;border-left:0;border-bottom:2px solid transparent}
+  .index a.on{border-bottom-color:var(--mag)}
+  .plate{scroll-margin-top:64px}
+  .notes{grid-template-columns:1fr}
+  .plates{gap:72px}
+}
+@media (max-width:560px){ .stage{min-height:280px;padding:16px} }
+
+/* ---------- Demos ---------- */
+/* Jerarquía */
+.poster{width:min(100%,420px);aspect-ratio:3/4;background:var(--paper);padding:8%;display:flex;flex-direction:column;justify-content:flex-start;gap:4%;border:1px solid var(--rule);overflow:hidden}
+.poster > *{transition:font-size .25s,font-weight .25s,letter-spacing .25s,color .25s,margin .25s;font-family:var(--f-display);line-height:1.05}
+.poster .p-foot{margin-top:auto}
+/* Contraste / proximidad / etc. SVG tokens */
+.f-ink{fill:var(--ink)} .f-ink2{fill:var(--ink-2)} .f-mag{fill:var(--mag)} .f-cyan{fill:var(--cyan)} .f-yel{fill:var(--yel)} .f-dot{fill:var(--dot)} .f-sheet{fill:var(--sheet)} .f-paper{fill:var(--paper)}
+.s-ink{stroke:var(--ink)} .s-mag{stroke:var(--mag)} .s-cyan{stroke:var(--cyan)} .s-rule{stroke:var(--rule)}
+svg text{font-family:var(--f-mono);font-size:12px;fill:var(--ink-2)}
+.tr{transition:transform .6s cubic-bezier(.2,.8,.2,1),fill .4s,opacity .4s,rx .4s}
+.tbox{transform-box:fill-box}
+
+/* Alineación */
+.align-card{position:relative;width:min(100%,460px);background:var(--paper);border:1px solid var(--rule);padding:28px 24px;display:flex;flex-direction:column;gap:12px}
+.align-card .ai{transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.align-guide{position:absolute;top:0;bottom:0;width:0;border-left:1px dashed var(--mag);transition:left .7s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.ai-tag{width:96px;height:10px;background:var(--mag)}
+.ai-title{width:280px;height:26px;background:var(--ink)}
+.ai-img{width:200px;height:110px;background:var(--cyan)}
+.ai-l1{width:240px;height:8px;background:var(--ink-2)}
+.ai-l2{width:180px;height:8px;background:var(--ink-2)}
+.ai-btn{width:120px;height:32px;border:2px solid var(--ink)}
+
+/* Proximidad */
+.prox{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px;width:100%;align-items:center}
+.form{display:flex;flex-direction:column;font-family:var(--f-display);font-size:13px}
+.form .fl{color:var(--ink-2);font-weight:600;transition:margin .3s}
+.form .fi{height:30px;border:1px solid var(--ink-2);background:var(--sheet);transition:margin .3s}
+@media (max-width:560px){.prox{grid-template-columns:minmax(0,1fr)}}
+
+/* Espacio */
+.air{width:min(100%,440px);aspect-ratio:4/3;background:var(--paper);border:1px solid var(--rule);display:flex;transition:padding .3s}
+.air-in{display:flex;flex-direction:column;transition:gap .3s;width:100%}
+.air-logo{width:28px;height:28px;background:var(--mag);border-radius:50%;flex:none}
+.air h5{font-family:var(--f-display);font-weight:800;font-stretch:110%;font-size:22px;margin:0;line-height:1.05}
+.air p{font-size:13px;line-height:1.45;color:var(--ink-2)}
+.air .air-cta{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--ink);text-transform:uppercase}
+
+/* Proporción */
+.ratio-wrap{width:100%;height:340px;display:flex;align-items:center;justify-content:center}
+.ratio-box{position:relative;background:var(--paper);border:1px solid var(--ink);transition:width .7s cubic-bezier(.2,.8,.2,1),height .7s cubic-bezier(.2,.8,.2,1);max-width:100%}
+.ratio-box svg{position:absolute;inset:0;width:100%;height:100%}
+.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .9s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.fadein{opacity:0;animation:fade .6s ease forwards}
+@keyframes fade{to{opacity:1}}
+
+/* Color */
+.color-lab{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:center;width:100%}
+.wheel{position:relative;width:200px;height:200px;border-radius:50%;flex:none}
+.wheel::after{content:"";position:absolute;inset:28%;border-radius:50%;background:var(--sheet)}
+.mk{position:absolute;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;border:3px solid var(--sheet);box-shadow:0 0 0 1px var(--ink);transition:left .5s cubic-bezier(.2,.8,.2,1),top .5s cubic-bezier(.2,.8,.2,1),background .3s;z-index:1}
+.mk.base{width:26px;height:26px;margin:-13px 0 0 -13px}
+.swatches{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.swatches div{width:44px;height:44px;transition:background .3s;position:relative}
+.cposter{aspect-ratio:4/3;max-width:100%;display:grid;grid-template-columns:3fr 2fr;transition:background .3s;border:1px solid var(--rule)}
+.cposter .cp-a{padding:16px;display:flex;flex-direction:column;justify-content:space-between;transition:color .3s}
+.cposter .cp-b{transition:background .3s;display:flex;align-items:flex-end;padding:14px}
+.cposter h5{margin:0;font-family:var(--f-display);font-weight:850;font-stretch:115%;font-size:clamp(20px,3vw,30px);line-height:.95}
+.cposter .acc{width:40%;height:10px;transition:background .3s}
+.ratio606{display:flex;height:10px;margin-top:10px}
+.ratio606 span{transition:background .3s}
+@media (max-width:640px){.color-lab{grid-template-columns:minmax(0,1fr);justify-items:center}.color-lab>div:last-child{width:100%}}
+
+/* Tipografía */
+.typo{max-width:100%;color:var(--ink);transition:font-size .2s,line-height .2s,letter-spacing .2s,max-width .3s;border-left:2px solid var(--mag);padding-left:16px}
+.typo-wrap{width:100%;display:flex;justify-content:center}
+.measure-ruler{height:6px;margin-top:10px;background:repeating-linear-gradient(90deg,var(--rule) 0 1px,transparent 1px 1ch)}
+
+/* Grilla */
+.gdemo{position:relative;width:100%;background:var(--paper);border:1px solid var(--rule);transition:padding .3s}
+.gcols,.gcontent{display:grid;transition:gap .3s}
+.gcols{position:absolute;inset:0;pointer-events:none;transition:padding .3s,opacity .3s}
+.gcols span{background:color-mix(in oklab,var(--mag) 12%,transparent);border-inline:1px solid color-mix(in oklab,var(--mag) 35%,transparent)}
+.gcontent{position:relative;row-gap:12px}
+.gb{min-height:24px;transition:all .4s}
+.gb.h{background:var(--ink);height:28px}
+.gb.img{background:var(--cyan);height:120px}
+.gb.txt{display:flex;flex-direction:column;gap:7px;padding-top:4px}
+.gb.txt i{height:7px;background:var(--ink-2)}
+.gb.card{height:70px;border:2px solid var(--ink)}
+
+/* Recorrido */
+.path-dot{transition:opacity .3s}
+
+/* ---------- Módulo 3: editorial ---------- */
+.back{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--rule)}
+.back:hover{color:var(--ink);border-color:var(--ink)}
+.spine{position:absolute;top:0;bottom:0;left:50%;width:0;border-left:1px solid var(--rule);box-shadow:0 0 18px 6px color-mix(in oklab,var(--ink) 6%,transparent);z-index:0}
+.svgw{width:100%;display:flex;justify-content:center}
+.svgw svg{width:100%;max-width:640px;height:auto}
+.pg{fill:var(--sheet);stroke:var(--ink-2);stroke-width:1}
+.pgp{fill:var(--paper)}
+.blk{fill:color-mix(in oklab,var(--mag) 16%,transparent);stroke:var(--mag);stroke-width:1.5}
+.cons{stroke:var(--cyan);stroke-width:1;fill:none}
+.tl{fill:var(--dot)}
+.gut{fill:color-mix(in oklab,var(--ink) 10%,transparent)}
+.mod{fill:color-mix(in oklab,var(--cyan) 12%,transparent);stroke:color-mix(in oklab,var(--cyan) 45%,transparent);stroke-width:.75}
+
+/* Anatomía */
+.art{width:min(100%,560px);background:var(--sheet);border:1px solid var(--rule);padding:26px 28px 14px;font-family:var(--f-body);color:var(--ink);position:relative;box-shadow:0 1px 0 var(--rule)}
+.art [data-p]{position:relative;transition:outline-color .25s,background .25s;outline:2px solid transparent;outline-offset:3px}
+.art [data-p].hl{outline-color:var(--mag);background:color-mix(in oklab,var(--mag) 7%,transparent)}
+.art [data-p]::after{content:attr(data-n);position:absolute;top:-10px;left:-12px;width:18px;height:18px;border-radius:50%;background:var(--mag);color:#fff;font:600 10px/18px var(--f-mono);text-align:center;opacity:0;transform:scale(.4);transition:all .3s;pointer-events:none}
+.art.all [data-p]::after,.art [data-p].hl::after{opacity:1;transform:none}
+.a-corn{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);border-bottom:1px solid var(--rule);padding-bottom:6px;margin-bottom:16px}
+.a-vol{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mag);font-weight:600}
+.a-tit{font-family:var(--f-display);font-weight:850;font-stretch:108%;font-size:clamp(24px,4vw,34px);line-height:1;margin:6px 0 10px}
+.a-cop{font-size:16px;line-height:1.4;color:var(--ink-2);margin-bottom:8px}
+.a-fir{font-family:var(--f-mono);font-size:11px;color:var(--ink-2);margin-bottom:14px}
+.a-cols{columns:2;column-gap:20px;font-size:13.5px;line-height:1.5;hyphens:auto}
+.a-cols p{margin:0 0 8px}
+.a-cap{float:left;font-family:var(--f-display);font-weight:850;font-size:52px;line-height:.8;margin:4px 6px 0 0;color:var(--mag)}
+.a-int{font-family:var(--f-display);font-weight:800;font-size:14px;margin:4px 0 4px;break-after:avoid}
+.a-dest{font-family:var(--f-display);font-weight:700;font-size:17px;line-height:1.15;border-top:3px solid var(--ink);padding-top:6px;margin:6px 0 10px;break-inside:avoid}
+.a-img{height:90px;background:var(--cyan);break-inside:avoid}
+.a-epi{font-family:var(--f-mono);font-size:10px;color:var(--ink-2);margin:4px 0 10px;break-inside:avoid}
+.a-fol{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:10px;color:var(--ink-2);border-top:1px solid var(--rule);padding-top:6px;margin-top:6px}
+.parts{display:flex;flex-direction:column;gap:2px}
+.parts button{display:flex;gap:8px;align-items:baseline;text-align:left;font-family:var(--f-display);font-size:13px;font-weight:600;padding:4px 6px;background:none;border:0;color:var(--ink-2);cursor:pointer;border-left:2px solid transparent}
+.parts button span{font-family:var(--f-mono);font-size:10px;color:var(--mag);width:16px}
+.parts button[aria-pressed="true"]{color:var(--ink);border-left-color:var(--mag);background:var(--sheet)}
+
+/* Composición */
+.compo{border-left:1px dashed var(--mag);border-right:1px dashed var(--mag);padding:0;font-size:16px;line-height:1.5;transition:width .25s;position:relative}
+.compo p{margin:0}
+.lastline{position:absolute;height:2px;background:var(--mag);transition:all .3s}
+
+/* Línea base */
+.bl{position:relative;width:min(100%,560px);background:var(--sheet);border:1px solid var(--rule);padding:22px 20px;display:grid;grid-template-columns:1fr 1fr;gap:20px;font-size:14px;line-height:22px;--lh:22px}
+.bl::before{content:"";position:absolute;inset:22px 0;background:repeating-linear-gradient(to bottom,transparent 0 21px,color-mix(in oklab,var(--cyan) 55%,transparent) 21px 22px);opacity:1;transition:opacity .3s;pointer-events:none}
+.bl.nogrid::before{opacity:0}
+.bl p{margin:0}
+.bl h6{font-family:var(--f-display);font-size:19px;font-weight:800;margin:0;transition:all .35s}
+.bl.reg h6{line-height:22px;padding:22px 0 0;margin:0 0 0}
+.bl.off h6{line-height:1.15;padding:13px 0 0;margin:0 0 7px}
+.bl.off .q{line-height:1.3}
+
+/* Paginación */
+.flat{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;width:100%}
+.flat button{padding:0;border:2px solid transparent;background:none;cursor:pointer;display:flex;flex-direction:column;gap:3px;align-items:stretch}
+.flat button[aria-current="true"]{border-color:var(--mag)}
+.flat svg{display:block;width:100%;height:auto}
+.flat span{font-family:var(--f-mono);font-size:9px;color:var(--ink-2);text-align:center}
+.bigspread{width:100%;max-width:560px;margin:0 auto}
+.bigspread svg{width:100%;height:auto;display:block}
+.fl-wrap{width:100%;display:flex;flex-direction:column;gap:16px}
+@media (max-width:560px){.flat{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* Capitular */
+.cap-p{width:min(100%,460px);font-size:17px;line-height:1.55;margin:0}
+.cap-p.drop::first-letter{float:left;font-family:var(--f-display);font-weight:850;font-size:calc(1.55em * 3 - 6px);line-height:.82;margin:6px 8px 0 0;color:var(--mag)}
+.cap-p.raised::first-letter{font-family:var(--f-display);font-weight:850;font-size:3.6em;line-height:1;color:var(--mag);margin-right:2px}
+.cap-p.small::first-line{font-variant:small-caps;letter-spacing:.06em;font-weight:600}
+.cap-p.hang{text-indent:-0.5em}
+.cap-p.hang::first-letter{float:left;font-family:var(--f-display);font-weight:850;font-size:calc(1.55em * 3 - 6px);line-height:.82;margin:6px 8px 0 -0.9em;color:var(--mag)}
+
+/* Portada */
+.covers{position:relative;width:100%;height:380px;display:flex;align-items:center;justify-content:center}
+.cv{position:absolute;width:220px;aspect-ratio:21/28;background:var(--sheet);border:1px solid var(--ink-2);overflow:hidden;transition:transform .7s cubic-bezier(.2,.8,.2,1),width .5s,box-shadow .5s;box-shadow:0 2px 0 var(--rule)}
+.cv-mast{position:absolute;left:8%;right:8%;font-family:var(--f-display);font-weight:900;font-stretch:125%;font-size:36px;line-height:.85;letter-spacing:-.03em;transition:top .5s,bottom .5s;text-transform:uppercase}
+.cv-img{position:absolute;inset:0;transition:opacity .4s}
+.cv-lines{position:absolute;left:8%;bottom:16%;display:flex;flex-direction:column;gap:4px;width:60%}
+.cv-lines b{font-family:var(--f-display);font-size:15px;font-weight:800;line-height:1;color:var(--ink)}
+.cv-lines i{height:5px;background:var(--ink)}
+.cv-bar{position:absolute;right:6%;bottom:4%;width:22%;height:9%;background:repeating-linear-gradient(90deg,var(--ink) 0 2px,var(--sheet) 2px 3px,var(--ink) 3px 4px,var(--sheet) 4px 6px);border:3px solid var(--sheet)}
+.shelf{position:absolute;left:0;right:0;bottom:0;z-index:5;background:color-mix(in oklab,var(--ink) 82%,var(--paper));border-top:4px solid var(--ink);opacity:0;transition:opacity .4s;pointer-events:none}
+</style>
+<link rel="stylesheet" href="laboratorio.css">
+<link rel="stylesheet" href="oficio.css">
+<script src="oficio-datos.js"></script>
+<script src="oficio.js"></script>
+
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <div class="hero-kicker mono"><span class="chip">Módulo 3</span><span>Diseño editorial</span></div>
+      <h1>Editorial<span class="l2">la página como sistema</span></h1>
+      <p class="hero-lede">En editorial no se diseña una pieza: se diseña una lectura. Este módulo trata de márgenes que vienen de la Edad Media, la doble página, la retícula, la anatomía de una nota, la composición de párrafos y el ritmo que se arma al pasar las hojas.</p>
+      <div class="hero-meta mono"><a href="index.html" style="color:var(--ink);font-weight:600;text-decoration:none;border-bottom:1px solid var(--mag)">← Índice del curso</a><span><b>11</b> láminas</span><a class="back" href="1-grafico.html">Módulo 1 · Gráfico</a><a class="back" href="2-web.html">Módulo 2 · Web</a><a class="back" href="4-identidad.html">Módulo 4 · Identidad →</a><a class="back" href="5-motion.html">Módulo 5 · Motion →</a></div>
+    </div>
+    <div class="hero-side">
+      <div class="hero-stage" id="heroStage" aria-label="Doble página que pasa del desorden al orden">
+        <span class="spine"></span>
+        <div class="hero-grid"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="hero-bar">
+        <span class="hero-state mono" id="heroState">Con principios: pliego, retícula, jerarquía</span>
+        <button class="btn" id="heroBtn" type="button">Desordenar</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="index" aria-label="Índice de láminas"><h3>Láminas</h3><ol id="indexList"></ol></aside>
+    <main class="plates" id="plates">
+
+<!-- 01 -->
+<section class="plate" id="canon" data-name="Canon de página">
+  <div class="plate-head"><div class="plate-no mono">Lámina 01</div><h2>Canon de página</h2>
+  <p class="lede">Los copistas medievales ubicaban la caja de texto con <strong>pura geometría</strong>: diagonales de la página y del pliego, sin medir nada. Van de Graaf y Tschichold lo reconstruyeron en el siglo XX. El resultado son márgenes 1 : 1 : 2 : 2 y una caja que repite la proporción de la hoja.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="svgw"><svg id="vgSvg" aria-label="Construcción del canon de Van de Graaf"></svg></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Formato de página</span><div class="seg" id="vgSeg"><button type="button" data-r="1.5" aria-pressed="true">2:3</button><button type="button" data-r="1.41421356">ISO A</button><button type="button" data-r="1.33333">3:4</button><button type="button" data-r="1.61803">φ</button></div></div>
+      <button class="btn prime" id="vgPlay" type="button">Construir de nuevo</button>
+      <div class="readout" id="vgRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>01 / 11 · Canon</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Para libros de lectura continua (novela, ensayo) el canon sigue siendo un punto de partida excelente. El margen inferior más grande da apoyo a los pulgares y "levanta" el bloque.</p></div><div class="dont"><h4>Error común</h4><p>Márgenes iguales en los cuatro lados. En una doble página, los dos márgenes interiores se suman y el bloque parece caerse hacia abajo.</p></div></div>
+</section>
+
+<!-- 02 -->
+<section class="plate" id="margenes" data-name="Márgenes">
+  <div class="plate-head"><div class="plate-no mono">Lámina 02</div><h2>Márgenes y caja</h2>
+  <p class="lede">Los márgenes no son lo que sobra: <strong>definen el carácter de la publicación</strong>. Márgenes amplios dicen calma y valor; márgenes mínimos dicen urgencia y economía. Compará sistemas clásicos con soluciones actuales.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="svgw"><svg id="mgSvg" viewBox="0 0 440 320" aria-label="Doble página con caja de texto"></svg></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Sistema</span><div class="seg" id="mgSeg">
+        <button type="button" data-m="vg" aria-pressed="true">Van de Graaf</button><button type="button" data-m="ts">Tschichold 2:3:4:6</button><button type="button" data-m="sim">Simétrico</button><button type="button" data-m="bol">Bolsillo</button><button type="button" data-m="rev">Revista</button></div></div>
+      <div class="readout" id="mgRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>02 / 11 · Márgenes</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Pensá los márgenes en orden: interior (el lomo se come espacio), superior, exterior (donde va el pulgar) e inferior. El interior se ajusta según la encuadernación: un libro cosido abre menos que uno anillado.</p></div><div class="dont"><h4>Error común</h4><p>Ganar páginas achicando márgenes. Ahorrás papel, pero el libro se siente barato y cuesta leerlo.</p></div></div>
+</section>
+
+<!-- 03 -->
+<section class="plate" id="pliego" data-name="Doble página">
+  <div class="plate-head"><div class="plate-no mono">Lámina 03</div><h2>La doble página</h2>
+  <p class="lede">El lector nunca ve una página sola: ve <strong>dos a la vez</strong>. La unidad de diseño editorial es el pliego abierto. Diseñar cada página por separado produce dos composiciones que compiten; pensarlas juntas produce una.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="svgw"><svg id="dpSvg" viewBox="0 0 440 320" aria-label="Doble página"></svg></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Enfoque</span><div class="seg" id="dpSeg"><button type="button" data-m="sep">Página por página</button><button type="button" data-m="pli" aria-pressed="true">Como pliego</button></div></div>
+      <div class="ctl"><span class="lbl">Zona del lomo</span><div class="seg"><button type="button" id="dpLomo" aria-pressed="true">Visible</button></div></div>
+      <div class="readout" id="dpRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>03 / 11 · Doble página</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Una foto puede cruzar el lomo, pero revisá qué cae en el pliegue: nunca una cara, un texto ni un producto. Las líneas de títulos y el arranque del texto se alinean entre las dos páginas.</p></div><div class="dont"><h4>Error común</h4><p>Revisar en pantalla página por página. Exportá o mirá siempre en vista de pliegos; ahí aparecen los choques.</p></div></div>
+</section>
+
+<!-- 04 -->
+<section class="plate" id="reticula" data-name="Retícula modular">
+  <div class="plate-head"><div class="plate-no mono">Lámina 04</div><h2>Retícula modular</h2>
+  <p class="lede">Columnas y también filas: la retícula modular divide la caja en <strong>módulos</strong> que se combinan en áreas. Es la herramienta de la escuela suiza (Müller-Brockmann) para que decenas de páginas distintas se sientan de la misma revista.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="svgw"><svg id="rmSvg" viewBox="0 0 300 410" style="max-width:300px" aria-label="Página con retícula modular"></svg></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="rmC">Columnas <output id="rmCO">4</output></label><input id="rmC" type="range" min="2" max="8" value="4"></div>
+      <div class="ctl"><label for="rmR">Filas <output id="rmRO">6</output></label><input id="rmR" type="range" min="2" max="9" value="6"></div>
+      <div class="ctl"><label for="rmG">Medianil <output id="rmGO">8</output></label><input id="rmG" type="range" min="0" max="20" value="8"></div>
+      <button class="btn prime" id="rmGo" type="button">Otra composición</button>
+      <div class="readout" id="rmRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>04 / 11 · Retícula modular</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Calculá la altura de cada fila como un número entero de líneas de texto. Así las imágenes que ocupan módulos terminan justo en una línea base.</p></div><div class="dont"><h4>Error común</h4><p>Usar todos los módulos en todas las páginas. La retícula es un repertorio de posiciones, no una obligación de llenarlas.</p></div></div>
+</section>
+
+<!-- 05 -->
+<section class="plate" id="anatomia" data-name="Anatomía de una nota">
+  <div class="plate-head"><div class="plate-no mono">Lámina 05</div><h2>Anatomía de una nota</h2>
+  <p class="lede">Un texto largo tiene <strong>varias puertas de entrada</strong>. Hay quien lee solo el título, quien llega al copete, quien salta a un destacado o a la foto. Cada pieza tiene un nombre y una función; en Argentina usamos volanta y copete donde otros dicen antetítulo y entradilla.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <article class="art all" id="anArt">
+        <div class="a-corn" data-p="corn" data-n="1"><span>Revista Taller · N.º 14</span><span>Oficios</span></div>
+        <div class="a-vol" data-p="vol" data-n="2">Oficios que resisten</div>
+        <h5 class="a-tit" data-p="tit" data-n="3">El último tornero del barrio</h5>
+        <p class="a-cop" data-p="cop" data-n="4">Hace cuarenta años que abre el taller a las siete. Entre virutas y planos dibujados a mano, sostiene un oficio que casi nadie quiere aprender.</p>
+        <div class="a-fir" data-p="fir" data-n="5">Texto: Laura Benítez · Fotos: Martín Ocampo</div>
+        <div class="a-cols">
+          <p><span class="a-cap" data-p="cap" data-n="6">L</span>a persiana sube con un chirrido que los vecinos ya usan de despertador. Adentro huele a aceite de corte y a café recalentado. El torno, un modelo de los años sesenta, arranca con un golpe seco y después se queda zumbando parejo.</p>
+          <p>Aprendió mirando a su padre, que a su vez aprendió en un astillero. Nunca tomó una clase formal: todo lo que sabe lo sabe con las manos.</p>
+          <div class="a-int" data-p="int" data-n="7">Medir dos veces</div>
+          <p>Trabaja con calibre y con paciencia. Dice que una pieza mal hecha no se nota el primer día, sino al año.</p>
+          <div class="a-dest" data-p="dest" data-n="8">"Una pieza mal hecha no se nota hoy. Se nota cuando falla."</div>
+          <div class="a-img" data-p="img" data-n="9"></div>
+          <div class="a-epi" data-p="epi" data-n="10">El torno, de 1964, sigue funcionando con su motor original.</div>
+          <p>Los pedidos llegan de talleres mecánicos, de un frigorífico y, cada tanto, de algún coleccionista de motos antiguas.</p>
+        </div>
+        <div class="a-fol" data-p="fol" data-n="11"><span>32</span><span>Revista Taller</span></div>
+      </article>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Partes</span><div class="parts" id="anParts"></div></div>
+      <div class="readout" id="anRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>05 / 11 · Anatomía</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Definí un estilo de párrafo para cada parte y no lo toques a mano en ninguna página. Es la diferencia entre una publicación que se ve profesional y una que se ve armada.</p></div><div class="dont"><h4>Error común</h4><p>Un destacado que repite palabra por palabra la oración que tiene al lado. Tiene que ser una frase que funcione sola y que invite a buscarla en el texto.</p></div></div>
+</section>
+
+<!-- 06 -->
+<section class="plate" id="composicion" data-name="Composición del párrafo">
+  <div class="plate-head"><div class="plate-no mono">Lámina 06</div><h2>Composición del párrafo</h2>
+  <p class="lede">Justificar parece prolijo, pero en columnas angostas obliga a estirar los espacios y aparecen <strong>ríos de blanco</strong>. La división silábica lo compensa. Y una última línea de una o dos palabras, la línea viuda o corta, deja un hueco que el ojo nota enseguida.</p></div>
+  <div class="bench">
+    <div class="stage" style="align-items:flex-start"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="compo" id="cpBox" lang="es"><p id="cpP">La imprenta llegó a Buenos Aires en 1780, traída desde Córdoba por los jesuitas expulsados. Durante décadas imprimió cartillas, bandos y almanaques con tipos gastados y tinta escasa. Los cajistas componían letra por letra, al revés y de derecha a izquierda, y aprendían a leer así antes que al derecho. Cada línea justificada se ajustaba con espacios de plomo de distintos grosores hasta que quedaba firme en el componedor.</p><span class="lastline" id="cpLast"></span></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="cpW">Ancho de columna <output id="cpWO">34 car.</output></label><input id="cpW" type="range" min="18" max="70" value="34"></div>
+      <div class="ctl"><span class="lbl">Alineación</span><div class="seg" id="cpSeg"><button type="button" data-a="left">Bandera</button><button type="button" data-a="justify" aria-pressed="true">Justificado</button></div></div>
+      <div class="ctl"><span class="lbl">Ajustes</span><div class="checks"><label><input type="checkbox" id="cpHy"> División silábica</label><label><input type="checkbox" id="cpPr"> Última línea pareja</label></div></div>
+      <div class="readout" id="cpRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>06 / 11 · Composición</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Columnas de menos de 40 caracteres: bandera a la izquierda. Si justificás, activá siempre la división silábica y limitá a dos o tres guiones seguidos. Las huérfanas (primera línea sola al pie de columna) y las viudas (última línea sola arriba) se corrigen editando o ajustando el tracking del párrafo.</p></div><div class="dont"><h4>Error común</h4><p>Corregir una línea corta agrandando la letra o el interlineado de ese párrafo. Rompe la línea base de toda la página.</p></div></div>
+</section>
+
+<!-- 07 -->
+<section class="plate" id="lineabase" data-name="Línea base">
+  <div class="plate-head"><div class="plate-no mono">Lámina 07</div><h2>Registro de línea base</h2>
+  <p class="lede">En una página con varias columnas, las líneas de texto deberían caer <strong>a la misma altura en todas</strong>. Para eso, títulos, espacios e imágenes tienen que medir múltiplos del interlineado. Visto a contraluz, el reverso de la hoja coincide renglón por renglón.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="bl reg" id="blBox">
+        <div><p>El papel tiene dirección de fibra, como la madera. Si se dobla a favor, el pliegue queda limpio; si se dobla en contra, se quiebra y se abre en pelusa. Por eso un libro bien hecho tiene la fibra paralela al lomo y las páginas caen solas al abrirlo.</p></div>
+        <div><p class="q">Un gramaje alto no siempre es mejor.</p><h6>Gramaje y opacidad</h6><p>Lo que importa es que no se transparente la página siguiente. Un papel de 80 gramos bien opaco rinde más que uno de 115 que deja ver todo.</p></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Espaciado del intertítulo</span><div class="seg" id="blSeg"><button type="button" data-m="reg" aria-pressed="true">En registro</button><button type="button" data-m="off">A ojo</button></div></div>
+      <div class="ctl"><span class="lbl">Líneas guía</span><div class="seg"><button type="button" id="blGrid" aria-pressed="true">Visibles</button></div></div>
+      <div class="readout" id="blRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>07 / 11 · Línea base</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Si el texto va a 10/14 pt, todo espacio vertical es múltiplo de 14: un intertítulo ocupa 28 (dos líneas), una imagen ocupa 14 × n. En InDesign, activá la retícula base y usá "alinear con la cuadrícula".</p></div><div class="dont"><h4>Error común</h4><p>Dejar "un poquito más" de espacio antes del intertítulo. Desde ahí, esa columna queda corrida respecto de la de al lado hasta el final de la página.</p></div></div>
+</section>
+
+<!-- 08 -->
+<section class="plate" id="paginacion" data-name="Ritmo de paginación">
+  <div class="plate-head"><div class="plate-no mono">Lámina 08</div><h2>Ritmo de paginación</h2>
+  <p class="lede">Una revista se diseña también en el tiempo: el lector pasa hojas. El <strong>planillo</strong> (la tira con todas las páginas en miniatura) muestra si hay respiro, sorpresa y variedad, o si todo se repite igual de principio a fin.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="fl-wrap"><div class="bigspread" id="flBig"></div><div class="flat" id="flFlat"></div></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Planillo</span><div class="seg" id="flSeg"><button type="button" data-m="mono">Monótono</button><button type="button" data-m="ritmo" aria-pressed="true">Con ritmo</button></div></div>
+      <button class="btn prime" id="flPlay" type="button">Hojear</button>
+      <div class="readout" id="flRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>08 / 11 · Paginación</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Alterná densidad: después de un pliego cargado de texto, uno con imagen grande o mucho blanco. Las aperturas de sección marcan el pulso; la contratapa y las páginas impares derechas son las más vistas.</p></div><div class="dont"><h4>Error común</h4><p>Resolver cada nota con la misma plantilla. Ahorra tiempo, pero al hojear todo parece la misma nota.</p></div></div>
+</section>
+
+<!-- 09 -->
+<section class="plate" id="capitular" data-name="Entradas de texto">
+  <div class="plate-head"><div class="plate-no mono">Lámina 09</div><h2>Entradas de texto</h2>
+  <p class="lede">El comienzo de un texto merece una marca. La capitular viene de los manuscritos iluminados; las versalitas en la primera línea son la versión sobria. Las dos cumplen la misma función: <strong>decir "acá empieza"</strong> y tender un puente entre el título y el cuerpo.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <p class="cap-p drop" id="caP">Era el verano en que el río se retiró tanto que se veían los cascos de los barcos hundidos. Los chicos del pueblo caminaban sobre el barro seco buscando monedas, clavos y botellas con etiquetas que nadie sabía leer. Mi abuelo decía que el río devolvía cosas solamente cuando estaba cansado.</p>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Entrada</span><div class="seg" id="caSeg"><button type="button" data-c="none">Sin marca</button><button type="button" data-c="drop" aria-pressed="true">Capitular caída</button><button type="button" data-c="hang">Colgada</button><button type="button" data-c="raised">Elevada</button><button type="button" data-c="small">Versalitas</button><button type="button" data-c="drop small">Capitular + versalitas</button></div></div>
+      <div class="readout" id="caRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>09 / 11 · Entradas</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>La capitular caída tiene que alinear su base con una línea de texto y su cima con la altura de las mayúsculas de la primera línea. Si sobresale o queda corta, se nota de inmediato.</p></div><div class="dont"><h4>Error común</h4><p>Poner capitular en cada párrafo o en cada intertítulo. Pierde su función de inicio y se vuelve ruido.</p></div></div>
+</section>
+
+<!-- 10 -->
+<section class="plate" id="sangrado" data-name="Sangrado y corte">
+  <div class="plate-head"><div class="plate-no mono">Lámina 10</div><h2>Sangrado, corte y margen de seguridad</h2>
+  <p class="lede">La guillotina nunca corta exacto: se desvía uno o dos milímetros. Por eso lo que llega al borde se extiende <strong>3 mm de demasía</strong> más allá del corte, y lo importante se queda adentro del margen de seguridad. Mové el desvío de la cuchilla y mirá qué pasa.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="svgw"><svg id="sgSvg" viewBox="0 0 320 320" style="max-width:360px" aria-label="Página con sangrado, corte y margen de seguridad"></svg></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Archivo enviado</span><div class="seg" id="sgSeg"><button type="button" data-m="ok" aria-pressed="true">Con demasía</button><button type="button" data-m="no">Sin demasía</button><button type="button" data-m="unsafe">Texto fuera de seguridad</button></div></div>
+      <div class="ctl"><label for="sgC">Desvío de la cuchilla <output id="sgCO">0 mm</output></label><input id="sgC" type="range" min="-25" max="25" value="0"></div>
+      <div class="ctl"><span class="lbl">Vista</span><div class="seg"><button type="button" id="sgView" aria-pressed="false">Pieza cortada</button></div></div>
+      <div class="readout" id="sgRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>10 / 11 · Sangrado</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Configurá el documento con 3 mm de sangrado desde el principio y exportá el PDF con marcas de corte y demasía. Margen de seguridad de 5 mm como mínimo; en libros encuadernados a lomo, más del lado interior.</p></div><div class="dont"><h4>Error común</h4><p>Un recuadro de borde fino pegado al corte. Con el mínimo desvío queda más grueso de un lado que del otro y se nota en toda la tirada.</p></div></div>
+</section>
+
+<!-- 11 -->
+<section class="plate" id="portada" data-name="Portada">
+  <div class="plate-head"><div class="plate-no mono">Lámina 11</div><h2>La portada</h2>
+  <p class="lede">La portada se diseña para el peor caso: <strong>en el kiosco se ve solo el tercio superior</strong>, y en una tienda online se ve del tamaño de una estampilla. La cabecera, la imagen y un titular tienen que funcionar en esas dos situaciones.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="covers" id="pcBox"><span class="shelf" id="pcShelf"></span></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Contexto</span><div class="seg" id="pcSeg"><button type="button" data-m="full" aria-pressed="true">Portada</button><button type="button" data-m="kiosk">En el kiosco</button><button type="button" data-m="thumb">Miniatura online</button></div></div>
+      <div class="ctl"><span class="lbl">Cabecera</span><div class="seg" id="pcMast"><button type="button" data-p="top" aria-pressed="true">Arriba</button><button type="button" data-p="bottom">Abajo</button></div></div>
+      <div class="readout" id="pcRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>11 / 11 · Portada</span></div>
+  <div class="notes"><div class="do"><h4>En la práctica</h4><p>Cabecera arriba y siempre en el mismo lugar: es la marca. Una sola imagen fuerte y un titular principal; el resto de los títulos de tapa, más chicos y agrupados.</p></div><div class="dont"><h4>Error común</h4><p>Tapar la cabecera con la foto para que "se vea moderno". Funciona en revistas tan conocidas que se reconocen solo por la tipografía; en una publicación nueva es perder la marca.</p></div></div>
+</section>
+
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+const RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $=(s,c=document)=>c.querySelector(s);
+const $$=(s,c=document)=>[...c.querySelectorAll(s)];
+const lerp=(a,b,t)=>a+(b-a)*t;
+const NS='http://www.w3.org/2000/svg';
+const el=(tag,attrs={},parent)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;};
+const fmt=(n,d=2)=>n.toFixed(d).replace('.',',');
+const pill=(cls,t)=>`<span class="pill ${cls}">${t}</span>`;
+function seg(container,cb){$$('button',container).forEach(b=>b.addEventListener('click',()=>{$$('button',container).forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');cb(b);}));}
+function tween(node,to,dur=650){
+  if(node._tw)cancelAnimationFrame(node._tw);
+  const from={};for(const k in to)from[k]=parseFloat(node.getAttribute(k))||0;
+  if(RM||!dur||!node.hasAttribute('data-init')){for(const k in to)node.setAttribute(k,to[k]);node.setAttribute('data-init','1');return;}
+  const t0=performance.now();
+  const step=now=>{const k=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-k,3);for(const a in to)node.setAttribute(a,lerp(from[a],to[a],e));if(k<1)node._tw=requestAnimationFrame(step);};
+  node._tw=requestAnimationFrame(step);
+}
+function drawLine(svg,x1,y1,x2,y2,cls,delay){const p=el('path',{d:`M${x1} ${y1}L${x2} ${y2}`,class:cls,pathLength:1,'vector-effect':'non-scaling-stroke'},svg);if(!RM){p.style.strokeDasharray=1;p.style.strokeDashoffset=1;p.animate([{strokeDashoffset:1},{strokeDashoffset:0}],{duration:700,delay,fill:'forwards',easing:'cubic-bezier(.4,0,.2,1)'});}return p;}
+function textLines(svg,x,y,w,h,step=7,cls='tl'){const g=el('g',{},svg);for(let yy=y;yy+3<=y+h;yy+=step){const last=yy+step+3>y+h;el('rect',{x,y:yy,width:last?w*.55:w,height:3,class:cls},g);}return g;}
+
+/* Índice */
+const list=$('#indexList');
+$$('.plate').forEach((p,i)=>{const li=document.createElement('li');li.innerHTML=`<a href="#${p.id}"><span>${String(i+1).padStart(2,'0')}</span>${p.dataset.name}</a>`;list.appendChild(li);});
+const links=$$('a',list);
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));const on=links.find(a=>a.classList.contains('on'));if(on&&window.innerWidth<=900)list.scrollTo({left:on.offsetLeft-list.clientWidth/2+on.offsetWidth/2,behavior:RM?'auto':'smooth'});}});},{rootMargin:'-40% 0px -55% 0px'});
+$$('.plate').forEach(p=>io.observe(p));
+
+/* Hero */
+(function(){
+  const stage=$('#heroStage');
+  const items=[
+    {x:6,y:8,w:88,h:52,c:'cyan'},
+    {x:6,y:66,w:40,h:7,c:'ink'},{x:6,y:76,w:28,h:2.5,c:'ink2'},
+    {x:54,y:66,w:18,h:2,c:'ink2'},{x:54,y:70,w:18,h:2,c:'ink2'},{x:54,y:74,w:18,h:2,c:'ink2'},{x:54,y:78,w:12,h:2,c:'ink2'},
+    {x:76,y:66,w:18,h:2,c:'ink2'},{x:76,y:70,w:18,h:2,c:'ink2'},{x:76,y:74,w:18,h:2,c:'ink2'},
+    {x:6,y:84,w:6,h:8,c:'mag'},{x:88,y:90,w:6,h:2,c:'ink2'}
+  ];
+  const els=items.map(it=>{const d=document.createElement('div');d.className='h-el c-'+it.c;Object.assign(d.style,{left:it.x+'%',top:it.y+'%',width:it.w+'%',height:it.h+'%'});stage.appendChild(d);return d;});
+  let ordered=true;
+  const scatter=()=>els.forEach(d=>{d.style.transform=`translate(${(Math.random()-.5)*50}%,${(Math.random()-.5)*60}%) rotate(${(Math.random()-.5)*50}deg) scale(${.5+Math.random()*.7})`;});
+  const apply=()=>{ordered?els.forEach(d=>d.style.transform='none'):scatter();stage.classList.toggle('ordered',ordered);$('#heroState').textContent=ordered?'Con principios: pliego, retícula, jerarquía':'Sin principios: cada elemento por su cuenta';$('#heroBtn').textContent=ordered?'Desordenar':'Ordenar';};
+  $('#heroBtn').addEventListener('click',()=>{ordered=!ordered;apply();});
+  if(!RM){els.forEach(d=>d.style.transition='none');ordered=false;apply();void stage.offsetWidth;els.forEach(d=>d.style.transition='');setTimeout(()=>{ordered=true;apply();},350);}else apply();
+})();
+
+/* 01 Canon */
+(function(){
+  const svg=$('#vgSvg');let r=1.5;
+  const fmts={'1.5':['2:3',160,240],'1.41421356':['ISO A5',148,210],'1.33333':['3:4',180,240],'1.61803':['φ',150,243]};
+  function render(){
+    svg.innerHTML='';const w=200,h=w*r,P=12;svg.setAttribute('viewBox',`${-P} ${-P} ${2*w+2*P} ${h+2*P}`);
+    el('rect',{x:0,y:0,width:w,height:h,class:'pg'},svg);el('rect',{x:w,y:0,width:w,height:h,class:'pg'},svg);
+    const L=[[0,0,2*w,h],[2*w,0,0,h],[w,0,0,h],[w,0,2*w,h],[2*w/9,0,2*w/9,h/9],[2*w/9,h/9-0.01,w-w/9,h/9],[2*w-2*w/9,0,2*w-2*w/9,h/9]];
+    L.forEach((l,i)=>drawLine(svg,...l,'cons',i*180));
+    const bx=[[2*w/9,h/9],[w+w/9,h/9]];
+    bx.forEach(([x,y],i)=>{const b=el('rect',{x,y,width:2*w/3,height:2*h/3,class:'blk'},svg);if(!RM){b.style.opacity=0;b.animate([{opacity:0},{opacity:1}],{duration:600,delay:1350+i*150,fill:'forwards'});}
+      const tg=textLines(svg,x+6,y+8,2*w/3-12,2*h/3-14,8);if(!RM){tg.style.opacity=0;tg.animate([{opacity:0},{opacity:1}],{duration:600,delay:1700+i*150,fill:'forwards'});}});
+    [[w/9+w,h/9,'B'],[2*w/9,h/9,'A']].forEach(([x,y,t])=>{const c=el('circle',{cx:x,cy:y,r:3,class:'f-mag'},svg);});
+    const f=fmts[String(r)];const [name,pw,ph]=f;
+    const mm=v=>Math.round(v);
+    $('#vgRead').innerHTML=`Formato: <b>${name} · ${pw} × ${ph} mm</b><br>Interior: <b>${mm(pw/9)} mm</b> · Superior: <b>${mm(ph/9)} mm</b><br>Exterior: <b>${mm(2*pw/9)} mm</b> · Inferior: <b>${mm(2*ph/9)} mm</b><br>Caja: <b>${mm(2*pw/3)} × ${mm(2*ph/3)} mm</b> (misma proporción que la hoja)`;
+  }
+  seg($('#vgSeg'),b=>{r=+b.dataset.r;render();});$('#vgPlay').addEventListener('click',render);
+  let done=false;new IntersectionObserver(es=>{if(es[0].isIntersecting&&!done){done=true;render();}},{threshold:.35}).observe(svg);render();
+})();
+
+/* 02 Márgenes */
+(function(){
+  const svg=$('#mgSvg'),W=200,H=290,X0=20,Y0=15;
+  el('rect',{x:X0,y:Y0,width:W,height:H,class:'pg'},svg);el('rect',{x:X0+W,y:Y0,width:W,height:H,class:'pg'},svg);
+  const L=el('rect',{class:'blk'},svg),R=el('rect',{class:'blk'},svg);
+  const linesL=el('g',{},svg),linesR=el('g',{},svg);
+  // m: [interior, superior, exterior, inferior] as fraction of page width (i,e) and height (t,b)
+  const sys={
+    vg:['Van de Graaf',[1/9,1/9,2/9,2/9],'Clásico. Caja con la misma proporción que la página. Lectura continua.',1],
+    ts:['Tschichold 2:3:4:6',[2/20,3/30,4/20,6/30],'Proporción creciente de interior a pie. Libros de ensayo y poesía.',1],
+    sim:['Simétrico',[.12,.12*W/H,.12,.12*W/H],'Márgenes iguales. Funciona en piezas sueltas, no en pliegos: el centro se ve vacío.',1],
+    bol:['Bolsillo',[.09,.055,.065,.07],'Máximo aprovechamiento del papel. Barato de imprimir, más denso de leer.',1],
+    rev:['Revista',[.08,.06,.065,.09],'Márgenes chicos, caja grande dividida en columnas, imágenes que pueden salir a sangre.',3]
+  };
+  function render(k){
+    const [name,[i,t,e,b],desc,cols]=sys[k];
+    const bw=W*(1-i-e),bh=H*(1-t-b);
+    tween(L,{x:X0+W*e,y:Y0+H*t,width:bw,height:bh});tween(R,{x:X0+W+W*i,y:Y0+H*t,width:bw,height:bh});
+    [[linesL,X0+W*e],[linesR,X0+W+W*i]].forEach(([g,x])=>{g.innerHTML='';const cw=(bw-(cols-1)*8)/cols;for(let c=0;c<cols;c++)textLines(g,x+5+c*(cw+8),Y0+H*t+6,cw-10,bh-10,7);if(!RM){g.style.opacity=0;g.animate([{opacity:0},{opacity:1}],{duration:500,delay:400,fill:'forwards'});}});
+    const area=bw*bh/(W*H)*100;
+    $('#mgRead').innerHTML=`<b>${name}</b><br>${desc}<br><br>Superficie de caja: <b>${Math.round(area)} %</b> de la página<br>Interior · Sup. · Ext. · Inf.: <b>${[i*W,t*H,e*W,b*H].map(v=>Math.round(v/W*148)).join(' · ')} mm</b> en A5`;
+  }
+  seg($('#mgSeg'),b=>render(b.dataset.m));render('vg');
+})();
+
+/* 03 Doble página */
+(function(){
+  const svg=$('#dpSvg'),W=200,H=290,X0=20,Y0=15;let mode='pli',lomo=true;
+  el('rect',{x:X0,y:Y0,width:W,height:H,class:'pg'},svg);el('rect',{x:X0+W,y:Y0,width:W,height:H,class:'pg'},svg);
+  const img=el('rect',{class:'f-cyan'},svg),img2=el('rect',{class:'f-cyan'},svg);
+  const face=el('circle',{r:16,class:'f-yel'},svg);
+  const tit=el('rect',{class:'f-ink'},svg),sub=el('rect',{class:'f-ink2'},svg);
+  const txt=[0,1,2,3].map(()=>el('rect',{class:'tl'},svg));
+  const gutter=el('rect',{x:X0+W-14,y:Y0,width:28,height:H,class:'gut'},svg);
+  const gl=el('text',{x:X0+W,y:Y0+H+12,'text-anchor':'middle'},svg);gl.textContent='lomo';
+  function render(){
+    if(mode==='sep'){
+      tween(img,{x:X0+30,y:Y0+40,width:140,height:110});tween(img2,{x:X0+W+50,y:Y0+170,width:110,height:90});
+      tween(face,{cx:X0+100,cy:Y0+95});
+      tween(tit,{x:X0+30,y:Y0+170,width:120,height:20});tween(sub,{x:X0+30,y:Y0+196,width:90,height:6});
+      [[X0+30,Y0+215,140,50],[X0+W+30,Y0+30,140,50],[X0+W+30,Y0+90,140,60],[X0+W+30,Y0+270,60,4]].forEach((r,i)=>tween(txt[i],{x:r[0],y:r[1],width:r[2],height:r[3]}));
+    } else {
+      tween(img,{x:X0,y:Y0,width:W+130,height:170});tween(img2,{x:X0+W+130,y:Y0,width:0,height:170});
+      tween(face,{cx:X0+80,cy:Y0+80});
+      tween(tit,{x:X0+24,y:Y0+190,width:150,height:22});tween(sub,{x:X0+24,y:Y0+220,width:110,height:6});
+      [[X0+24,Y0+236,150,40],[X0+W+24,Y0+190,72,86],[X0+W+104,Y0+190,72,86],[X0+W+24,Y0+282,0,0]].forEach((r,i)=>tween(txt[i],{x:r[0],y:r[1],width:r[2],height:r[3]}));
+    }
+    gutter.style.opacity=lomo?1:0;gl.style.opacity=lomo?1:0;
+    $('#dpRead').innerHTML=mode==='sep'?'<b>Página por página</b><br>Cada página tiene su propio centro. Las dos imágenes compiten, los bloques no se alinean entre sí y el ojo no sabe dónde empezar.<br><br>'+pill('bad','Dos composiciones'):'<b>Como pliego</b><br>Una imagen cruza el lomo y une las dos páginas; la cara queda lejos del pliegue. Título y columnas arrancan a la misma altura.<br><br>'+pill('ok','Una composición');
+  }
+  seg($('#dpSeg'),b=>{mode=b.dataset.m;render();});
+  $('#dpLomo').addEventListener('click',e=>{lomo=!lomo;e.target.setAttribute('aria-pressed',lomo);e.target.textContent=lomo?'Visible':'Oculta';render();});render();
+})();
+
+/* 04 Retícula */
+(function(){
+  const svg=$('#rmSvg'),PW=300,PH=410,m={t:30,b:40,i:24,o:24};let seed=1;
+  function rnd(){seed=(seed*9301+49297)%233280;return seed/233280;}
+  function render(newComp){
+    if(newComp)seed=Math.floor(Math.random()*1e5);let s0=seed;
+    const C=+$('#rmC').value,R=+$('#rmR').value,G=+$('#rmG').value;
+    $('#rmCO').textContent=C;$('#rmRO').textContent=R;$('#rmGO').textContent=G;
+    svg.innerHTML='';el('rect',{x:0,y:0,width:PW,height:PH,class:'pg'},svg);
+    const bw=PW-m.i-m.o,bh=PH-m.t-m.b,cw=(bw-G*(C-1))/C,rh=(bh-G*(R-1))/R;
+    const X=c=>m.i+c*(cw+G),Y=r=>m.t+r*(rh+G),SW=n=>n*cw+(n-1)*G,SH=n=>n*rh+(n-1)*G;
+    for(let r=0;r<R;r++)for(let c=0;c<C;c++)el('rect',{x:X(c),y:Y(r),width:cw,height:rh,class:'mod'},svg);
+    // composition
+    const tc=Math.max(1,Math.round(C*(.5+rnd()*.5))),ir=Math.max(1,Math.round(R*(.3+rnd()*.25)));
+    const imgC=Math.max(1,Math.min(C,Math.round(C*(.5+rnd()*.5)))),imgStart=rnd()>.5?0:C-imgC;
+    const parts=[];
+    parts.push(['f-cyan',X(imgStart),Y(0),SW(imgC),SH(ir)]);
+    parts.push(['f-ink',X(0),Y(ir)+4,SW(tc),Math.min(26,rh*.6)]);
+    const textRow=ir+1;
+    if(textRow<R){const cols=C>=4?2:1;const per=Math.floor(C/cols);for(let k=0;k<cols;k++){const g=el('g',{},svg);textLines(g,X(k*per),Y(textRow)+2,SW(per),SH(R-textRow)-2,6);}}
+    if(C>=3&&R-textRow>=2){const qc=C-1;parts.push(['f-mag',X(qc),Y(R-2),SW(1),SH(1)]);}
+    parts.forEach(([cls,x,y,w,h],i)=>{const r=el('rect',{x,y,width:w,height:h,class:cls},svg);if(!RM)r.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:450,delay:i*90,fill:'backwards'});});
+    seed=s0;
+    $('#rmRead').innerHTML=`Módulos: <b>${C*R}</b> (${C} × ${R})<br>Módulo: <b>${Math.round(cw)} × ${Math.round(rh)}</b><br>Combinaciones de áreas posibles: <b>${(C*(C+1)/2)*(R*(R+1)/2)}</b><br>${C*R<12?pill('mid','Rígida'):C*R>48?pill('mid','Muy fragmentada'):pill('ok','Versátil')}`;
+  }
+  ['#rmC','#rmR','#rmG'].forEach(s=>$(s).addEventListener('input',()=>render(false)));$('#rmGo').addEventListener('click',()=>render(true));
+  seed=4242;render(false);
+})();
+
+/* 05 Anatomía */
+(function(){
+  const art=$('#anArt'),box=$('#anParts');
+  const parts=[['corn','Cornisa','Línea superior con el nombre de la publicación o la sección. Orienta al que hojea.'],['vol','Volanta','Antetítulo breve que ubica el tema. Va arriba del título, más chica y con otro estilo.'],['tit','Título','La puerta principal. Corto, concreto, del tamaño mayor de la página.'],['cop','Copete','Bajada o entradilla: resume la nota en dos o tres líneas. Es lo segundo que se lee y muchas veces lo último.'],['fir','Firma','Autoría del texto y de las fotos. Pequeña pero siempre en el mismo lugar.'],['cap','Capitular','Marca el inicio del cuerpo de texto.'],['int','Intertítulo','Divide el texto largo en tramos y permite retomar la lectura.'],['dest','Destacado','Cita extraída que funciona como gancho visual en medio del texto.'],['img','Imagen','Fotografía o ilustración; ocupa módulos de la retícula.'],['epi','Epígrafe','Pie de foto. Uno de los textos más leídos: la gente mira la imagen y lee lo que está abajo.'],['fol','Folio','Número de página, a veces con el nombre de la publicación.']];
+  box.innerHTML='<button type="button" data-k="all" aria-pressed="true"><span>·</span>Ver todas</button>'+parts.map((p,i)=>`<button type="button" data-k="${p[0]}"><span>${i+1}</span>${p[1]}</button>`).join('');
+  seg(box,b=>{const k=b.dataset.k;art.classList.toggle('all',k==='all');$$('[data-p]',art).forEach(e=>e.classList.toggle('hl',e.dataset.p===k));
+    if(k==='all'){$('#anRead').innerHTML='Once piezas, once puertas de entrada. Tocá una para ver su función.';}else{const p=parts.find(x=>x[0]===k);$('#anRead').innerHTML=`<b>${p[1]}</b><br>${p[2]}`;}});
+  $('#anRead').innerHTML='Once piezas, once puertas de entrada. Tocá una para ver su función.';
+})();
+
+/* 06 Composición */
+(function(){
+  const box=$('#cpBox'),p=$('#cpP'),last=$('#cpLast');let al='justify';
+  function lines(){const rng=document.createRange();rng.selectNodeContents(p);const rects=[...rng.getClientRects()];const by={};rects.forEach(r=>{const k=Math.round(r.top);if(!by[k])by[k]={l:r.left,r:r.right,t:r.top,b:r.bottom};else{by[k].l=Math.min(by[k].l,r.left);by[k].r=Math.max(by[k].r,r.right);}});return Object.values(by).sort((a,b)=>a.t-b.t);}
+  function render(){
+    const w=+$('#cpW').value;$('#cpWO').textContent=w+' car.';box.style.width=`min(100%, ${w}ch)`;
+    p.style.textAlign=al;p.style.hyphens=$('#cpHy').checked?'auto':'manual';p.style.webkitHyphens=p.style.hyphens;p.style.textWrap=$('#cpPr').checked?'pretty':'wrap';
+    requestAnimationFrame(()=>{const ls=lines();if(!ls.length)return;const b=box.getBoundingClientRect(),L=ls[ls.length-1];const ratio=(L.r-L.l)/b.width;
+      last.style.left=(L.l-b.left)+'px';last.style.width=(L.r-L.l)+'px';last.style.top=(L.b-b.top+1)+'px';
+      const words=p.textContent.trim().split(/\s+/);
+      const risk=al==='justify'&&!$('#cpHy').checked&&w<40;
+      $('#cpRead').innerHTML=`Líneas: <b>${ls.length}</b><br>Última línea: <b>${Math.round(ratio*100)} %</b> del ancho ${ratio<.2?pill('bad','Corta'):ratio<.35?pill('mid','Justa'):pill('ok','Bien')}<br>Espacios entre palabras: ${al==='left'?pill('ok','Parejos'):risk?pill('bad','Ríos probables'):$('#cpHy').checked?pill('ok','Controlados'):pill('mid','Variables')}`;});
+  }
+  $('#cpW').addEventListener('input',render);['#cpHy','#cpPr'].forEach(s=>$(s).addEventListener('change',render));
+  seg($('#cpSeg'),b=>{al=b.dataset.a;render();});new ResizeObserver(render).observe(box.parentElement);render();
+})();
+
+/* 07 Línea base */
+(function(){
+  const box=$('#blBox');let mode='reg',grid=true;
+  function render(){box.classList.toggle('reg',mode==='reg');box.classList.toggle('off',mode==='off');box.classList.toggle('nogrid',!grid);
+    $('#blRead').innerHTML=mode==='reg'?'Interlineado: <b>22 px</b><br>Intertítulo: <b>22 + 22 px</b> (dos líneas)<br>'+pill('ok','Las columnas coinciden'):'Interlineado: <b>22 px</b><br>Intertítulo: <b>13 + 22 + 7 px</b><br>'+pill('bad','Columna corrida');}
+  seg($('#blSeg'),b=>{mode=b.dataset.m;render();});
+  $('#blGrid').addEventListener('click',e=>{grid=!grid;e.target.setAttribute('aria-pressed',grid);e.target.textContent=grid?'Visibles':'Ocultas';render();});render();
+})();
+
+/* 08 Paginación */
+(function(){
+  const flat=$('#flFlat'),big=$('#flBig');let mode='ritmo',cur=0,timer=0;
+  const plans={
+    mono:[['tapa','sum'],['txt','txti'],['txt','txti'],['txt','txti'],['txt','txti'],['txt','txti'],['txt','txti'],['pub','ctapa']],
+    ritmo:[['tapa','sum'],['pub','ap'],['bleedL','txt'],['txt','quote'],['gal','gal'],['blank','apB'],['txti','txt'],['pub','ctapa']]
+  };
+  const names={tapa:'Tapa',sum:'Sumario',txt:'Texto',txti:'Texto e imagen',pub:'Publicidad',ctapa:'Contratapa',ap:'Apertura',bleedL:'Foto a sangre',quote:'Destacado',gal:'Galería',blank:'Blanco',apB:'Apertura'};
+  function page(g,x,type,W,H){
+    const r=(a,b,c,d,cls)=>el('rect',{x:x+a,y:b,width:c,height:d,class:cls},g);
+    const m=W*.1;
+    r(0,0,W,H,'pg');
+    if(type==='tapa'){r(0,0,W,H,'f-cyan');r(m,m,W-2*m,H*.1,'f-ink');}
+    if(type==='ctapa'){r(m,H*.6,W-2*m,H*.3,'f-dot');}
+    if(type==='sum'){r(m,m,W*.4,H*.05,'f-ink');textLines(g,x+m,m+H*.1,W-2*m,H*.7,H*.04);}
+    if(type==='txt'){textLines(g,x+m,m,(W-2*m)/2-3,H-2*m,H*.03);textLines(g,x+W/2+3,m,(W-2*m)/2-3,H-2*m,H*.03);}
+    if(type==='txti'){r(m,m,W-2*m,H*.35,'f-cyan');textLines(g,x+m,m+H*.4,W-2*m,H*.5-m,H*.03);}
+    if(type==='pub'){r(0,0,W,H,'f-yel');r(W*.25,H*.4,W*.5,H*.1,'f-ink');}
+    if(type==='ap'){r(m,H*.35,W*.7,H*.12,'f-ink');r(m,H*.52,W*.5,H*.03,'f-ink2');r(m,H*.85,W*.15,H*.05,'f-mag');}
+    if(type==='apB'){r(m,H*.7,W*.6,H*.1,'f-mag');}
+    if(type==='bleedL'){r(0,0,W,H,'f-cyan');}
+    if(type==='quote'){r(m,H*.3,W-2*m,H*.03,'f-ink');r(m,H*.36,W-2*m,H*.2,'f-mag');textLines(g,x+m,H*.62,W-2*m,H*.3,H*.03);}
+    if(type==='gal'){const s=(W-2*m-4)/2;[[0,0],[1,0],[0,1],[1,1]].forEach(([a,b])=>r(m+a*(s+4),m+b*(s*1.3+4),s,s*1.3,'f-cyan'));}
+    if(type==='blank'){r(W*.4,H*.48,W*.2,H*.02,'f-dot');}
+  }
+  function spread(target,pair,W,H){const s=el('svg',{viewBox:`-1 -1 ${2*W+2} ${H+2}`},target);const g=el('g',{},s);page(g,0,pair[0],W,H);page(g,W,pair[1],W,H);el('line',{x1:W,y1:0,x2:W,y2:H,class:'s-rule'},s);return s;}
+  function render(){
+    const plan=plans[mode];flat.innerHTML='';
+    plan.forEach((pair,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-current',String(i===cur));b.setAttribute('aria-label','Pliego '+(i+1));spread(b,pair,40,56);const sp=document.createElement('span');sp.textContent=i===0?'1':`${i*2}–${i*2+1}`;b.appendChild(sp);b.addEventListener('click',()=>{stop();cur=i;show();});flat.appendChild(b);});
+    show();
+    const kinds=new Set(plan.flat()).size;
+    $('#flRead').innerHTML=`Tipos de página distintos: <b>${kinds}</b><br>${mode==='mono'?pill('bad','Todo igual'):pill('ok','Respira y sorprende')}<br><br>${mode==='mono'?'Seis pliegos seguidos con la misma plantilla de texto.':'Apertura, foto a sangre, destacado, galería, un pliego en blanco y vuelta al texto.'}`;
+  }
+  function show(){big.innerHTML='';const s=spread(big,plans[mode][cur],200,280);if(!RM)s.animate([{opacity:0,transform:'translateX(12px)'},{opacity:1,transform:'none'}],{duration:350,easing:'ease-out'});
+    $$('button',flat).forEach((b,i)=>b.setAttribute('aria-current',String(i===cur)));
+    const p=plans[mode][cur];const lab=document.createElement('div');lab.className='mono';lab.style.cssText='display:flex;justify-content:space-between;color:var(--ink-2);margin-top:6px';lab.innerHTML=`<span>${names[p[0]]}</span><span>${names[p[1]]}</span>`;big.appendChild(lab);}
+  function stop(){clearInterval(timer);timer=0;$('#flPlay').textContent='Hojear';}
+  $('#flPlay').addEventListener('click',()=>{if(timer){stop();return;}$('#flPlay').textContent='Pausar';timer=setInterval(()=>{cur=(cur+1)%8;show();},RM?1800:1100);});
+  seg($('#flSeg'),b=>{mode=b.dataset.m;cur=0;render();});render();
+})();
+
+/* 09 Capitular */
+(function(){
+  const p=$('#caP');
+  const info={none:'El texto arranca sin señal. Funciona en piezas breves; en una nota larga el comienzo se pierde.','drop':'Capitular caída de tres líneas: la más clásica. Su base apoya en la tercera línea.','hang':'Colgada en el margen: la letra sale de la caja y el bloque de texto queda limpio.','raised':'Elevada: crece hacia arriba sobre la primera línea. Más simple de componer, más gráfica.','small':'Primera línea en versalitas: transición sobria del título al texto. Muy usada en libros.','drop small':'Combinación de libro clásico: capitular más versalitas que completan la primera palabra.'};
+  seg($('#caSeg'),b=>{p.className='cap-p '+(b.dataset.c==='none'?'':b.dataset.c);$('#caRead').innerHTML=info[b.dataset.c];});
+  $('#caRead').innerHTML=info.drop;
+})();
+
+/* 10 Sangrado */
+(function(){
+  const svg=$('#sgSvg');let mode='ok',cut=false;
+  // escala: 1 mm = 2 unidades. Página 120x140 mm → 240x280, centrada; sangrado 3 mm = 6
+  const S=2,PW=120*S,PH=140*S,X=(320-PW)/2,Y=(320-PH)/2,B=3*S,SAFE=5*S;
+  function render(){
+    const off=+$('#sgC').value/10;$('#sgCO').textContent=fmt(off,1)+' mm';
+    svg.innerHTML='';const d=off*S;
+    const defs=el('defs',{},svg);const cp=el('clipPath',{id:'cutClip'},defs);el('rect',{x:X+d,y:Y+d,width:PW,height:PH},cp);
+    el('rect',{x:0,y:0,width:320,height:320,class:'pgp'},svg);
+    const g=el('g',cut?{'clip-path':'url(#cutClip)'}:{},svg);
+    el('rect',{x:X-B-4,y:Y-B-4,width:PW+2*B+8,height:PH+2*B+8,class:'f-sheet'},g);
+    const imgExt=mode==='no'?0:B;
+    el('rect',{x:X-imgExt,y:Y-imgExt,width:PW+2*imgExt,height:PH*.62+imgExt,class:'f-cyan'},g);
+    const ty=mode==='unsafe'?Y+PH-12:Y+PH-38,tx=mode==='unsafe'?X+3:X+SAFE+6;
+    el('rect',{x:tx,y:Y+PH*.66,width:PW*.7,height:16,class:'f-ink'},g);
+    const t=el('text',{x:tx,y:ty,style:'font-size:14px;font-family:var(--f-display);font-weight:800;fill:var(--mag)'},g);t.textContent='www.taller.com.ar';
+    if(!cut){
+      el('rect',{x:X-B,y:Y-B,width:PW+2*B,height:PH+2*B,fill:'none',stroke:'#D03030','stroke-dasharray':'4 3'},svg);
+      el('rect',{x:X,y:Y,width:PW,height:PH,fill:'none',class:'s-ink','stroke-width':1.2},svg);
+      el('rect',{x:X+SAFE,y:Y+SAFE,width:PW-2*SAFE,height:PH-2*SAFE,fill:'none',class:'s-cyan','stroke-dasharray':'2 3'},svg);
+      el('rect',{x:X+d,y:Y+d,width:PW,height:PH,fill:'none',class:'s-mag','stroke-width':2},svg);
+      // marcas de corte
+      [[X,Y],[X+PW,Y],[X,Y+PH],[X+PW,Y+PH]].forEach(([cx,cy])=>{const sx=cx===X?-1:1,sy=cy===Y?-1:1;el('line',{x1:cx,y1:cy+sy*(B+4),x2:cx,y2:cy+sy*(B+16),class:'s-ink'},svg);el('line',{x1:cx+sx*(B+4),y1:cy,x2:cx+sx*(B+16),y2:cy,class:'s-ink'},svg);});
+      const lg=[['#D03030','Sangrado 3 mm'],['var(--ink)','Corte'],['var(--cyan)','Seguridad 5 mm'],['var(--mag)','Corte real']];
+      lg.forEach(([c,tx2],i)=>{const tt=el('text',{x:8+i*80,y:314,style:`fill:${c};font-size:9px`},svg);tt.textContent=tx2;});
+    }
+    const white=mode==='no'&&Math.abs(off)>0;const textCut=mode==='unsafe'&&Math.abs(off)>=1.5;
+    $('#sgRead').innerHTML=`${mode==='ok'?'La foto se extiende 3 mm más allá del corte.':mode==='no'?'La foto termina justo en el corte.':'El texto está a 1,5 mm del borde.'}<br><br>${white?pill('bad','Filete blanco en el borde'):textCut?pill('bad','Texto cortado'):mode==='unsafe'?pill('mid','En riesgo'):pill('ok','Sale bien')}`;
+  }
+  $('#sgC').addEventListener('input',render);seg($('#sgSeg'),b=>{mode=b.dataset.m;render();});
+  $('#sgView').addEventListener('click',e=>{cut=!cut;e.target.setAttribute('aria-pressed',cut);e.target.textContent=cut?'Ver pliego':'Pieza cortada';render();});
+  render();
+})();
+
+/* 11 Portada */
+(function(){
+  const box=$('#pcBox'),shelf=$('#pcShelf');let ctx='full',mast='top';
+  const palettes=[['var(--cyan)','var(--sheet)'],['var(--yel)','var(--ink)'],['var(--mag)','var(--sheet)']];
+  const titles=['TALLER','Andamio','Pliego'];
+  const covers=[0,1,2].map(i=>{const c=document.createElement('div');c.className='cv';c.innerHTML=`<div class="cv-img"></div><div class="cv-mast"></div><div class="cv-lines"><b></b><i style="width:80%"></i><i style="width:60%"></i></div><div class="cv-bar"></div>`;box.appendChild(c);return c;});
+  function render(){
+    covers.forEach((c,i)=>{
+      const img=c.querySelector('.cv-img'),m=c.querySelector('.cv-mast'),b=c.querySelector('.cv-lines b');
+      const main=i===1;
+      img.style.background=main?'linear-gradient(160deg,var(--cyan) 0 55%,color-mix(in oklab,var(--cyan) 60%,var(--ink)) 55%)':palettes[i][0];
+      m.textContent=main?'Taller':titles[i];m.style.color=main?'var(--ink)':palettes[i][1];
+      b.textContent=main?'El último tornero':'Especial imprenta';
+      const mp=main?mast:'top';m.style.top=mp==='top'?'6%':'auto';m.style.bottom=mp==='bottom'?'24%':'auto';
+      c.style.zIndex=main?3:1;
+      let tf='';
+      if(ctx==='full'){tf=main?'none':`translate(${i===0?-60:60}px,0) scale(.9)`;c.style.opacity=main?1:0;}
+      if(ctx==='kiosk'){tf=`translate(${(i-1)*150}px,${120}px)`;c.style.opacity=1;}
+      if(ctx==='thumb'){tf=`translate(${(i-1)*70}px,0) scale(.32)`;c.style.opacity=1;}
+      c.style.transform=tf;
+    });
+    const cvH=covers[0].offsetHeight||293;
+    shelf.style.top=(box.clientHeight/2-cvH/2+120+cvH/3)+'px';
+    shelf.style.opacity=ctx==='kiosk'?1:0;
+    box.style.overflow='hidden';
+    const ok=ctx!=='kiosk'||mast==='top';
+    const txt={full:'La portada completa, como la ves en el archivo de diseño.',kiosk:'En el exhibidor, cada revista tapa a la de adelante: queda a la vista solo la franja superior.',thumb:'En una tienda online o una red social, la portada mide menos de 100 px de ancho.'}[ctx];
+    $('#pcRead').innerHTML=`${txt}<br><br>${ctx==='kiosk'?(ok?pill('ok','La cabecera se ve'):pill('bad','Cabecera tapada')):ctx==='thumb'?pill('mid','Solo sobrevive la cabecera y la imagen'):pill('ok','Jerarquía clara')}`;
+  }
+  seg($('#pcSeg'),b=>{ctx=b.dataset.m;render();});seg($('#pcMast'),b=>{mast=b.dataset.p;render();});render();
+})();
+})();
+</script>
+
+<script src="laboratorio.js" defer></script>
+</body>
+</html>
