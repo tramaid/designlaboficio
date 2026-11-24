@@ -215,7 +215,8 @@ const QUIZ_MAP={
  2:['2-web.html#fitts','2-web.html#hick','2-web.html#feedback','2-web.html#movimiento','2-web.html#convenciones'],
  3:['3-editorial.html#canon','3-editorial.html#anatomia','3-editorial.html#sangrado','3-editorial.html#composicion','3-editorial.html#pliego'],
  4:['4-identidad.html#tipos','4-identidad.html#resguardo','4-identidad.html#construccion','4-identidad.html#voz','4-identidad.html#tipografia'],
- 5:['5-motion.html#timing','5-motion.html#curvas','5-motion.html#squash','5-motion.html#ritmo','5-motion.html#cinetica']
+ 5:['5-motion.html#timing','5-motion.html#curvas','5-motion.html#squash','5-motion.html#ritmo','5-motion.html#cinetica'],
+ 6:['6-after-effects.html#keyframes','6-after-effects.html#curvas','6-after-effects.html#estructura','6-after-effects.html#expressions','6-after-effects.html#exportar']
 };
 
 const PLATE_NAMES={};
@@ -223,9 +224,10 @@ const PLATE_NAMES={};
  ['2-web.html','affordance:Affordance,estados:Estados,fitts:Ley de Fitts,hick:Ley de Hick,divulgacion:Divulgación progresiva,responsive:Responsive,espaciado:Sistema de espaciado,fluida:Tipografía fluida,feedback:Feedback y espera,movimiento:Movimiento,accesibilidad:Accesibilidad,convenciones:Convenciones'],
  ['3-editorial.html','canon:Canon de página,margenes:Márgenes,pliego:Doble página,reticula:Retícula modular,anatomia:Anatomía de una nota,composicion:Composición del párrafo,lineabase:Línea base,paginacion:Ritmo de paginación,capitular:Entradas de texto,sangrado:Sangrado y corte,portada:Portada'],
  ['4-identidad.html','tipos:Tipos de marca,reduccion:Reducción,resguardo:Área de resguardo,versiones:Versiones de color,incorrectos:Usos incorrectos,construccion:Construcción y óptica,paleta:Sistema cromático,tipografia:Sistema tipográfico,patron:Elementos gráficos,voz:Voz y tono,aplicaciones:Aplicaciones'],
- ['5-motion.html','timing:Timing y spacing,curvas:Editor de curvas,squash:Squash y stretch,anticipacion:Anticipación,superposicion:Superposición,arcos:Arcos,escalonado:Escalonamiento,keyframes:Fotogramas clave,ritmo:Ritmo y música,cinetica:Tipografía cinética,transiciones:Transiciones']
+ ['5-motion.html','timing:Timing y spacing,curvas:Editor de curvas,squash:Squash y stretch,anticipacion:Anticipación,superposicion:Superposición,arcos:Arcos,escalonado:Escalonamiento,keyframes:Fotogramas clave,ritmo:Ritmo y música,cinetica:Tipografía cinética,transiciones:Transiciones'],
+ ['6-after-effects.html','interfaz:Interfaz,keyframes:Keyframes,curvas:Graph Editor,estructura:Anchor y parenting,trazos:Trim Paths,mattes:Track mattes,texto:Texto animado,expressions:Expressions,exportar:Exportar,atajos:Atajos,proyecto:Proyecto final']
 ].forEach(([file,list])=>list.split(',').forEach(pair=>{const [id,name]=pair.split(':');PLATE_NAMES[file+'#'+id]=name}));
-const MODULE_NAMES={'1-grafico.html':'Gráfico','2-web.html':'Interfaz','3-editorial.html':'Editorial','4-identidad.html':'Identidad','5-motion.html':'Movimiento'};
+const MODULE_NAMES={'1-grafico.html':'Gráfico','2-web.html':'Interfaz','3-editorial.html':'Editorial','4-identidad.html':'Identidad','5-motion.html':'Movimiento','6-after-effects.html':'After Effects'};
 
 const BRIEF_NAMES={carvan:'Oferta en dos segundos',sentida:'Emoción sin decorado',htg:'Un clic antes de pensar',trama:'El carácter del vacío'};
 

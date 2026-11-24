@@ -1,6 +1,6 @@
 {
   "name": "lab-oficio",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "private": true,
   "description": "Plataforma personal de aprendizaje, experimentación y herramientas para diseño gráfico y dirección de arte. Sitio estático, sin dependencias de ejecución.",
   "scripts": {

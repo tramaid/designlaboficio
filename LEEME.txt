@@ -21,8 +21,10 @@ Todos los archivos del ZIP deben quedar juntos en su carpeta.
 
 QUÉ HAY
 - 5 módulos originales (diseño gráfico, web, editorial, identidad y movimiento).
-- 58 láminas de teoría y demostraciones interactivas, conservadas.
-- 25 preguntas de repaso, con respuestas persistidas.
+- Módulo 6: After Effects para quien viene de Flash, con 11 láminas que simulan
+  las herramientas del programa y un ejercicio por lámina.
+- 69 láminas de teoría y demostraciones interactivas, conservadas.
+- 30 preguntas de repaso, con respuestas persistidas.
 - Un cuaderno por lámina: consignas de proyectos, espacio para reflexiones,
   marcar como comprendida o señalar para volver a revisar.
 - Un panel de progreso, acceso directo a la última lámina, y un archivo

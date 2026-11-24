@@ -6,7 +6,7 @@ Es un sitio estático: HTML, CSS y JavaScript sin dependencias, sin compilación
 
 ## Qué incluye (V5)
 
-- **Curso**: 5 módulos (gráfico, interfaz, editorial, identidad y movimiento), 58 láminas interactivas con un cuaderno por lámina y 25 preguntas de repaso.
+- **Curso**: 6 módulos (gráfico, interfaz, editorial, identidad, movimiento y After Effects), 69 láminas interactivas con un cuaderno por lámina y 30 preguntas de repaso.
 - **Taller de composición**: 4 encargos editables con versiones A y B, guías y exportación SVG, PNG y JSON.
 - **10 herramientas**: retículas, color, escalas tipográficas, combinaciones tipográficas, composición, jerarquía visual, sistemas visuales, encuadre fotográfico, pruebas de logotipos y archivo de referencias.
 - **Recorridos**: 6 competencias con 5 estaciones cada una (entender, experimentar, practicar, evaluar y aplicar) que conectan las láminas, el taller y las herramientas en un mismo proceso, con avance basado en evidencia y una bitácora descargable.
@@ -50,8 +50,9 @@ npm test
 
 ```
 index.html              Biblioteca: portada, módulos y repaso
-1-grafico.html …        Los 5 módulos del curso
+1-grafico.html …        Los 5 módulos de principios
 5-motion.html
+6-after-effects.html    Módulo 6: After Effects para quien viene de Flash
 laboratorio.js / .css   Cuaderno por lámina, progreso y respaldo
 taller.html             Taller de composición
 herramientas.html/.js   Herramientas 01 a 04
