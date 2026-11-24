@@ -29,8 +29,9 @@ Estas reglas valen para cualquier cambio futuro.
 
 | Página | Contenido | Script propio |
 |---|---|---|
-| `index.html` | Biblioteca: portada, módulos, banda de recorridos, repaso de 25 preguntas | inline + `laboratorio.js` |
-| `1-grafico.html` a `5-motion.html` | 5 módulos, 58 láminas interactivas | inline + `laboratorio.js` |
+| `index.html` | Biblioteca: portada, módulos, banda de recorridos, repaso de 30 preguntas | inline + `laboratorio.js` |
+| `1-grafico.html` a `5-motion.html` | 5 módulos de principios, 58 láminas interactivas | inline + `laboratorio.js` |
+| `6-after-effects.html` | Módulo 6: After Effects para quien viene de Flash, 11 láminas que simulan herramientas del programa (keyframes por propiedad, Graph Editor, parenting, Trim Paths, track mattes, Animators de texto, expressions, exportación y atajos) con un ejercicio en After Effects por lámina | inline + `laboratorio.js` |
 | `taller.html` | Taller de composición: 4 encargos, lienzo SVG 800 × 800, versiones A/B | inline |
 | `herramientas.html` | Herramientas 01 a 04 | `herramientas.js` |
 | `estudio.html` | Herramientas 05 a 10 | `estudio.js` |
@@ -66,6 +67,7 @@ Todo vive en `localStorage`. Cada clave pertenece a un único dueño, que es qui
 | `lab-oficio-estudio-v4` | `estudio.js` | `{compose, hierarchy:{points:[{x,y} en %], first, goal, notes, marks, source, handoff}, system, systems:[], crop, logo, refs:[]}` |
 | `lab-oficio-recorridos-v5` | `oficio.js` y `recorridos.js` | ver 3.6 |
 | `lab-oficio-traspaso` | `oficio.js` escribe, `estudio.js` consume y borra | `{svg, source, goal, path, version, at}`, vence a los 15 minutos |
+| `lab-oficio-ae-v1` | `6-after-effects.html` | `{proyecto:{"grupo-ítem":bool}, atajos:{atajo:aciertos}, racha:número, lottie:{recurso:bool}}`. Las notas y las láminas comprendidas del módulo 6 viven en `laboratorio-oficio-v2`, como en los otros módulos. |
 
 Excepciones de escritura cruzada, todas iniciadas por la persona: aplicar o restaurar una configuración sugerida escribe la subclave correspondiente de `lab-oficio-herramientas-v1` o `lab-oficio-estudio-v4`, y registrar una lectura borra `hierarchy.handoff` en `lab-oficio-estudio-v4`.
 
@@ -73,7 +75,7 @@ Un elemento del taller es `{type:'rect', id, x, y, w, h, fill}` o `{type:'text',
 
 ### 3.4 Respaldo
 
-**Exportar mi cuaderno** (en `index.html`) descarga un JSON con `version: 4` y las claves `learning`, `quiz`, `workshop`, `tools`, `labs` y `paths`. La importación acepta las versiones 2, 3 y 4. Una versión nueva del respaldo tiene que seguir aceptando todas las anteriores.
+**Exportar mi cuaderno** (en `index.html`) descarga un JSON con `version: 4` y las claves `learning`, `quiz`, `workshop`, `tools`, `labs`, `paths` y `ae`. La clave `ae` es opcional: los respaldos anteriores, que no la tienen, se siguen importando igual. La importación acepta las versiones 2, 3 y 4. Una versión nueva del respaldo tiene que seguir aceptando todas las anteriores.
 
 ### 3.5 Recorridos
 

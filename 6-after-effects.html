@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>After Effects desde Flash</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* VOICE: taller de oficio, directo, en castellano rioplatense.
+   IDEA: pliego de imprenta de LAB/OFICIO — láminas numeradas con escenario, barra de control CMYK y marcas de corte.
+   PICTURE: cada lámina es un simulador chico de una herramienta de After Effects que se toca y responde.
+   COLOUR and TYPE: los del sistema LAB/OFICIO (papel, tinta, magenta, cian, amarillo; Archivo, Source Serif 4, JetBrains Mono).
+   LAYOUT: índice lateral pegajoso, láminas apiladas, controles a la derecha del escenario; todo apila bajo 980px. */
+:root{
+  --paper:#ECEFF2;--sheet:#FFFFFF;--ink:#14161B;--ink-2:#4B525E;--rule:#C9D0D8;--dot:#B7BEC8;
+  --mag:#D4006A;--cyan:#008DC4;--yel:#EFBE00;--ok:#1C8A4B;
+  --ae:#232529;--ae-2:#2E3137;--ae-t:#C9CED6;
+  --f-display:"Archivo","Arial Narrow",Arial,sans-serif;
+  --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --s-1:12px;--s-3:17px;--s-5:34px;--s-6:clamp(44px,8vw,104px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#101215;--sheet:#181B20;--ink:#ECEEF1;--ink-2:#A2A9B4;--rule:#2D323A;--dot:#4A515C;
+  --mag:#FF4D9B;--cyan:#3DB6E6;--yel:#FFD43F;--ok:#5FD08F;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#101215;--sheet:#181B20;--ink:#ECEEF1;--ink-2:#A2A9B4;--rule:#2D323A;--dot:#4A515C;
+  --mag:#FF4D9B;--cyan:#3DB6E6;--yel:#FFD43F;--ok:#5FD08F;color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:var(--s-3);line-height:1.6;overflow-x:clip}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+[hidden]{display:none!important}
+em,i{font-style:normal}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-family:var(--f-display);margin:0;text-wrap:balance}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-size:var(--s-1);letter-spacing:.06em;text-transform:uppercase}
+:focus-visible{outline:2px solid var(--mag);outline-offset:3px}
+code,kbd{font-family:var(--f-mono)}
+
+/* Hero */
+.hero{padding-block:48px 56px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:center}
+.hero-kicker{display:flex;gap:14px;align-items:center;color:var(--ink-2);margin-bottom:20px}
+.hero-kicker .chip{background:var(--ink);color:var(--paper);padding:4px 8px}
+.hero h1{font-size:var(--s-6);font-stretch:118%;font-weight:850;line-height:.9;letter-spacing:-.02em}
+.hero h1 .l2{display:block;font-stretch:72%;font-weight:300;letter-spacing:0;color:var(--mag);font-size:.62em;margin-top:.12em}
+.hero-lede{margin-top:24px;max-width:52ch;color:var(--ink-2)}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:28px;color:var(--ink-2);align-items:center}
+.hero-meta b{color:var(--ink);font-weight:600}
+.back{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--rule)}
+.back:hover{color:var(--ink);border-color:var(--ink)}
+.meter{height:6px;width:140px;background:var(--sheet);border:1px solid var(--rule)}
+.meter i{display:block;height:100%;background:var(--mag);width:0;transition:width .4s}
+.hero-side{display:flex;flex-direction:column;gap:12px}
+.hero-stage{position:relative;background:var(--sheet);border:1px solid var(--rule);padding:20px;display:flex;flex-direction:column;gap:14px}
+.hs-lane{position:relative;height:150px;background:var(--paper);border:1px solid var(--rule);overflow:hidden}
+.hs-pos{position:absolute;left:16px;top:50%;margin-top:-30px;width:60px;height:60px}
+.hs-rot,.hs-obj{width:100%;height:100%}
+.hs-obj{background:var(--mag)}
+.mini{display:flex;flex-direction:column;gap:4px;font-family:var(--f-mono);font-size:11px;color:var(--ink-2)}
+.mini-row{display:grid;grid-template-columns:76px minmax(0,1fr);align-items:center;gap:8px}
+.mini-lane{position:relative;height:18px;background:var(--paper);border:1px solid var(--rule)}
+.mini-lane b{position:absolute;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;transform:rotate(45deg);background:var(--ink);transition:left .5s cubic-bezier(.2,.8,.2,1)}
+.mini-lane s{position:absolute;top:7px;height:2px;background:var(--mag);opacity:.5;text-decoration:none;transition:left .5s cubic-bezier(.2,.8,.2,1),width .5s cubic-bezier(.2,.8,.2,1)}
+.hero-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.hero-state{color:var(--ink-2)}
+.btns{display:flex;gap:6px;flex-wrap:wrap}
+
+/* Layout */
+.layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:56px;padding-bottom:80px}
+.index{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start}
+.index h3{font-family:var(--f-mono);font-size:var(--s-1);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin-bottom:12px}
+.index ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.index li{flex:none}
+.index a{display:flex;gap:10px;align-items:baseline;padding:5px 8px;color:var(--ink-2);text-decoration:none;font-family:var(--f-display);font-size:15px;font-weight:500;border-left:2px solid transparent;transition:color .2s,border-color .2s,background .2s}
+.index a span{font-family:var(--f-mono);font-size:11px;font-variant-numeric:tabular-nums}
+.index a:hover{color:var(--ink)}
+.index a.on{color:var(--ink);border-left-color:var(--mag);background:var(--sheet)}
+.plates{display:flex;flex-direction:column;gap:96px}
+
+/* Plate */
+.plate{scroll-margin-top:24px}
+.plate-head{display:grid;gap:12px;margin-bottom:24px}
+.plate-no{display:flex;gap:12px;align-items:center;color:var(--mag)}
+.plate-no::after{content:"";flex:1;height:1px;background:var(--rule)}
+.plate h2{font-size:var(--s-5);font-stretch:112%;font-weight:800;letter-spacing:-.01em;line-height:1.05}
+.lede{max-width:66ch;color:var(--ink-2)}
+.lede strong{color:var(--ink);font-weight:600}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 270px;border:1px solid var(--rule);background:var(--sheet)}
+.stage{position:relative;min-height:340px;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:28px}
+.stage svg{display:block;max-width:100%;height:auto}
+.crop{position:absolute;width:14px;height:14px;pointer-events:none}
+.crop.tl{top:8px;left:8px;border-top:1px solid var(--ink-2);border-left:1px solid var(--ink-2)}
+.crop.tr{top:8px;right:8px;border-top:1px solid var(--ink-2);border-right:1px solid var(--ink-2)}
+.crop.bl{bottom:8px;left:8px;border-bottom:1px solid var(--ink-2);border-left:1px solid var(--ink-2)}
+.crop.br{bottom:8px;right:8px;border-bottom:1px solid var(--ink-2);border-right:1px solid var(--ink-2)}
+.controls{border-left:1px solid var(--rule);padding:20px;display:flex;flex-direction:column;gap:18px;background:color-mix(in oklab,var(--paper) 45%,var(--sheet))}
+.ctl{display:flex;flex-direction:column;gap:6px}
+.ctl label,.ctl .lbl{display:flex;justify-content:space-between;gap:8px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.ctl output{color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--mag);margin:0;height:28px}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button,.btn{font-family:var(--f-display);font-size:14px;font-weight:600;min-height:36px;padding:6px 11px;background:var(--sheet);color:var(--ink);border:1px solid var(--rule);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.seg button:hover,.btn:hover{border-color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.btn.prime{background:var(--mag);border-color:var(--mag);color:#fff}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ctl .checks label{display:flex;justify-content:flex-start;gap:6px;align-items:center;font-family:var(--f-display);font-size:13px;text-transform:none;letter-spacing:0;color:var(--ink);cursor:pointer;min-height:28px}
+.checks input,.pf input{accent-color:var(--mag);width:16px;height:16px;flex:none}
+.readout{font-family:var(--f-mono);font-size:12px;line-height:1.55;color:var(--ink-2);border-top:1px dashed var(--rule);padding-top:12px;font-variant-numeric:tabular-nums}
+.readout b{color:var(--ink);font-weight:600}
+.pill{display:inline-block;padding:1px 7px;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.04em;white-space:nowrap}
+.pill.ok{background:color-mix(in oklab,var(--ok) 18%,transparent);color:var(--ok)}
+.pill.mid{background:color-mix(in oklab,var(--yel) 30%,transparent);color:color-mix(in oklab,var(--yel) 40%,var(--ink))}
+.pill.bad{background:color-mix(in oklab,var(--mag) 16%,transparent);color:var(--mag)}
+.strip{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 12px;border:1px solid var(--rule);border-top:0;background:var(--sheet);color:var(--ink-2);flex-wrap:wrap}
+.patches{display:flex;gap:3px}
+.patches i{width:14px;height:10px;display:block}
+.c-ink{background:var(--ink)}.c-mag{background:var(--mag)}.c-cyan{background:var(--cyan)}.c-yel{background:var(--yel)}
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}
+.notes h4{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.notes .was h4{color:var(--cyan)}.notes .is h4{color:var(--mag)}
+.notes p{font-size:16px;color:var(--ink-2);max-width:60ch}
+.notes code{font-size:13px;color:var(--ink)}
+
+/* Práctica y cuaderno */
+.practice{margin-top:24px;border:1px solid var(--rule);background:var(--sheet)}
+.practice summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;font-family:var(--f-display);font-weight:700;font-size:16px}
+.practice summary::-webkit-details-marker{display:none}
+.practice summary::after{content:"+";font-family:var(--f-mono);color:var(--mag);font-size:18px}
+.practice[open] summary::after{content:"−"}
+.pr-in{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:28px;padding:4px 18px 20px;border-top:1px dashed var(--rule)}
+.pr-in ol{margin:12px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:6px;font-size:16px}
+.pr-in h4{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin-top:16px}
+.pr-in p{font-size:16px;color:var(--ink-2);margin-top:4px}
+.pr-in kbd{font-size:13px;color:var(--ink)}
+.code,.txtin{width:100%;font:16px/1.5 var(--f-body);padding:10px 12px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);resize:vertical}
+
+/* 01 Interfaz */
+.aewin{width:100%;display:grid;grid-template-columns:1.1fr 2.3fr 1.1fr;grid-template-rows:34px minmax(120px,1fr) 104px;gap:4px;background:#17181b;padding:4px;min-height:300px}
+.aewin button{all:unset;box-sizing:border-box;cursor:pointer;background:var(--ae);color:var(--ae-t);font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;padding:8px;display:flex;flex-direction:column;gap:6px;overflow:hidden;outline:2px solid transparent;outline-offset:-2px;transition:outline-color .2s,background .2s}
+.aewin button:hover{background:var(--ae-2)}
+.aewin button[aria-pressed="true"]{outline-color:var(--mag);background:var(--ae-2)}
+.aewin button:focus-visible{outline-color:var(--yel)}
+.aewin .p-tool{grid-column:1/-1;flex-direction:row;align-items:center;gap:10px}
+.aewin .p-tl{grid-column:1/-1}
+.faux{display:flex;flex-direction:column;gap:4px}
+.faux i{height:6px;background:#3A3E46;display:block}
+.p-tool .faux{flex-direction:row}.p-tool .faux i{width:14px;height:14px}
+.p-comp{align-items:center}
+.p-comp .scr{flex:1;width:80%;background:#000;display:flex;align-items:center;justify-content:center;max-height:150px}
+.p-comp .scr i{width:22%;aspect-ratio:1;background:var(--mag);display:block}
+.p-tl .tlx{display:grid;grid-template-columns:30% 1fr;gap:4px}
+.p-tl .tlx i{height:8px;background:#3A3E46;display:block}
+.p-tl .tlx i:nth-child(even){background:linear-gradient(90deg,transparent 12%,#4A6A8A 12% 70%,transparent 70%)}
+
+/* 02 Keyframes */
+.kfl{width:100%;display:flex;flex-direction:column;gap:12px}
+.kfl-stage{position:relative;height:150px;background:var(--paper);border:1px solid var(--rule);overflow:hidden}
+.kfl-obj{position:absolute;top:50%;left:16px;width:56px;height:56px;margin-top:-28px;background:var(--mag)}
+.kf-rows{display:flex;flex-direction:column;gap:4px;font-family:var(--f-mono);font-size:11px;color:var(--ink-2)}
+.kf-row{display:grid;grid-template-columns:78px minmax(0,1fr);align-items:center;gap:8px}
+.kf-lane{position:relative;height:34px;background:var(--paper);border:1px solid var(--rule);touch-action:none}
+.kf-bar{position:absolute;top:15px;height:4px;background:color-mix(in oklab,var(--mag) 40%,transparent)}
+.kfd{position:absolute;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;transform:rotate(45deg);background:var(--ink);border:2px solid var(--sheet);cursor:ew-resize;touch-action:none;padding:0;z-index:2}
+.kfd::before{content:"";position:absolute;inset:-12px}
+.kfd.drag{background:var(--mag)}
+.kf-ph{position:absolute;top:-1px;bottom:-1px;width:2px;margin-left:-1px;background:var(--cyan);pointer-events:none;z-index:1}
+.kf-ruler{display:flex;justify-content:space-between;padding-left:86px}
+
+/* 03 Curvas */
+.ge{display:grid;grid-template-columns:minmax(0,250px) minmax(0,1fr);gap:24px;align-items:center;width:100%}
+.ge svg{touch-action:none;width:100%;height:auto}
+.handle{cursor:grab;fill:var(--mag);stroke:var(--sheet);stroke-width:3}
+.tracks{display:flex;flex-direction:column;gap:8px}
+.track{position:relative;height:58px;background:var(--paper);border:1px solid var(--rule)}
+.track i{position:absolute;top:22px;left:8px;width:28px;height:28px;display:block}
+.track span{position:absolute;left:8px;top:4px;font-family:var(--f-mono);font-size:10px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em}
+.codebox{font-family:var(--f-mono);font-size:12px;background:var(--paper);border:1px solid var(--rule);padding:8px 10px;display:flex;justify-content:space-between;gap:10px;align-items:center;overflow-x:auto}
+.codebox code{white-space:nowrap}
+
+/* SVG tokens */
+svg text{font-family:var(--f-mono);font-size:11px;fill:var(--ink-2)}
+.f-ink{fill:var(--ink)}.f-mag{fill:var(--mag)}.f-cyan{fill:var(--cyan)}.f-yel{fill:var(--yel)}.f-sheet{fill:var(--sheet)}.f-paper{fill:var(--paper)}
+.s-ink{stroke:var(--ink)}.s-rule{stroke:var(--rule)}.s-mag{stroke:var(--mag)}.s-cyan{stroke:var(--cyan)}
+
+/* 07 Texto */
+.ta{width:100%;min-height:240px;display:flex;align-items:center;justify-content:center;background:var(--ink);color:var(--sheet);padding:24px;overflow:hidden}
+.ta-line{font-family:var(--f-display);font-weight:850;font-stretch:115%;font-size:clamp(28px,5.4vw,58px);line-height:1.1;text-align:center;text-transform:uppercase;letter-spacing:-.01em}
+.ta-line .w,.ta-line .c{display:inline-block}
+.ta-line .w{margin:0 .12em}
+
+/* 08 Expressions */
+.ex{width:100%;display:flex;flex-direction:column;gap:10px}
+.ex-stage{position:relative;height:200px;background:var(--paper);border:1px solid var(--rule);overflow:hidden}
+.ex-obj{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;background:var(--cyan)}
+.ex-val{position:absolute;left:10px;bottom:8px;font-family:var(--f-mono);font-size:12px;color:var(--ink-2)}
+.ex-err{background:var(--yel);color:#14161B;font-family:var(--f-mono);font-size:12px;padding:6px 10px}
+.code{font:16px/1.45 var(--f-mono);min-height:84px}
+.as3{font-family:var(--f-mono);font-size:12px;color:var(--ink-2)}
+.as3 b{color:var(--ink)}
+
+/* 09 Exportar */
+.ficha{width:100%;display:flex;flex-direction:column;gap:14px}
+.ficha h3{font-size:24px;font-stretch:110%;font-weight:800}
+.ficha dl{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px 14px;margin:0;font-size:16px}
+.ficha dt{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);padding-top:4px}
+.ficha dd{margin:0}
+.compat{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.compat div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:8px 0;border-bottom:1px solid var(--rule);font-size:15px}
+.compat small{grid-column:1/-1;color:var(--ink-2);font-size:14px}
+
+/* 10 Atajos */
+.qz{width:100%;min-height:270px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;outline:none;border:1px dashed transparent;padding:16px}
+.qz:focus{border-color:var(--rule)}
+.qz-q{font-family:var(--f-display);font-weight:800;font-stretch:110%;font-size:clamp(22px,3.4vw,32px);line-height:1.1;max-width:22ch}
+.qz-k{min-height:44px;display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap}
+kbd.k{display:inline-flex;align-items:center;justify-content:center;min-width:40px;height:40px;padding:0 10px;border:1px solid var(--ink);border-bottom-width:3px;background:var(--sheet);color:var(--ink);font-size:15px;font-weight:600}
+.qz.ok kbd.k{border-color:var(--ok);color:var(--ok)}
+.qz.bad kbd.k{border-color:var(--mag);color:var(--mag)}
+.qz-msg{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);min-height:18px}
+.klist{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 18px;font-size:15px;align-self:start}
+.klist div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--rule);padding:5px 0}
+.klist kbd{font-size:12px;white-space:nowrap;color:var(--mag)}
+
+/* 11 Proyecto */
+.pf{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-self:start}
+.pf h3{font-size:17px;font-stretch:110%;font-weight:800;margin-bottom:8px}
+.pf label{display:flex;gap:8px;align-items:flex-start;font-size:15px;line-height:1.4;padding:6px 0;border-bottom:1px solid var(--rule);cursor:pointer}
+.pf input{margin-top:2px}
+.pf label:has(input:checked){color:var(--ink-2)}
+.big{font-family:var(--f-display);font-weight:850;font-stretch:115%;font-size:48px;line-height:1;color:var(--ink)}
+
+@media (max-width:980px){.bench{grid-template-columns:minmax(0,1fr)}.controls{border-left:0;border-top:1px solid var(--rule)}.pf{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:900px){
+  .hero{grid-template-columns:minmax(0,1fr);gap:32px;padding-block:32px 40px}
+  .layout{grid-template-columns:minmax(0,1fr);gap:24px}
+  .index{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding-block:8px;border-bottom:1px solid var(--rule)}
+  .index h3{display:none}
+  .index ol{flex-direction:row;overflow-x:auto;gap:4px;scrollbar-width:none}
+  .index a{white-space:nowrap;border-left:0;border-bottom:2px solid transparent}
+  .index a.on{border-bottom-color:var(--mag)}
+  .plate{scroll-margin-top:64px}
+  .notes,.pr-in{grid-template-columns:minmax(0,1fr)}
+  .plates{gap:72px}
+}
+@media (max-width:640px){.ge{grid-template-columns:minmax(0,1fr)}.ge svg{max-width:250px;margin:0 auto}.stage{min-height:280px;padding:16px}.aewin{grid-template-columns:1fr 1fr;grid-template-rows:34px 110px 110px 96px}.aewin .p-comp{grid-column:1/-1;grid-row:2}.ficha dl{grid-template-columns:minmax(0,1fr)}}
+</style>
+<link rel="stylesheet" href="laboratorio.css">
+<link rel="stylesheet" href="oficio.css">
+<script src="oficio-datos.js"></script>
+<script src="oficio.js"></script>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <div class="hero-kicker mono"><span class="chip">Módulo 6</span><span>After Effects</span></div>
+      <h1>After Effects<span class="l2">para quien viene de Flash</span></h1>
+      <p class="hero-lede">Casi todo lo que sabías de Flash tiene un equivalente: el escenario, la Library, los tweens, las máscaras, ActionScript. Lo que cambia es una idea, y está acá al lado. Cada lámina es un simulador chico de una herramienta de After Effects: la tocás acá, hacés el ejercicio en el programa y anotás en el cuaderno lo que decidiste.</p>
+      <div class="hero-meta mono"><a href="index.html" style="color:var(--ink);font-weight:600;text-decoration:none;border-bottom:1px solid var(--mag)">← Índice del curso</a><span><b>11</b> láminas</span><a class="back" href="5-motion.html">5 · Motion</a></div>
+    </div>
+    <div class="hero-side">
+      <div class="hero-stage" aria-label="La misma animación hecha con un tween de Flash y con keyframes por propiedad">
+        <div class="hs-lane" id="hsLane"><div class="hs-pos" id="hsPos"><div class="hs-rot" id="hsRot"><div class="hs-obj" id="hsObj"></div></div></div></div>
+        <div class="mini" id="hsMini"></div>
+      </div>
+      <div class="hero-bar">
+        <span class="hero-state mono" id="hsState">La misma entrada, dos maneras de pensarla</span>
+        <span class="btns"><button class="btn" id="hsFlash" type="button">Un tween (Flash)</button><button class="btn prime" id="hsAE" type="button">Por propiedad (AE)</button></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="index" aria-label="Índice de láminas"><h3>Láminas</h3><ol id="indexList"></ol></aside>
+    <main class="plates" id="plates">
+
+<!-- 01 -->
+<section class="plate" id="interfaz" data-name="Interfaz">
+  <div class="plate-head"><div class="plate-no mono">Lámina 01</div><h2>La interfaz, con ojos de Flash</h2>
+  <p class="lede">Un proyecto de After Effects guarda archivos y <strong>composiciones</strong>. Cada composición es un escenario con su propia timeline, y podés tener todas las que quieras. Tocá cada panel de la ventana para ver para qué sirve y a qué se parece en Flash.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="aewin" id="aeWin">
+        <button type="button" class="p-tool" data-k="tool">Herramientas<span class="faux"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></button>
+        <button type="button" data-k="proj">Project<span class="faux"><i></i><i></i><i></i><i></i></span></button>
+        <button type="button" class="p-comp" data-k="comp" aria-pressed="true">Composition<span class="scr"><i></i></span></button>
+        <button type="button" data-k="fx">Effects &amp; Presets<span class="faux"><i></i><i></i><i></i></span></button>
+        <button type="button" class="p-tl" data-k="tl">Timeline<span class="tlx"><i></i><i></i><i></i><i></i><i></i><i></i></span></button>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Panel</span><div class="seg" id="aeSeg"><button type="button" data-k="tool">Herramientas</button><button type="button" data-k="proj">Project</button><button type="button" data-k="comp" aria-pressed="true">Composition</button><button type="button" data-k="fx">Effects</button><button type="button" data-k="tl">Timeline</button></div></div>
+      <div class="readout" id="aeRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>01 / 11 · Interfaz</span></div>
+  <div class="notes"><div class="was"><h4>En Flash era</h4><p>Un solo documento con un escenario, una timeline principal y la Library al costado. Los símbolos tenían su propia timeline adentro.</p></div><div class="is"><h4>En After Effects</h4><p>El proyecto (<code>.aep</code>) es el contenedor. Las composiciones son escenarios independientes y una comp se puede meter dentro de otra, como un símbolo dentro de otro.</p></div></div>
+  <div class="practice" data-p="interfaz"></div>
+</section>
+
+<!-- 02 -->
+<section class="plate" id="keyframes" data-name="Keyframes">
+  <div class="plate-head"><div class="plate-no mono">Lámina 02</div><h2>Un keyframe por propiedad</h2>
+  <p class="lede">Esta es la idea que cambia todo. En After Effects <strong>cada propiedad tiene sus propios keyframes</strong>: la posición puede terminar antes de que empiece la rotación. Arrastrá los rombos y mirá cómo cambia el movimiento. Después pasá a modo Flash: los keyframes quedan atados entre sí.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="kfl">
+        <div class="kfl-stage" id="kfStage"><div class="kfl-obj" id="kfObj"></div></div>
+        <div class="kf-rows" id="kfRows"></div>
+        <div class="kf-ruler mono" aria-hidden="true"><span>0:00</span><span>1:00</span><span>2:00</span><span>3:00</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Cómo se guardan los keyframes</span><div class="seg" id="kfMode"><button type="button" data-m="ae" aria-pressed="true">After Effects</button><button type="button" data-m="flash">Flash (un tween)</button></div></div>
+      <div class="ctl"><label for="kfT">Tiempo <output id="kfTO">0:00</output></label><input id="kfT" type="range" min="0" max="3" step="0.0333" value="0"></div>
+      <div class="btns"><button class="btn prime" id="kfPlay" type="button">Reproducir</button></div>
+      <div class="readout" id="kfRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>02 / 11 · Keyframes · 30 fps</span></div>
+  <div class="notes"><div class="was"><h4>En Flash era</h4><p>Keyframe en el frame 1, keyframe en el 30, clic derecho y Create Motion Tween. El keyframe guardaba el estado completo del objeto.</p></div><div class="is"><h4>En After Effects</h4><p>Activás el cronómetro de una propiedad, movés el tiempo y cambiás el valor: dos keyframes ya son una animación. No hay que crear un tween. El tiempo se cuenta en segundos y frames (<code>0:15</code> es medio segundo a 30 fps).</p></div></div>
+  <div class="practice" data-p="keyframes"></div>
+</section>
+
+<!-- 03 -->
+<section class="plate" id="curvas" data-name="Graph Editor">
+  <div class="plate-head"><div class="plate-no mono">Lámina 03</div><h2>Ritmo: Easy Ease y Graph Editor</h2>
+  <p class="lede">La diferencia entre algo amateur y algo profesional casi siempre está en <strong>cómo acelera y frena</strong>. After Effects lo controla con la <strong>influencia</strong> de cada keyframe. Movés las manijas rosadas en la vista de valor o usás los deslizadores. El cuadrado negro sigue tu curva y los otros dos te sirven para comparar.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="ge">
+        <svg id="geSvg" viewBox="0 0 240 240" aria-label="Graph Editor"></svg>
+        <div class="tracks">
+          <div class="track"><i class="c-ink" id="geT1"></i><span>Tu curva</span></div>
+          <div class="track"><i class="c-cyan" id="geT2"></i><span>Easy Ease</span></div>
+          <div class="track"><i style="background:var(--dot)" id="geT3"></i><span>Lineal</span></div>
+          <div class="codebox"><code id="geCode"></code><button class="btn" id="geCopy" type="button">Copiar</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Vista</span><div class="seg" id="geView"><button type="button" data-v="speed" aria-pressed="true">Speed Graph</button><button type="button" data-v="value">Value Graph</button></div></div>
+      <div class="ctl"><span class="lbl">Punto de partida</span><div class="seg" id="gePre"><button type="button" data-p="lin">Lineal</button><button type="button" data-p="33,33">Easy Ease</button><button type="button" data-p="5,90" aria-pressed="true">Entra y se apoya</button><button type="button" data-p="90,5">Arranca lento</button></div></div>
+      <div class="ctl"><label for="geO">Influencia de salida <output id="geOO">5%</output></label><input id="geO" type="range" min="1" max="100" value="5"></div>
+      <div class="ctl"><label for="geI">Influencia de entrada <output id="geIO">90%</output></label><input id="geI" type="range" min="1" max="100" value="90"></div>
+      <div class="btns"><button class="btn prime" id="gePlay" type="button">Reproducir</button></div>
+      <div class="readout" id="geRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>03 / 11 · Curvas · F9</span></div>
+  <div class="notes"><div class="was"><h4>En Flash era</h4><p>El campo Ease, de −100 a 100, y en las versiones nuevas el editor de Custom Ease.</p></div><div class="is"><h4>En After Effects</h4><p>F9 aplica Easy Ease (33% de influencia en los dos lados). En el Graph Editor, el Speed Graph muestra la velocidad: donde la curva está alta, el objeto va rápido. Si Position está unida, clic derecho y Separate Dimensions para ver X e Y por separado.</p></div></div>
+  <div class="practice" data-p="curvas"></div>
+</section>
+
+<!-- 04 -->
+<section class="plate" id="estructura" data-name="Anchor y parenting">
+  <div class="plate-head"><div class="plate-no mono">Lámina 04</div><h2>Anchor point y parenting</h2>
+  <p class="lede">El <strong>anchor point</strong> es el punto de registro: desde ahí gira y escala la capa. El <strong>parenting</strong> hace que una capa siga a otra, como un clip dentro de otro. Cambiá el anchor de la aguja y girala. Después mové la esfera con y sin parent.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <svg id="paSvg" viewBox="0 0 480 300" width="480" aria-label="Reloj con aguja hija de la esfera">
+        <g id="paParent"><circle r="100" class="f-sheet s-ink" stroke-width="2"/><g id="paTicks"></g><circle r="5" class="f-ink"/></g>
+        <g id="paWorld"></g>
+      </svg>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Anchor point de la aguja</span><div class="seg" id="paAnc"><button type="button" data-a="base" aria-pressed="true">Base</button><button type="button" data-a="centro">Centro</button><button type="button" data-a="punta">Punta</button></div></div>
+      <div class="ctl"><label for="paCR">Rotation de la aguja <output id="paCRO">30°</output></label><input id="paCR" type="range" min="0" max="360" value="30"></div>
+      <div class="ctl"><span class="lbl">Parent de la aguja</span><div class="seg" id="paLink"><button type="button" data-l="1" aria-pressed="true">Esfera</button><button type="button" data-l="0">None</button></div></div>
+      <div class="ctl"><label for="paPX">Position X de la esfera <output id="paPXO">240</output></label><input id="paPX" type="range" min="120" max="360" value="240"></div>
+      <div class="ctl"><label for="paPS">Scale de la esfera <output id="paPSO">100%</output></label><input id="paPS" type="range" min="50" max="130" value="100"></div>
+      <div class="btns"><button class="btn prime" id="paPlay" type="button">Animar las dos</button></div>
+      <div class="readout" id="paRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>04 / 11 · Estructura · Y · Ctrl+Shift+C</span></div>
+  <div class="notes"><div class="was"><h4>En Flash era</h4><p>El punto de registro del símbolo y los MovieClips anidados, cada uno con su timeline.</p></div><div class="is"><h4>En After Effects</h4><p>El anchor se mueve con la herramienta Pan Behind (Y). El parenting hereda posición, escala y rotación, pero no la opacidad, y no crea una timeline aparte. Para eso está la precomposición (Ctrl+Shift+C), que se comporta como un símbolo: la editás una vez y cambian todas sus copias.</p></div></div>
+  <div class="practice" data-p="estructura"></div>
+</section>
+
+<!-- 05 -->
+<section class="plate" id="trazos" data-name="Trim Paths">
+  <div class="plate-head"><div class="plate-no mono">Lámina 05</div><h2>Shapes y Trim Paths</h2>
+  <p class="lede">Los vectores viven en <strong>shape layers</strong>. Con Trim Paths agregado a una shape, <strong>Start</strong>, <strong>End</strong> y <strong>Offset</strong> deciden qué parte del trazo se ve. Animar End de 0% a 100% hace que la línea se dibuje sola, el efecto que más vas a usar.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <svg id="trSvg" viewBox="0 0 480 260" width="480" aria-label="Trazo con Trim Paths">
+        <path id="trGhost" fill="none" class="s-rule" stroke-width="2" stroke-dasharray="4 6"/>
+        <path id="trPath" fill="none" class="s-mag" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" pathLength="100"/>
+      </svg>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Trazado</span><div class="seg" id="trShape"><button type="button" data-s="linea" aria-pressed="true">Curva</button><button type="button" data-s="circulo">Círculo</button><button type="button" data-s="firma">Firma</button></div></div>
+      <div class="ctl"><label for="trS">Start <output id="trSO">0%</output></label><input id="trS" type="range" min="0" max="100" value="0"></div>
+      <div class="ctl"><label for="trE">End <output id="trEO">100%</output></label><input id="trE" type="range" min="0" max="100" value="100"></div>
+      <div class="ctl"><label for="trO">Offset <output id="trOO">0°</output></label><input id="trO" type="range" min="0" max="360" value="0"></div>
+      <div class="ctl"><span class="lbl">Animación típica</span><div class="seg" id="trAnim"><button type="button" data-a="dibujo">Se dibuja</button><button type="button" data-a="cola">Cola</button><button type="button" data-a="vuelta">Da vueltas</button></div></div>
+      <div class="readout" id="trRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>05 / 11 · Shapes · Add → Trim Paths</span></div>
+  <div class="notes"><div class="was"><h4>En Flash era</h4><p>Dibujar el trazo cuadro por cuadro o tapar una línea con una máscara que se iba corriendo.</p></div><div class="is"><h4>En After Effects</h4><p>Desde una capa de Illustrator: clic derecho, Create → Create Shapes from Vector Layer. Después, en la shape: Add → Trim Paths. El morph entre formas se hace con keyframes en Path, y anda mejor si las dos formas tienen la misma cantidad de puntos.</p></div></div>
+  <div class="practice" data-p="trazos"></div>
+</section>
+
+<!-- 06 -->
+<section class="plate" id="mattes" data-name="Track mattes">
+  <div class="plate-head"><div class="plate-no mono">Lámina 06</div><h2>Track mattes: la capa de máscara de Flash</h2>
+  <p class="lede">Una capa usa <strong>la forma (alpha)</strong> o <strong>el brillo (luma)</strong> de otra para mostrarse. El contorno punteado es el matte: en After Effects queda oculto y solo presta su forma. Cambiá el modo y corré el matte.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <svg id="mtSvg" viewBox="0 0 480 260" width="480" aria-label="Track matte">
+        <defs>
+          <linearGradient id="mtGrad" x1="0" x2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
+          <mask id="mtMask" maskUnits="userSpaceOnUse" x="0" y="0" width="480" height="260"><g id="mtMaskIn"></g></mask>
+        </defs>
+        <rect x="0" y="0" width="480" height="260" class="f-paper"/>
+        <g id="mtFill">
+          <rect x="30" y="40" width="420" height="180" class="f-mag"/>
+          <text x="240" y="160" text-anchor="middle" style="font-family:var(--f-display);font-weight:850;font-size:92px;font-stretch:115%;fill:var(--sheet)">OFICIO</text>
+        </g>
+        <g id="mtTop"></g>
+      </svg>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Track Matte</span><div class="seg" id="mtMode"><button type="button" data-m="none">Ninguno</button><button type="button" data-m="alpha" aria-pressed="true">Alpha</button><button type="button" data-m="inv">Alpha invertido</button><button type="button" data-m="luma">Luma</button></div></div>
+      <div class="ctl"><span class="lbl">Forma del matte</span><div class="seg" id="mtShape"><button type="button" data-s="rect" aria-pressed="true">Rectángulo</button><button type="button" data-s="circ">Círculo</button></div></div>
+      <div class="ctl"><label for="mtX">Position X del matte <output id="mtXO">50%</output></label><input id="mtX" type="range" min="0" max="100" value="50"></div>
+      <div class="btns"><button class="btn prime" id="mtPlay" type="button">Animar el revelado</button></div>
+      <div class="readout" id="mtRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>06 / 11 · Mattes · F4 muestra la columna</span></div>
+  <div class="notes"><div class="was"><h4>En Flash era</h4><p>Una capa de máscara arriba y las capas enmascaradas abajo, con un ícono que las unía.</p></div><div class="is"><h4>En After Effects</h4><p>En la capa que querés recortar elegís el matte en la columna Track Matte (si no la ves, apretá F4). El matte puede estar animado por su cuenta. Para recortes simples dentro de una sola capa también existen las máscaras, que se dibujan con la pluma sobre la capa.</p></div></div>
+  <div class="practice" data-p="mattes"></div>
+</section>
+
+<!-- 07 -->
+<section class="plate" id="texto" data-name="Texto animado">
+  <div class="plate-head"><div class="plate-no mono">Lámina 07</div><h2>Texto con Animators</h2>
+  <p class="lede">El texto sigue editable y se anima letra por letra sin separarlo. Un <strong>Animator</strong> dice qué cambia y un <strong>Range Selector</strong> decide a qué letras se aplica. Lo que se anima es el rango: lo corrés con Offset y las letras cambian a su paso.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="ta"><div class="ta-line" id="taLine"></div></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><label for="taTxt">Texto</label><input class="txtin" id="taTxt" type="text" value="Cada letra a su tiempo" maxlength="48"></div>
+      <div class="ctl"><span class="lbl">Animator: qué cambia</span><div class="checks"><label><input type="checkbox" id="taPY" checked> Position Y</label><label><input type="checkbox" id="taOp" checked> Opacity</label><label><input type="checkbox" id="taSc"> Scale</label><label><input type="checkbox" id="taRo"> Rotation</label></div></div>
+      <div class="ctl"><span class="lbl">Based On</span><div class="seg" id="taBase"><button type="button" data-b="c" aria-pressed="true">Caracteres</button><button type="button" data-b="w">Palabras</button></div></div>
+      <div class="ctl"><span class="lbl">Shape</span><div class="seg" id="taShape"><button type="button" data-s="sq" aria-pressed="true">Square</button><button type="button" data-s="ramp">Ramp Up</button></div></div>
+      <div class="ctl"><label for="taS">Start <output id="taSO">0%</output></label><input id="taS" type="range" min="0" max="100" value="0"></div>
+      <div class="ctl"><label for="taE">End <output id="taEO">100%</output></label><input id="taE" type="range" min="0" max="100" value="100"></div>
+      <div class="ctl"><label for="taO">Offset <output id="taOO">100%</output></label><input id="taO" type="range" min="-100" max="100" value="100"></div>
+      <div class="btns"><button class="btn prime" id="taPlay" type="button">Animar Offset de 0 a 100</button></div>
+      <div class="readout" id="taRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>07 / 11 · Texto · Animate → Position</span></div>
+  <div class="notes"><div class="was"><h4>En Flash era</h4><p>Break Apart, distribuir cada letra en su capa y animarlas una por una. Si cambiaba el texto, había que rehacer todo.</p></div><div class="is"><h4>En After Effects</h4><p>En la capa de texto, Animate → Position (o la propiedad que quieras). Ease High y Ease Low, en Advanced, suavizan el paso. La carpeta Animation Presets → Text trae decenas armadas: aplicá una y apretá UU para ver cómo está hecha.</p></div></div>
+  <div class="practice" data-p="texto"></div>
+</section>
+
+<!-- 08 -->
+<section class="plate" id="expressions" data-name="Expressions">
+  <div class="plate-head"><div class="plate-no mono">Lámina 08</div><h2>Expressions, para quien sabía ActionScript</h2>
+  <p class="lede">Una expression es JavaScript pegado a una propiedad. No hay eventos: se calcula en cada frame y devuelve el valor de esa propiedad. <strong>time</strong> son los segundos y <strong>value</strong> es lo que dirían los keyframes. Elegí un ejemplo o escribí el tuyo: corre en vivo.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="ex">
+        <div class="ex-stage"><div class="ex-obj" id="exObj"></div><div class="ex-val" id="exVal"></div></div>
+        <label class="mono" for="exCode" style="color:var(--ink-2)">Expression de la propiedad</label>
+        <textarea class="code" id="exCode" spellcheck="false" autocomplete="off">time * 90</textarea>
+        <div class="ex-err" id="exErr" hidden></div>
+        <div class="as3" id="exAs"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Ejemplos</span><div class="seg" id="exPre"></div></div>
+      <div class="ctl"><span class="lbl">Propiedad</span><div class="seg" id="exProp"><button type="button" data-p="rot" aria-pressed="true">Rotation</button><button type="button" data-p="x">Position X</button><button type="button" data-p="sc">Scale</button><button type="button" data-p="op">Opacity</button></div></div>
+      <div class="readout" id="exRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>08 / 11 · Expressions · Alt + clic en el cronómetro</span></div>
+  <div class="notes"><div class="was"><h4>En Flash era</h4><p><code>onEnterFrame</code>, <code>_rotation += 5</code>, <code>gotoAndPlay(1)</code>: código que corría en tiempo real y respondía al usuario.</p></div><div class="is"><h4>En After Effects</h4><p>Alt + clic en el cronómetro abre el campo. El espiral de la expression (pick whip) se arrastra a otra propiedad y escribe la referencia solo. Un Null con un Slider Control sirve para manejar muchas capas desde un único valor.</p></div></div>
+  <div class="practice" data-p="expressions"></div>
+</section>
+
+<!-- 09 -->
+<section class="plate" id="exportar" data-name="Exportar">
+  <div class="plate-head"><div class="plate-no mono">Lámina 09</div><h2>Exportar: video para redes, Lottie para web</h2>
+  <p class="lede">Lo que antes era un SWF hoy es <strong>Lottie</strong>: un JSON vectorial que reproduce una librería de JavaScript. No todo lo que hacés en After Effects llega a Lottie. Elegí el destino y marcá qué usaste en tu pieza.</p></div>
+  <div class="bench">
+    <div class="stage" style="align-items:flex-start"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="ficha" id="xpFicha"></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Destino</span><div class="seg" id="xpDest"><button type="button" data-d="redes" aria-pressed="true">Redes</button><button type="button" data-d="web">Web (Lottie)</button><button type="button" data-d="alfa">Con transparencia</button><button type="button" data-d="editor">A un editor</button><button type="button" data-d="gif">GIF</button></div></div>
+      <div class="ctl"><span class="lbl">Qué usaste</span><div class="checks" id="xpFeat"></div></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>09 / 11 · Exportar · B y N marcan lo que sale</span></div>
+  <div class="notes"><div class="was"><h4>En Flash era</h4><p>Publish: un SWF liviano y vectorial que reproducía el navegador.</p></div><div class="is"><h4>En After Effects</h4><p>Para Lottie se instala un plugin: LottieFiles o Bodymovin. Exportar es gratis con los dos. LottieFiles suma vista previa y prueba en el celular, pero algunas funciones son pagas. Si la pieza va a Lottie, decidilo antes de empezar, no al final.</p></div></div>
+  <div class="practice" data-p="exportar"></div>
+</section>
+
+<!-- 10 -->
+<section class="plate" id="atajos" data-name="Atajos">
+  <div class="plate-head"><div class="plate-no mono">Lámina 10</div><h2>Atajos en los dedos</h2>
+  <p class="lede">After Effects se usa con el teclado. Tocá Empezar y apretá el atajo que corresponde a cada pedido. Los atajos son los de Windows. Los que el navegador no deja usar están solo en la lista.</p></div>
+  <div class="bench">
+    <div class="stage"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="qz" id="qz" tabindex="0" aria-live="polite">
+        <div class="qz-q" id="qzQ">Tocá Empezar y usá el teclado</div>
+        <div class="qz-k" id="qzK"></div>
+        <div class="qz-msg" id="qzMsg"></div>
+      </div>
+      <div class="klist" id="klist" hidden></div>
+    </div>
+    <div class="controls">
+      <div class="btns"><button class="btn prime" id="qzGo" type="button">Empezar</button><button class="btn" id="qzSkip" type="button">Ver respuesta</button></div>
+      <div class="ctl"><span class="lbl">Vista</span><div class="seg" id="qzView"><button type="button" data-v="q" aria-pressed="true">Práctica</button><button type="button" data-v="l">Lista completa</button></div></div>
+      <div class="readout" id="qzRead"></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>10 / 11 · Atajos · Windows</span></div>
+  <div class="notes"><div class="was"><h4>En Flash era</h4><p>F6 para un keyframe, F5 para extender, Enter para reproducir.</p></div><div class="is"><h4>En After Effects</h4><p>Las letras solas muestran propiedades de la capa seleccionada (P, S, R, T, A, U). Shift más otra letra suma esa propiedad a las que ya ves. Con UU ves todo lo que modificaste de una capa.</p></div></div>
+  <div class="practice" data-p="atajos"></div>
+</section>
+
+<!-- 11 -->
+<section class="plate" id="proyecto" data-name="Proyecto final">
+  <div class="plate-head"><div class="plate-no mono">Lámina 11</div><h2>Proyecto final: una pieza, dos destinos</h2>
+  <p class="lede">Una presentación animada de 15 segundos para una marca, un cliente o un proyecto propio, en dos versiones que salen de las <strong>mismas precomps</strong>: un video vertical para redes y un Lottie para web. Marcá cada punto cuando lo tengas resuelto en After Effects.</p></div>
+  <div class="bench">
+    <div class="stage" style="align-items:flex-start"><span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      <div class="pf" id="pf"></div>
+    </div>
+    <div class="controls">
+      <div class="ctl"><span class="lbl">Avance</span><div class="big" id="pfPct">0%</div><span class="meter" style="width:100%" aria-hidden="true"><i id="pfMeter"></i></span></div>
+      <div class="readout" id="pfRead"></div>
+      <div class="btns"><button class="btn" id="pfReset" type="button">Desmarcar todo</button></div>
+    </div>
+  </div>
+  <div class="strip mono"><span class="patches"><i class="c-cyan"></i><i class="c-mag"></i><i class="c-yel"></i><i class="c-ink"></i></span><span>11 / 11 · Proyecto · 15 segundos</span></div>
+  <div class="notes"><div class="was"><h4>Cómo trabajarlo</h4><p>Guion y storyboard de cinco cuadros en papel. Después una animatic con cortes secos, solo para ajustar tiempos. Si hay música, cortá al ritmo.</p></div><div class="is"><h4>Antes de exportar</h4><p>Animá de lo grande a lo chico: primero los movimientos principales, después las curvas y al final los detalles. Miralo al día siguiente, con ojos frescos.</p></div></div>
+  <div class="practice" data-p="proyecto"></div>
+</section>
+
+    </main>
+  </div>
+
+</div>
+
+<script>
+{
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const KEY='lab-oficio-ae-v1';
+const all=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){return {}}};
+const st={get(k,d){const v=all()[k];return v==null?d:v},set(k,v){try{const o=all();o[k]=v;localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}};
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const tc=s=>{const f=Math.round(s*30);return Math.floor(f/30)+':'+String(f%30).padStart(2,'0')};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function seg(el,cb){el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!el.contains(b))return;el.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));cb(b)})}
+function press(el,sel){el.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.matches(sel)))}
+function tween(ms,fn,done){const t0=performance.now();let id;const step=n=>{const u=Math.min(1,(n-t0)/ms);fn(u);if(u<1)id=requestAnimationFrame(step);else if(done)done()};id=requestAnimationFrame(step);return()=>cancelAnimationFrame(id)}
+const ease=u=>u<.5?4*u*u*u:1-((-2*u+2)**3)/2;
+const easeOut=u=>1-(1-u)**3;
+async function copy(text,btn){try{await navigator.clipboard.writeText(text);if(btn){const o=btn.textContent;btn.textContent='Copiado';setTimeout(()=>btn.textContent=o,1400)}return true}catch(e){return false}}
+
+/* ---------- Práctica por lámina ---------- */
+const PR={
+ interfaz:{s:['Abrí After Effects y elegí Window → Workspace → Standard. Después, Reset to Saved Layout.','Creá una comp con Ctrl+N: 1920 × 1080, 30 fps, 10 segundos, fondo negro.','Creá un sólido con Ctrl+Y, de 200 × 200.','Desplegá la capa y abrí Transform: Anchor Point, Position, Scale, Rotation y Opacity.','Arrastrá los números azules para cambiarlos (scrubbing).','Guardá como clase-00.aep.'],x:'Armá una comp vertical de 1080 × 1920 con tres sólidos de colores ubicados a mano.',t:'Creás una comp y una capa, y encontrás sus cinco propiedades sin buscar.'},
+ keyframes:{s:['Comp de 5 segundos y un sólido de 200 × 200.','Apretá P. En 0:00 llevá el cuadrado a la izquierda y activá el cronómetro.','En 2:00 arrastrá el cuadrado a la derecha: el segundo keyframe aparece solo.','Barra espaciadora para ver. La línea punteada es el motion path y se edita como una curva.','Shift+R. En 0:15 activá Rotation en 0°; en 1:15 ponele 1x+0°.','Apretá U para ver solo lo animado. Con T, Opacity de 0% en 0:00 a 100% en 0:10.'],x:'Un círculo que entra desde abajo, crece de 0% a 100% mientras sube y se va a la derecha mientras se desvanece. Tres propiedades con tiempos distintos.',t:'Podés explicar por qué la rotación puede empezar después que el movimiento.'},
+ curvas:{s:['Duplicá la capa de la lámina 02 tres veces (Ctrl+D) y apilalas.','Capa A: dejala lineal.','Capa B: seleccioná sus keyframes y apretá F9.','Capa C: F9, abrí el Graph Editor, clic derecho → Edit Speed Graph. Manija del primer keyframe corta, la del segundo larga (80% a 90%).','Capa D: al revés que la C.','Mirá las cuatro juntas.'],x:'Una pelota que cae y rebota tres veces, cada vez más bajo. Separá dimensiones y animá solo Y: acelera al caer y frena arriba.',t:'Mirás una animación cualquiera y podés describir su curva de velocidad.'},
+ estructura:{s:['Un círculo grande (la esfera) y dos rectángulos finos (las agujas).','Con Pan Behind (Y), llevá el anchor de cada aguja a su base.','Ubicá las agujas con la base en el centro de la esfera.','En la columna Parent &amp; Link, arrastrá el espiral de cada aguja a la esfera.','Animá las agujas: el minutero da una vuelta en 5 segundos.','Animá solo la esfera: que entre, crezca y rote. Después precompone todo (Ctrl+Shift+C) y duplicá la precomp.'],x:'Un brazo con hombro, antebrazo y mano. Encadená el parenting, poné cada anchor en la articulación y animá un saludo.',t:'Sabés cuándo alcanza el parenting y cuándo hace falta una precomp.'},
+ trazos:{s:['Prepará un logo en Illustrator con cada parte en su propia capa.','En After Effects: File → Import, como Composition – Retain Layer Sizes.','Clic derecho en las capas → Create → Create Shapes from Vector Layer.','En una shape con solo stroke: Add → Trim Paths. Animá End de 0% a 100%.','Para un morph: keyframes en Path, editando los vértices en el segundo.'],x:'La aparición de un logo tuyo: el contorno se dibuja con Trim Paths y el nombre entra al final. No más de 3 segundos.',t:'Llevás cualquier pieza de Illustrator a After Effects y animás sus partes por separado.'},
+ mattes:{s:['Un texto grande y, arriba, un rectángulo.','Si no ves la columna Track Matte, apretá F4.','En la capa de texto elegí el rectángulo como matte, en modo Alpha.','Animá el rectángulo de abajo hacia arriba: el texto se revela.','Probá Alpha Inverted y Luma con un degradé.'],x:'Una transición entre dos escenas usando un círculo que crece como matte.',t:'Podés revelar cualquier capa con la forma de otra y elegir el modo correcto.'},
+ texto:{s:['Con Ctrl+T escribí una palabra grande.','Desplegá la capa y tocá Animate → Position.','En el Animator poné Position en 0, 100. Sumá Opacity (Add → Property) en 0%.','En el Range Selector, animá Offset de 0% en 0:00 a 100% en 1:00.','En Advanced, subí Ease Low o probá Shape: Ramp Up.','Cambiá Based On a Words para animar por palabras.'],x:'Una frase de cuatro a seis palabras animada al ritmo en que la dirías. Grabá tu voz, importala y usá la forma de onda (LL) como guía.',t:'Armás una entrada de texto letra por letra sin buscar un tutorial.'},
+ expressions:{s:['En el reloj de la lámina 04, borrá los keyframes del minutero.','Alt + clic en el cronómetro de Rotation y escribí time * 72.','En la aguja de la hora: con el campo abierto, arrastrá su espiral hasta Rotation del minutero y agregá / 12.','En un sólido nuevo, wiggle(2, 30) en Position.','Dos keyframes que van y vienen, y loopOut("pingpong") en esa propiedad.','Un Null con Slider Control llamado Intensidad, usado como amplitud del wiggle.'],x:'Un fondo de 20 círculos que flotan con wiggle(), todos controlados por un único slider.',t:'Reemplazás una animación repetitiva de keyframes por una línea de expression.'},
+ exportar:{s:['Ajustá el área de trabajo con B (inicio) y N (fin).','Composition → Add to Adobe Media Encoder Queue, preset H.264.','En Media Encoder, tocá el botón verde.','Instalá LottieFiles o Bodymovin y abrilo desde Window → Extensions.','Exportá la comp a JSON y probala en una página local con lottie-web.'],x:'Exportá el logo animado de la lámina 05 en MP4 y en Lottie, y compará los pesos.',t:'Elegís el formato según dónde va a vivir la pieza.'},
+ atajos:{s:['Practicá acá hasta acertar diez seguidas.','Después hacé el ejercicio de la lámina 02 sin tocar ningún menú.'],x:'Durante una semana, cada vez que uses un menú, buscá si tiene atajo y anotalo en el cuaderno.',t:'Mostrás propiedades, ponés easing y recortás capas sin el mouse.'},
+ proyecto:{s:['Escribí el guion: una línea cada 3 segundos.','Storyboard de cinco cuadros.','Animatic con cortes secos.','Animación: de lo grande a lo chico.','Exportá las dos versiones.'],x:'Mostrale la pieza a alguien sin explicarle nada y anotá qué entendió.',t:'Tenés un video para redes y un Lottie que funcionan, hechos con las mismas precomps.'}
+};
+function renderPractice(){
+  $$('.practice').forEach(el=>{
+    const id=el.dataset.p,p=PR[id];
+    el.outerHTML=`<details class="practice" data-p="${id}"><summary>Ejercicio en After Effects</summary><div class="pr-in"><div><ol>${p.s.map(s=>`<li>${s}</li>`).join('')}</ol></div><div><h4>Ejercicio solo</h4><p>${p.x}</p><h4>Ya sabés si…</h4><p>${p.t}</p></div></div></details>`;
+  });
+}
+
+/* ---------- Índice ---------- */
+{const plates=$$('.plate');$('#indexList').innerHTML=plates.map((p,i)=>`<li><a href="#${p.id}"><span>${String(i+1).padStart(2,'0')}</span>${esc(p.dataset.name)}</a></li>`).join('');
+ const links=$$('#indexList a');const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>{const on=a.hash==='#'+e.target.id;a.classList.toggle('on',on);if(on&&innerWidth<900)a.scrollIntoView({block:'nearest',inline:'center'})})}})},{rootMargin:'-40% 0px -55% 0px'});plates.forEach(p=>io.observe(p));}
+renderPractice();
+
+/* ---------- Hero ---------- */
+{const rows=[['Position','pos'],['Rotation','rot'],['Opacity','op']];
+ const K={flash:{pos:[0,100],rot:[0,100],op:[0,100]},ae:{pos:[0,61],rot:[22,83],op:[0,17]}};
+ $('#hsMini').innerHTML=rows.map(r=>`<div class="mini-row"><span>${r[0]}</span><div class="mini-lane" data-r="${r[1]}"><s></s><b></b><b></b></div></div>`).join('');
+ const lay=m=>rows.forEach(([,k])=>{const l=$(`.mini-lane[data-r="${k}"]`),[a,b]=K[m][k],bs=l.querySelectorAll('b');bs[0].style.left=`calc(${a}% + ${a===0?6:0}px)`;bs[1].style.left=`calc(${b}% - ${b===100?6:0}px)`;l.querySelector('s').style.left=a+'%';l.querySelector('s').style.width=(b-a)+'%'});
+ let anims=[];
+ function play(m){anims.forEach(a=>a.cancel());lay(m);const W=$('#hsLane').clientWidth-92,D=RM?1:1800,o={fill:'both'};
+  const pos=$('#hsPos'),rot=$('#hsRot'),obj=$('#hsObj');
+  if(m==='flash'){anims=[pos.animate([{transform:'translateX(0)'},{transform:`translateX(${W}px)`}],{...o,duration:D,easing:'linear'}),rot.animate([{transform:'rotate(0)'},{transform:'rotate(180deg)'}],{...o,duration:D,easing:'linear'}),obj.animate([{opacity:0},{opacity:1}],{...o,duration:D,easing:'linear'})];$('#hsState').textContent='Flash: un tween para todo, lineal';}
+  else{anims=[pos.animate([{transform:'translateX(0)'},{transform:`translateX(${W}px)`}],{...o,duration:D*.61,easing:'cubic-bezier(.1,0,0,1)'}),rot.animate([{transform:'rotate(0)'},{transform:'rotate(180deg)'}],{...o,duration:D*.61,delay:D*.22,easing:'cubic-bezier(.33,0,.67,1)'}),obj.animate([{opacity:0},{opacity:1}],{...o,duration:D*.17,easing:'linear'})];$('#hsState').textContent='After Effects: cada propiedad a su ritmo';}
+ }
+ $('#hsFlash').addEventListener('click',()=>play('flash'));$('#hsAE').addEventListener('click',()=>play('ae'));
+ lay('ae');setTimeout(()=>play('ae'),500);}
+
+/* ---------- 01 Interfaz ---------- */
+{const P={tool:['Herramientas','Selección (V), Mano (H), Zoom (Z), Rotación (W), Pan Behind (Y), Rectángulo (Q), Pluma (G) y Texto (Ctrl+T).','La barra de herramientas','Pan Behind no existe en Flash: es la que mueve el anchor point.'],
+ proj:['Project','Todo lo importado y todas las composiciones. Una comp también es un ítem: se arrastra dentro de otra comp.','Library','Ordená por carpetas desde el principio: Comps, Illustrator, Audio, Sólidos.'],
+ comp:['Composition','El visor de la comp activa. Lo que queda afuera del cuadro no se renderiza, pero se ve como contorno.','Stage','Doble clic en una capa de texto o shape entra a editarla, como en Flash.'],
+ fx:['Effects & Presets','Buscás un efecto por nombre y lo arrastrás sobre la capa. Sus ajustes aparecen en el panel Effect Controls.','Los filtros de Flash 8, pero muchos más','Animation Presets → Text tiene animaciones de texto listas para aprender.'],
+ tl:['Timeline','A la izquierda, capas y propiedades. A la derecha, las barras de capa y los keyframes. La capa de arriba se ve adelante, igual que en Flash.','Timeline','Acá vas a pasar el 80% del tiempo. Aprendé primero sus atajos.']};
+ const show=k=>{const p=P[k];$('#aeRead').innerHTML=`<b>${p[0]}</b><br>${p[1]}<br><br><b>En Flash:</b> ${p[2]}<br><b>Tip:</b> ${p[3]}`;press($('#aeWin'),`[data-k="${k}"]`);press($('#aeSeg'),`[data-k="${k}"]`)};
+ $('#aeWin').addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.k)});seg($('#aeSeg'),b=>show(b.dataset.k));show('comp');}
+
+/* ---------- 02 Keyframes ---------- */
+{const D=3,props=[['pos','Position',0,1],['rot','Rotation',0,360],['op','Opacity',0,100]];
+ let keys={pos:[0,2],rot:[.5,1.5],op:[0,.4]},saved=null,mode='ae',t=0,stop=null;
+ $('#kfRows').innerHTML=props.map(([k,n])=>`<div class="kf-row"><span>${n}</span><div class="kf-lane" data-k="${k}"><div class="kf-bar"></div><button class="kfd" type="button" data-k="${k}" data-i="0" aria-label="${n}, keyframe 1"></button><button class="kfd" type="button" data-k="${k}" data-i="1" aria-label="${n}, keyframe 2"></button><div class="kf-ph"></div></div></div>`).join('');
+ const val=(k,tt)=>{const p=props.find(x=>x[0]===k),[a,b]=keys[k],u=tt<=a?0:tt>=b?1:(tt-a)/(b-a);return p[2]+(p[3]-p[2])*u};
+ function layout(){props.forEach(([k,n])=>{const l=$(`.kf-lane[data-k="${k}"]`),[a,b]=keys[k];l.querySelectorAll('.kfd').forEach((d,i)=>d.style.left=(keys[k][i]/D*100)+'%');const bar=l.querySelector('.kf-bar');bar.style.left=(a/D*100)+'%';bar.style.width=((b-a)/D*100)+'%'});
+  $('#kfRead').innerHTML=props.map(([k,n])=>`<b>${n}</b> ${tc(keys[k][0])} → ${tc(keys[k][1])}`).join('<br>')+'<br><br>'+(mode==='flash'?'Modo Flash: mover un keyframe mueve los tres. Todo arranca y termina junto.':'Cada propiedad tiene su tramo. Arrastrá los rombos o usá las flechas del teclado.')}
+ function draw(tt){t=tt;const W=$('#kfStage').clientWidth-88;$('#kfObj').style.transform=`translateX(${val('pos',tt)*W}px) rotate(${val('rot',tt)}deg)`;$('#kfObj').style.opacity=val('op',tt)/100;$$('#kfRows .kf-ph').forEach(p=>p.style.left=(tt/D*100)+'%');$('#kfT').value=tt;$('#kfTO').textContent=tc(tt)}
+ function setKey(k,i,v){v=Math.round(clamp(v,0,D)*30)/30;const ks=mode==='flash'?props.map(p=>p[0]):[k];const other=keys[k][1-i];v=i===0?Math.min(v,other-.1):Math.max(v,other+.1);ks.forEach(x=>keys[x][i]=Math.round(v*30)/30);layout();draw(t)}
+ $('#kfRows').addEventListener('pointerdown',e=>{const d=e.target.closest('.kfd');if(!d)return;e.preventDefault();d.setPointerCapture(e.pointerId);d.classList.add('drag');const lane=d.parentElement;
+  const mv=ev=>{const r=lane.getBoundingClientRect();setKey(d.dataset.k,+d.dataset.i,(ev.clientX-r.left)/r.width*D)};
+  const up=()=>{d.classList.remove('drag');d.removeEventListener('pointermove',mv);d.removeEventListener('pointerup',up);d.removeEventListener('pointercancel',up)};
+  d.addEventListener('pointermove',mv);d.addEventListener('pointerup',up);d.addEventListener('pointercancel',up)});
+ $('#kfRows').addEventListener('keydown',e=>{const d=e.target.closest('.kfd');if(!d)return;const s=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!s)return;e.preventDefault();setKey(d.dataset.k,+d.dataset.i,keys[d.dataset.k][+d.dataset.i]+s*(e.shiftKey?10:1)/30)});
+ seg($('#kfMode'),b=>{if(b.dataset.m===mode)return;mode=b.dataset.m;if(mode==='flash'){saved=JSON.parse(JSON.stringify(keys));props.forEach(([k])=>keys[k]=[...keys.pos])}else if(saved)keys=saved;layout();draw(t)});
+ $('#kfT').addEventListener('input',e=>{if(stop)stop();draw(+e.target.value)});
+ $('#kfPlay').addEventListener('click',()=>{if(stop)stop();stop=tween(D*1000,u=>draw(u*D),()=>stop=null)});
+ const kro=new ResizeObserver(()=>draw(t));kro.observe($('#kfStage'));layout();draw(1);}
+
+/* ---------- 03 Graph Editor ---------- */
+{let o=.05,i=.9,lin=false,view='speed';const svg=$('#geSvg'),X=x=>20+x*200,Y=y=>220-y*200;
+ const bz=(a,b,u)=>3*a*u*(1-u)**2+3*b*u*u*(1-u)+u**3,dbz=(a,b,u)=>3*a*(1-u)**2+6*(b-a)*u*(1-u)+3*(1-b)*u*u;
+ const P=()=>lin?[0,0,1,1]:[o,0,1-i,1];
+ function draw(){const [x1,y1,x2,y2]=P();let h='<rect x="20" y="20" width="200" height="200" class="f-paper s-rule"/>';
+  for(let k=1;k<4;k++)h+=`<line x1="${20+k*50}" y1="20" x2="${20+k*50}" y2="220" class="s-rule" stroke-dasharray="2 4"/><line x1="20" y1="${20+k*50}" x2="220" y2="${20+k*50}" class="s-rule" stroke-dasharray="2 4"/>`;
+  if(view==='value'){h+=`<line x1="${X(0)}" y1="${Y(0)}" x2="${X(1)}" y2="${Y(1)}" class="s-rule" stroke-width="1.5"/>`;
+   h+=`<path d="M${X(0)},${Y(0)} C${X(x1)},${Y(y1)} ${X(x2)},${Y(y2)} ${X(1)},${Y(1)}" fill="none" class="s-ink" stroke-width="3"/>`;
+   if(!lin)h+=`<line x1="${X(0)}" y1="${Y(0)}" x2="${X(x1)}" y2="${Y(y1)}" class="s-mag" stroke-width="2"/><line x1="${X(1)}" y1="${Y(1)}" x2="${X(x2)}" y2="${Y(y2)}" class="s-mag" stroke-width="2"/><circle class="handle" data-h="1" cx="${X(x1)}" cy="${Y(y1)}" r="9"/><circle class="handle" data-h="2" cx="${X(x2)}" cy="${Y(y2)}" r="9"/>`;
+   h+=`<text x="20" y="236">tiempo →</text><text x="24" y="14">valor</text>`;}
+  else{const pts=[];let mx=0,pk=0;const S=[];for(let k=0;k<=80;k++){const u=k/80,x=bz(x1,x2,u),dx=dbz(x1,x2,u),dy=dbz(y1,y2,u);const s=lin?1:(dx<1e-4?0:dy/dx);S.push([x,s]);if(s>mx){mx=s;pk=x}}
+   const sc=lin?.5:1/Math.max(mx,1e-6)*.9;S.forEach(([x,s])=>pts.push(`${X(x).toFixed(1)},${Y(s*sc).toFixed(1)}`));
+   h+=`<polyline points="${pts.join(' ')}" fill="none" class="s-ink" stroke-width="3" stroke-linejoin="round"/>`;
+   if(!lin)h+=`<line x1="${X(pk)}" y1="20" x2="${X(pk)}" y2="220" class="s-mag" stroke-dasharray="3 3"/><text x="${clamp(X(pk)+4,24,170)}" y="34" style="fill:var(--mag)">pico</text>`;
+   h+=`<text x="20" y="236">tiempo →</text><text x="24" y="14">velocidad</text>`;
+   $('#geRead').dataset.pk=Math.round(pk*100);}
+  h+=`<rect x="${X(0)-5}" y="${Y(0)-5}" width="10" height="10" transform="rotate(45 ${X(0)} ${Y(0)})" class="f-ink"/><rect x="${X(1)-5}" y="${Y(view==='value'?1:0)-5}" width="10" height="10" transform="rotate(45 ${X(1)} ${Y(view==='value'?1:0)})" class="f-ink"/>`;
+  svg.innerHTML=h;
+  const code=lin?'linear':`cubic-bezier(${x1.toFixed(2)}, 0, ${x2.toFixed(2)}, 1)`;$('#geCode').textContent=code;
+  $('#geOO').textContent=lin?'lineal':Math.round(o*100)+'%';$('#geIO').textContent=lin?'lineal':Math.round(i*100)+'%';
+  if(view==='speed'&&!lin){}else if(view==='value'){const tmp=[];for(let k=0;k<=80;k++){const u=k/80;tmp.push([bz(x1,x2,u),lin?1:dbz(y1,y2,u)/Math.max(dbz(x1,x2,u),1e-4)])}let mm=0,pp=0;tmp.forEach(([x,s])=>{if(s>mm){mm=s;pp=x}});$('#geRead').dataset.pk=Math.round(pp*100)}
+  const pk=$('#geRead').dataset.pk;
+  $('#geRead').innerHTML=lin?'<b>Lineal</b><br>Velocidad constante: arranca y frena de golpe. Así vienen los keyframes por defecto y es lo que hace que algo “se vea de computadora”.':`<b>Salida ${Math.round(o*100)}% · Entrada ${Math.round(i*100)}%</b><br>La velocidad máxima llega al ${pk}% del tiempo. ${pk<35?'Arranca con fuerza y se apoya al final: ideal para algo que entra a escena.':pk>65?'Arranca lento y llega de golpe: sirve para algo que sale de escena.':'Acelera y frena parejo: un movimiento de un punto a otro.'}<br><br>En CSS es la misma curva que ves en el código.`}
+ function css(){const [x1,,x2]=P();return lin?'linear':`cubic-bezier(${x1},0,${x2},1)`}
+ svg.addEventListener('pointerdown',e=>{const c=e.target.closest('.handle');if(!c)return;e.preventDefault();svg.setPointerCapture(e.pointerId);const h=c.dataset.h;
+  const mv=ev=>{const pt=new DOMPoint(ev.clientX,ev.clientY).matrixTransform(svg.getScreenCTM().inverse());const x=clamp((pt.x-20)/200,.01,1);if(h==='1')o=x;else i=clamp(1-x,.01,1);$('#geO').value=Math.round(o*100);$('#geI').value=Math.round(i*100);press($('#gePre'),'x');draw()};
+  const up=()=>{svg.removeEventListener('pointermove',mv);svg.removeEventListener('pointerup',up);svg.removeEventListener('pointercancel',up)};
+  svg.addEventListener('pointermove',mv);svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up)});
+ $('#geO').addEventListener('input',e=>{lin=false;o=e.target.value/100;press($('#gePre'),'x');draw()});
+ $('#geI').addEventListener('input',e=>{lin=false;i=e.target.value/100;press($('#gePre'),'x');draw()});
+ seg($('#gePre'),b=>{if(b.dataset.p==='lin'){lin=true}else{lin=false;const [a,c]=b.dataset.p.split(',');o=a/100;i=c/100;$('#geO').value=a;$('#geI').value=c}draw()});
+ seg($('#geView'),b=>{view=b.dataset.v;draw()});
+ $('#gePlay').addEventListener('click',()=>{const W=$('#geT1').parentElement.clientWidth-46,D=RM?1:1200;[['#geT1',css()],['#geT2','cubic-bezier(.333,0,.667,1)'],['#geT3','linear']].forEach(([s,ez])=>{$(s).getAnimations().forEach(a=>a.cancel());$(s).animate([{transform:'translateX(0)'},{transform:`translateX(${W}px)`}],{duration:D,easing:ez,fill:'forwards'})})});
+ $('#geCopy').addEventListener('click',e=>copy($('#geCode').textContent,e.currentTarget));
+ draw();}
+
+/* ---------- 04 Anchor y parenting ---------- */
+{let anc='base',cr=30,link=true,px=240,ps=1,pr=0,stop=null;
+ $('#paTicks').innerHTML=Array.from({length:12},(_,k)=>`<line x1="0" y1="-88" x2="0" y2="${k%3?-80:-74}" class="s-ink" stroke-width="${k%3?1.5:3}" transform="rotate(${k*30})"/>`).join('');
+ const needle=()=>{const y=anc==='base'?-86:anc==='centro'?-43:0;return `<g id="paChild" transform="rotate(${cr})"><rect x="-4" y="${y}" width="8" height="86" class="f-mag"/><g class="s-cyan" stroke-width="2" fill="none"><circle r="9"/><line x1="-15" x2="15"/><line y1="-15" y2="15"/></g></g>`};
+ function draw(){$('#paParent').setAttribute('transform',`translate(${px},150) rotate(${pr}) scale(${ps})`);
+  const old=$('#paChild');if(old)old.remove();
+  if(link)$('#paParent').insertAdjacentHTML('beforeend',needle());else $('#paWorld').innerHTML=`<g transform="translate(240,150)">${needle()}</g>`;
+  if(link)$('#paWorld').innerHTML='';
+  $('#paCRO').textContent=Math.round(cr)+'°';$('#paPXO').textContent=Math.round(px);$('#paPSO').textContent=Math.round(ps*100)+'%';
+  $('#paRead').innerHTML=`<b>Anchor: ${anc}</b><br>${anc==='base'?'La aguja gira desde su base, en el centro del reloj. Es lo correcto.':anc==='centro'?'Gira desde el medio: es el anchor por defecto y casi nunca es el que querés.':'Gira desde la punta: la aguja queda colgando para el otro lado.'}<br><br><b>Parent: ${link?'esfera':'none'}</b><br>${link?'Si movés o escalás la esfera, la aguja la acompaña y conserva su propio giro.':'La aguja no sabe nada de la esfera: movela y se separan.'}`}
+ seg($('#paAnc'),b=>{anc=b.dataset.a;draw()});seg($('#paLink'),b=>{link=b.dataset.l==='1';draw()});
+ $('#paCR').addEventListener('input',e=>{cr=+e.target.value;draw()});$('#paPX').addEventListener('input',e=>{px=+e.target.value;draw()});$('#paPS').addEventListener('input',e=>{ps=e.target.value/100;draw()});
+ $('#paPlay').addEventListener('click',()=>{if(stop)stop();stop=tween(RM?1:2400,u=>{const v=ease(u);px=140+200*v;pr=Math.sin(u*Math.PI)*-20;cr=30+360*u;$('#paPX').value=px;$('#paCR').value=cr%360;draw()},()=>{pr=0;draw();stop=null})});
+ draw();}
+
+/* ---------- 05 Trim Paths ---------- */
+{const PATHS={linea:'M30,190 C110,40 190,40 240,130 S370,230 450,70',circulo:'M240,40 A90,90 0 1 1 240,220 A90,90 0 1 1 240,40 Z',firma:'M40,170 C80,60 125,60 112,150 C100,220 60,170 122,130 C182,92 205,200 242,150 C270,112 290,112 300,160 C310,210 342,92 380,120 C410,142 420,170 450,150'};
+ let s=0,e=100,off=0,stop=null;const p=$('#trPath');
+ function apply(){const lo=Math.min(s,e),hi=Math.max(s,e),len=hi-lo,sh=off/360*100;p.style.opacity=len<.2?0:1;p.setAttribute('stroke-dasharray',`${len} ${100-len+.001}`);p.setAttribute('stroke-dashoffset',-(lo+sh));
+  $('#trS').value=s;$('#trE').value=e;$('#trO').value=off;$('#trSO').textContent=Math.round(s)+'%';$('#trEO').textContent=Math.round(e)+'%';$('#trOO').textContent=Math.round(off)+'°';
+  $('#trRead').innerHTML=`<b>Se ve del ${Math.round(lo)}% al ${Math.round(hi)}%</b> del trazo${off?`, corrido ${Math.round(off)}°`:''}.<br>${len>=99.5?'Trazo completo.':len<.2?'Nada visible: Start y End coinciden.':'El resto existe, pero no se dibuja.'}`}
+ seg($('#trShape'),b=>{const d=PATHS[b.dataset.s];p.setAttribute('d',d);$('#trGhost').setAttribute('d',d);apply()});
+ $('#trS').addEventListener('input',ev=>{if(stop)stop();s=+ev.target.value;apply()});$('#trE').addEventListener('input',ev=>{if(stop)stop();e=+ev.target.value;apply()});$('#trO').addEventListener('input',ev=>{if(stop)stop();off=+ev.target.value;apply()});
+ seg($('#trAnim'),b=>{if(stop)stop();const a=b.dataset.a;
+  if(a==='dibujo'){off=0;s=0;stop=tween(RM?1:1400,u=>{e=easeOut(u)*100;apply()})}
+  else if(a==='cola'){off=0;stop=tween(RM?1:1800,u=>{e=ease(clamp(u/.7,0,1))*100;s=ease(clamp((u-.3)/.7,0,1))*100;apply()})}
+  else{s=0;e=25;stop=tween(RM?1:2400,u=>{off=u*720%360;apply()},()=>{off=0;apply()})}});
+ p.setAttribute('d',PATHS.linea);$('#trGhost').setAttribute('d',PATHS.linea);apply();}
+
+/* ---------- 06 Track mattes ---------- */
+{let mode='alpha',shape='rect',x=.5,stop=null;
+ const shp=(cls,extra='')=>{const cx=-60+x*600;return shape==='rect'?`<rect x="${cx-90}" y="20" width="180" height="220" ${cls} ${extra}/>`:`<circle cx="${cx}" cy="130" r="${110}" ${cls} ${extra}/>`};
+ function draw(){const mi=$('#mtMaskIn'),fill=$('#mtFill'),top=$('#mtTop');
+  if(mode==='none'){fill.removeAttribute('mask');mi.innerHTML='';top.innerHTML=shp('class="f-yel"','opacity=".9"')}
+  else{fill.setAttribute('mask','url(#mtMask)');
+   mi.innerHTML=mode==='alpha'?shp('fill="#fff"'):mode==='inv'?`<rect width="480" height="260" fill="#fff"/>${shp('fill="#000"')}`:shp('fill="url(#mtGrad)"');
+   top.innerHTML=shp('fill="none" class="s-cyan"','stroke-width="2" stroke-dasharray="6 5"')}
+  $('#mtXO').textContent=Math.round(x*100)+'%';$('#mtX').value=Math.round(x*100);
+  const T={none:'<b>Sin matte</b><br>El rectángulo amarillo es una capa más y tapa lo de abajo.',alpha:'<b>Alpha Matte</b><br>Se ve la capa solo donde el matte tiene forma. Es la capa de máscara de Flash.',inv:'<b>Alpha Inverted</b><br>Al revés: se ve todo menos lo que tapa el matte.',luma:'<b>Luma Matte</b><br>Cuenta el brillo: donde el matte es blanco se ve, donde es negro desaparece. El degradé hace un fundido.'};
+  $('#mtRead').innerHTML=T[mode]}
+ seg($('#mtMode'),b=>{mode=b.dataset.m;draw()});seg($('#mtShape'),b=>{shape=b.dataset.s;draw()});
+ $('#mtX').addEventListener('input',e=>{if(stop)stop();x=e.target.value/100;draw()});
+ $('#mtPlay').addEventListener('click',()=>{if(stop)stop();stop=tween(RM?1:1600,u=>{x=ease(u);draw()})});
+ draw();}
+
+/* ---------- 07 Texto ---------- */
+{let base='c',shape='sq',S=0,E=100,O=100,stop=null;const line=$('#taLine');
+ function build(){line.textContent='';const words=$('#taTxt').value.trim().split(/\s+/).filter(Boolean);
+  words.forEach((w,wi)=>{const ws=document.createElement('span');ws.className='w';[...w].forEach(ch=>{const c=document.createElement('span');c.className='c';c.textContent=ch;ws.appendChild(c)});line.appendChild(ws);if(wi<words.length-1)line.appendChild(document.createTextNode(' '))});apply()}
+ function apply(){const units=[...line.querySelectorAll(base==='c'?'.c':'.w')],other=[...line.querySelectorAll(base==='c'?'.w':'.c')],n=units.length;other.forEach(u=>{u.style.transform='';u.style.opacity=''});
+  const lo=Math.min(S,E)+O,hi=Math.max(S,E)+O;let sel=0;
+  units.forEach((u,k)=>{const a=k/n*100,b=(k+1)/n*100;let amt;
+   if(shape==='sq'){amt=hi<=lo?0:clamp((Math.min(b,hi)-Math.max(a,lo))/(b-a),0,1)}else{const c=(a+b)/2;amt=c<=lo?0:c>=hi?1:(c-lo)/Math.max(hi-lo,1e-6)}
+   if(amt>.01)sel++;
+   const tf=[];if($('#taPY').checked)tf.push(`translateY(${amt*.8}em)`);if($('#taSc').checked)tf.push(`scale(${1-amt})`);if($('#taRo').checked)tf.push(`rotate(${amt*-90}deg)`);
+   u.style.transform=tf.join(' ');u.style.opacity=$('#taOp').checked?1-amt:''});
+  $('#taSO').textContent=Math.round(S)+'%';$('#taEO').textContent=Math.round(E)+'%';$('#taOO').textContent=Math.round(O)+'%';
+  $('#taRead').innerHTML=`<b>Rango: ${Math.round(lo)}% a ${Math.round(hi)}%</b><br>${sel} de ${n} ${base==='c'?'caracteres':'palabras'} afectados.<br>Las ${base==='c'?'letras':'palabras'} dentro del rango toman los valores del Animator. Fuera del rango quedan normales.`}
+ $('#taTxt').addEventListener('input',build);['taPY','taOp','taSc','taRo'].forEach(id=>$('#'+id).addEventListener('change',apply));
+ seg($('#taBase'),b=>{base=b.dataset.b;apply()});seg($('#taShape'),b=>{shape=b.dataset.s;apply()});
+ [['taS',v=>S=v],['taE',v=>E=v],['taO',v=>O=v]].forEach(([id,f])=>$('#'+id).addEventListener('input',e=>{if(stop)stop();f(+e.target.value);apply()}));
+ $('#taPlay').addEventListener('click',()=>{if(stop)stop();stop=tween(RM?1:1500,u=>{O=easeOut(u)*100;$('#taO').value=O;apply()},()=>stop=null)});
+ build();}
+
+/* ---------- 08 Expressions ---------- */
+{const PRE=[['time * 90','rot','onEnterFrame: _rotation += 3'],['wiggle(2, 30)','x','_x = base + Math.random() * 30, en cada frame'],['loopOut("cycle")','x','gotoAndPlay(1) en el último frame'],['loopOut("pingpong")','sc','invertir el sentido al llegar al final'],['Math.sin(time * 4) * 100','x','_x = Math.sin(t) * 100'],['linear(time, 0, 2, 0, 100)','op','una interpolación hecha a mano']];
+ const BASE={rot:[0,90,'Rotation','°'],x:[-120,120,'Position X','px'],sc:[40,100,'Scale','%'],op:[0,100,'Opacity','%']};
+ let prop='rot',fn=null,t0=performance.now(),run=false,raf=0,last=0;
+ $('#exPre').innerHTML=PRE.map((p,k)=>`<button type="button" data-i="${k}"${k===0?' aria-pressed="true"':''}><code>${esc(p[0])}</code></button>`).join('');
+ const keyed=t=>{const [a,b]=BASE[prop];return t<=0?a:t>=1?b:a+(b-a)*t};
+ const noise=x=>(Math.sin(x*1.7+1.3)+Math.sin(x*3.1+.7)*.6+Math.sin(x*5.3+2.1)*.3)/1.9;
+ function compile(){const code=$('#exCode').value;const args=['time','value','wiggle','loopOut','linear','ease','clamp','Math'];
+  try{fn=new Function(...args,`"use strict";return (${code}\n);`)}catch(e){try{const L=code.trim().split('\n');const lastL=L.pop();fn=new Function(...args,`"use strict";${L.join('\n')}\nreturn (${lastL});`)}catch(e2){fn=null;err(e2.message)}}
+  if(fn)err('');if(!run)render(performance.now())}
+ function err(m){const el=$('#exErr');el.hidden=!m;el.textContent=m?'Error de expression: '+m+'. La propiedad mantiene su valor.':''}
+ function evalAt(t){const value=keyed(t);
+  const wiggle=(f,a)=>value+a*noise(t*f*1.3);
+  const loopOut=(type='cycle')=>{if(t<=1)return keyed(t);const tt=t%1,odd=Math.floor(t)%2===1;return type==='pingpong'&&odd?keyed(1-tt):keyed(tt)};
+  const lin=(x,a,b,c,d)=>{const u=clamp((x-a)/(b-a),0,1);return c+(d-c)*u},es=(x,a,b,c,d)=>{const u=clamp((x-a)/(b-a),0,1);return c+(d-c)*(u*u*(3-2*u))};
+  const cl=(v,a,b)=>Math.min(b,Math.max(a,v));
+  try{const v=fn(t,value,wiggle,loopOut,lin,es,cl,Math);if(typeof v!=='number'||!isFinite(v)){err('tiene que devolver un número');return value}return v}catch(e){err(e.message);return value}}
+ function frame(now){if(!run)return;raf=requestAnimationFrame(frame);if(now-last<33)return;last=now;render(now)}
+ function render(now){const t=RM?1.5:((now-t0)/1000)%6;let v=fn?evalAt(t):keyed(t);const b=BASE[prop],o=$('#exObj'),W=$('#exObj').parentElement.clientWidth/2-40;
+  let tf='';o.style.opacity='';if(prop==='rot')tf=`rotate(${v}deg)`;else if(prop==='x')tf=`translateX(${clamp(v,-W,W)}px)`;else if(prop==='sc')tf=`scale(${clamp(v,0,300)/100})`;else o.style.opacity=clamp(v,0,100)/100;o.style.transform=tf;
+  $('#exVal').textContent=`time ${t.toFixed(2)} s · ${b[2]} ${v.toFixed(1)}${b[3]}`}
+ function info(k){const p=PRE[k];$('#exAs').innerHTML=p?`<b>En ActionScript sería:</b> ${esc(p[2])}`:'';}
+ function readout(){const b=BASE[prop];$('#exRead').innerHTML=`<b>value</b> = lo que dicen los keyframes: ${b[2]} va de ${b[0]} a ${b[1]}${b[3]} entre 0:00 y 1:00.<br><br><b>Disponibles acá:</b> time, value, wiggle(f, a), loopOut("cycle" | "pingpong"), linear(), ease(), clamp() y Math.<br><br>En After Effects, Position es [x, y]. Acá se simplifica a un solo eje.`}
+ seg($('#exPre'),b=>{const p=PRE[+b.dataset.i];$('#exCode').value=p[0];prop=p[1];press($('#exProp'),`[data-p="${prop}"]`);info(+b.dataset.i);readout();compile();t0=performance.now()});
+ seg($('#exProp'),b=>{prop=b.dataset.p;$('#exObj').style.transform='';readout();t0=performance.now()});
+ let to;$('#exCode').addEventListener('input',()=>{clearTimeout(to);press($('#exPre'),'x');info(-1);to=setTimeout(compile,250)});
+ const exio=new IntersectionObserver(es=>{run=es[0].isIntersecting&&!RM;cancelAnimationFrame(raf);if(run)raf=requestAnimationFrame(frame);else render(performance.now())});exio.observe($('#exObj').parentElement);
+ compile();info(0);readout();}
+
+/* ---------- 09 Exportar ---------- */
+{const DEST={redes:['Video para redes','MP4 · H.264','Composition → Add to Adobe Media Encoder Queue','Preset H.264 “Match Source – High bitrate”. Comp vertical de 1080 × 1920 a 30 fps.','Dejá el texto importante lejos de los bordes de arriba y de abajo: ahí la app pone su interfaz.'],
+ web:['Animación vectorial para web','Lottie · JSON o .lottie','Window → Extensions → LottieFiles o Bodymovin','Exportá la comp y probala con lottie-web o el reproductor de dotLottie en una página local.','Lo que Lottie no soporta se pierde sin aviso. Mirá la lista de abajo.'],
+ alfa:['Video con transparencia','MOV · ProRes 4444','Composition → Add to Render Queue → Output Module','Format QuickTime, códec Apple ProRes 4444, canales RGB + Alpha.','Pesa mucho: sirve para pasar la pieza a otro programa, no para publicarla.'],
+ editor:['Para seguir en Premiere u otro editor','MOV ProRes 422 o MP4 de alta calidad','Composition → Add to Render Queue','Si el editor es Premiere, también podés importar el .aep directo y queda vinculado (Dynamic Link).','Con Dynamic Link, cada cambio en After Effects aparece en Premiere sin volver a exportar.'],
+ gif:['GIF liviano','GIF animado','Composition → Add to Adobe Media Encoder Queue → formato Animated GIF','Bajá el tamaño y los fps: 15 fps alcanza para la mayoría de los casos.','Para web, un MP4 corto en loop o un Lottie casi siempre pesa menos que un GIF.']};
+ const F=[['shapes','Shape layers','ok','Es la base de Lottie.',1],['trim','Trim Paths','ok','Funciona bien.',1],['parent','Parenting y precomps','ok','Funcionan bien.',1],['masks','Máscaras','mid','Add y Subtract funcionan; otros modos, no siempre.',0],['matte','Track mattes','mid','Alpha y luma funcionan, pero cuestan rendimiento.',0],['text','Texto con Animators','mid','Mejor convertir el texto a shapes antes de exportar.',0],['expr','Expressions','mid','Andan en web; en apps de iOS o Android, en general no.',0],['raster','Imágenes raster','mid','Se incrustan: pesan y no escalan.',0],['blur','Gaussian Blur','bad','No es confiable: en muchos reproductores no aparece.',0],['glow','Glow y efectos de luz','bad','No se exportan.',0],['d3','Capas 3D y cámara','bad','Lottie es 2D.',0],['video','Video importado','bad','No se exporta.',0]];
+ let dest='redes';const sel=st.get('lottie',null)||Object.fromEntries(F.map(f=>[f[0],!!f[4]]));
+ $('#xpFeat').innerHTML=F.map(f=>`<label><input type="checkbox" data-f="${f[0]}"${sel[f[0]]?' checked':''}> ${f[1]}</label>`).join('');
+ const L={ok:'Funciona',mid:'Con cuidado',bad:'No va'};
+ function draw(){const d=DEST[dest];let h=`<h3>${d[0]}</h3><dl><dt>Formato</dt><dd>${d[1]}</dd><dt>Dónde</dt><dd>${d[2]}</dd><dt>Ajustes</dt><dd>${d[3]}</dd><dt>Ojo</dt><dd>${d[4]}</dd></dl>`;
+  const used=F.filter(f=>sel[f[0]]);
+  if(dest==='web'){const worst=used.some(f=>f[2]==='bad')?'bad':used.some(f=>f[2]==='mid')?'mid':'ok';
+   h+=`<div><span class="pill ${worst}">${worst==='ok'?'Tu pieza pasa a Lottie':worst==='mid'?'Pasa, con cuidados':'Hay cosas que no van a llegar'}</span></div><div class="compat">${used.length?used.map(f=>`<div><span>${f[1]}</span><span class="pill ${f[2]}">${L[f[2]]}</span><small>${f[3]}</small></div>`).join(''):'<div><span>Marcá a la derecha qué usaste en la pieza.</span></div>'}</div>`}
+  else h+=`<div><span class="pill ok">Todo lo que usaste sale tal cual</span></div><p style="color:var(--ink-2);font-size:16px">Un video renderiza lo que ves en el visor, con efectos incluidos. Las limitaciones de la lista solo importan si la pieza va a Lottie.</p>`;
+  $('#xpFicha').innerHTML=h}
+ seg($('#xpDest'),b=>{dest=b.dataset.d;draw()});
+ $('#xpFeat').addEventListener('change',e=>{const c=e.target.closest('[data-f]');if(!c)return;sel[c.dataset.f]=c.checked;st.set('lottie',sel);draw()});
+ draw();}
+
+/* ---------- 10 Atajos ---------- */
+{const Q=[['Mostrar solo Position','P'],['Mostrar solo Scale','S'],['Mostrar solo Rotation','R'],['Mostrar solo Opacity','T'],['Mostrar solo Anchor Point','A'],['Ver solo las propiedades animadas','U'],['Easy Ease en los keyframes seleccionados','F9'],['Ir al keyframe anterior','J'],['Ir al keyframe siguiente','K'],['Marcar el inicio del área de trabajo','B'],['Marcar el fin del área de trabajo','N'],['Herramienta Pan Behind, para mover el anchor point','Y'],['Duplicar la capa','Ctrl+D'],['Cortar la capa donde está el cursor','Ctrl+Shift+D'],['Nuevo sólido','Ctrl+Y'],['Ajustar la capa al tamaño de la comp','Ctrl+Alt+F'],['Mostrar la columna de Track Matte y modos','F4'],['Previsualizar','Espacio']];
+ const EXTRA=[['Nueva composición','Ctrl+N'],['Herramienta de texto','Ctrl+T'],['Precomponer','Ctrl+Shift+C'],['Todo lo modificado de una capa','UU'],['Sumar una propiedad a las visibles','Shift + letra'],['Mover el inicio / fin de la capa al cursor','[  /  ]'],['Recortar el inicio / fin de la capa al cursor','Alt+[  /  Alt+]'],['Mostrar la forma de onda del audio','LL'],['Abrir el campo de expression','Alt + clic en el cronómetro']];
+ let cur=-1,active=false,streak=0,best=st.get('racha',0);const hits=st.get('atajos',{});
+ const kb=s=>s.split('+').map(k=>`<kbd class="k">${esc(k)}</kbd>`).join('');
+ $('#klist').innerHTML=[...Q,...EXTRA].map(([a,k])=>`<div><span>${esc(a)}</span><kbd>${esc(k)}</kbd></div>`).join('');
+ function readout(){const m=Q.filter(q=>(hits[q[1]]||0)>=3).length;$('#qzRead').innerHTML=`<b>Racha:</b> ${streak} · <b>Mejor:</b> ${best}<br><b>Dominados:</b> ${m} de ${Q.length}<br><span style="opacity:.8">Un atajo cuenta como dominado después de tres aciertos.</span>`}
+ function next(){const pool=Q.map((q,k)=>k).filter(k=>k!==cur);pool.sort((a,b)=>(hits[Q[a][1]]||0)-(hits[Q[b][1]]||0)+Math.random()*2-1);cur=pool[0];$('#qzQ').textContent=Q[cur][0];$('#qzK').innerHTML='';$('#qzMsg').textContent='Apretá el atajo';$('#qz').className='qz'}
+ function combo(e){if(['Control','Shift','Alt','Meta','AltGraph','Tab','Escape'].includes(e.key))return null;let k=e.code.startsWith('Key')?e.code.slice(3):e.code.startsWith('Digit')?e.code.slice(5):e.code==='Space'?'Espacio':/^F\d+$/.test(e.code)?e.code:e.key.length===1?e.key.toUpperCase():e.key;return (e.ctrlKey||e.metaKey?'Ctrl+':'')+(e.altKey?'Alt+':'')+(e.shiftKey?'Shift+':'')+k}
+ $('#qz').addEventListener('keydown',e=>{if(!active)return;const c=combo(e);if(!c)return;e.preventDefault();const want=Q[cur][1];$('#qzK').innerHTML=kb(c);
+  if(c===want){hits[want]=(hits[want]||0)+1;st.set('atajos',hits);streak++;if(streak>best){best=streak;st.set('racha',best)}$('#qz').className='qz ok';$('#qzMsg').textContent='Bien';readout();setTimeout(next,650)}
+  else{streak=0;$('#qz').className='qz bad';$('#qzMsg').textContent='Ese es '+c+'. Probá de nuevo.';readout()}});
+ $('#qz').addEventListener('blur',()=>{if(active)$('#qzMsg').textContent='Hacé clic acá para seguir practicando'});
+ $('#qz').addEventListener('focus',()=>{if(active&&!$('#qz').classList.contains('ok'))$('#qzMsg').textContent='Apretá el atajo'});
+ $('#qzGo').addEventListener('click',()=>{active=true;press($('#qzView'),'[data-v="q"]');$('#qz').hidden=false;$('#klist').hidden=true;streak=0;next();readout();$('#qz').focus()});
+ $('#qzSkip').addEventListener('click',()=>{if(!active||cur<0)return;streak=0;$('#qzK').innerHTML=kb(Q[cur][1]);$('#qzMsg').textContent='Era este. Va otro.';readout();setTimeout(()=>{next();$('#qz').focus()},1400)});
+ seg($('#qzView'),b=>{const l=b.dataset.v==='l';$('#qz').hidden=l;$('#klist').hidden=!l});
+ readout();}
+
+/* ---------- 11 Proyecto ---------- */
+{const G=[['Las dos versiones',['Guion de una línea cada 3 segundos, escrito antes de abrir After Effects','Elementos de Illustrator convertidos en shapes','Curvas trabajadas en el Graph Editor en los movimientos principales','Un fondo o detalle controlado por expressions','Una transición hecha con track matte','Un cierre con el logo quieto al menos 2 segundos']],
+ ['Versión redes',['Comp vertical de 1080 × 1920 a 30 fps','Al menos una entrada de texto hecha con Animators','El texto importante lejos de los bordes de arriba y de abajo','Exportada en MP4 H.264']],
+ ['Versión web',['Comp 1:1 o 16:9 armada con las mismas precomps','Solo recursos que soporta Lottie: sin blur ni glow','Texto convertido a shapes','Exportada en JSON o .lottie y probada en una página local']]];
+ const chk=st.get('proyecto',{});const all=G.flatMap(g=>g[1]);
+ $('#pf').innerHTML=G.map(([t,items],gi)=>`<div><h3>${t}</h3>${items.map((it,k)=>`<label><input type="checkbox" data-c="${gi}-${k}"${chk[gi+'-'+k]?' checked':''}> <span>${it}</span></label>`).join('')}</div>`).join('');
+ function upd(){const n=Object.values(chk).filter(Boolean).length,p=Math.round(n/all.length*100);$('#pfPct').textContent=p+'%';$('#pfMeter').style.width=p+'%';
+  const g=G.map(([t,items],gi)=>{const k=items.filter((_,j)=>chk[gi+'-'+j]).length;return `<b>${t}:</b> ${k} de ${items.length}`}).join('<br>');$('#pfRead').innerHTML=g+(p===100?'<br><br>Pieza terminada. Mostrala sin explicar nada y anotá qué se entendió.':'')}
+ $('#pf').addEventListener('change',e=>{const c=e.target.closest('[data-c]');if(!c)return;chk[c.dataset.c]=c.checked;st.set('proyecto',chk);upd()});
+ $('#pfReset').addEventListener('click',()=>{Object.keys(chk).forEach(k=>delete chk[k]);st.set('proyecto',chk);$$('#pf input').forEach(i=>i.checked=false);upd()});
+ upd();}
+}
+</script>
+
+<script src="laboratorio.js" defer></script>
+</body>
+</html>

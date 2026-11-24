@@ -1,5 +1,13 @@
 # Cambios
 
+## 5.1.0 — Módulo 6: After Effects
+
+- Nuevo `6-after-effects.html`: After Effects para quien viene de Flash. Once láminas con simuladores de las herramientas del programa: interfaz, keyframes por propiedad (con modo Flash para comparar), Graph Editor con influencia y Speed Graph, anchor point y parenting, Trim Paths, track mattes, Animators de texto con Range Selector, expressions que corren en vivo, exportación a video y Lottie con lista de compatibilidad, práctica de atajos y proyecto final con dos versiones (redes y web).
+- Cada lámina suma un ejercicio para hacer en After Effects. El cuaderno y las láminas comprendidas usan `laboratorio.js`, igual que los otros módulos.
+- `index.html`: tarjeta del módulo 6 y cinco preguntas de repaso nuevas (30 en total).
+- `laboratorio.js`: el total de láminas se calcula a partir de los módulos en lugar de estar fijo en 58. El respaldo suma la clave opcional `ae`, sin cambiar de versión.
+- `oficio-datos.js`: nombres de las láminas del módulo 6 y enlaces del repaso a sus láminas.
+
 ## 5.0.0 — Recorridos
 
 - Nueva página `recorridos.html`: seis recorridos con cinco estaciones cada uno (entender, experimentar, practicar, evaluar y aplicar), avance basado en evidencia, tablero de evaluación A/B con indicadores, lectura en la herramienta 06 y rúbrica de cuatro niveles.

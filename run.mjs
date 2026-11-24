@@ -34,7 +34,7 @@ const store = key => page.evaluate(k => JSON.parse(localStorage.getItem(k) || '{
 
 try {
   await check('Todas las páginas cargan sin errores de script', async () => {
-    for (const f of ['index.html', '1-grafico.html', '2-web.html', '3-editorial.html', '4-identidad.html', '5-motion.html', 'taller.html', 'herramientas.html', 'estudio.html', 'recorridos.html', 'recorridos.html#identidad/practicar']) {
+    for (const f of ['index.html', '1-grafico.html', '2-web.html', '3-editorial.html', '4-identidad.html', '5-motion.html', '6-after-effects.html', 'taller.html', 'herramientas.html', 'estudio.html', 'recorridos.html', 'recorridos.html#identidad/practicar']) {
       await page.goto(B + f, { waitUntil: 'load' }); await page.waitForTimeout(300);
     }
     assert.deepEqual(errors, []);

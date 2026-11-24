@@ -298,13 +298,13 @@ footer.end{padding-block:48px 64px;color:var(--ink-2)}
 <div class="wrap">
   <header class="cover">
     <div>
-      <div class="hero-kicker mono"><span class="chip">Curso interactivo</span><span>5 módulos · 58 láminas</span></div>
+      <div class="hero-kicker mono"><span class="chip">Curso interactivo</span><span>6 módulos · 69 láminas</span></div>
       <h1>Principios<span>del diseño</span></h1>
       <p class="lede">Del afiche a la pantalla, de la página a la marca y de la marca al movimiento. Cada principio tiene un banco de pruebas: se toca, se rompe y se entiende. Al final, un repaso por módulo.</p>
     </div>
     <div>
-      <div class="cover-stats"><div><b>5</b><span>Módulos</span></div><div><b>58</b><span>Láminas</span></div><div><b>25</b><span>Preguntas</span></div></div>
-      <div class="how mono"><span>Orden sugerido: 1 → 5</span><span>Cada módulo funciona solo</span></div>
+      <div class="cover-stats"><div><b>6</b><span>Módulos</span></div><div><b>69</b><span>Láminas</span></div><div><b>30</b><span>Preguntas</span></div></div>
+      <div class="how mono"><span>Orden sugerido: 1 → 6</span><span>Cada módulo funciona solo</span></div>
     </div>
   </header>
 
@@ -317,7 +317,7 @@ footer.end{padding-block:48px 64px;color:var(--ink-2)}
     <div class="qbody" id="qbody" role="tabpanel"></div>
   </div>
 
-  <footer class="end mono">Curso de principios del diseño · Gráfico, Web, Editorial, Identidad y Motion</footer>
+  <footer class="end mono">Curso de principios del diseño · Gráfico, Web, Editorial, Identidad, Motion y After Effects</footer>
 </div>
 
 <script>
@@ -334,7 +334,9 @@ const MODS=[
   {n:4,t:'Identidad de marca',href:'4-identidad.html',d:'De un logo a un sistema, con una marca de ejemplo de punta a punta.',l:['Tipos de marca','Reducción','Resguardo','Versiones de color','Usos incorrectos','Construcción','Color','Tipografía','Patrones','Voz y tono','Aplicaciones'],
    pv:`<i style="left:30px;top:36px;width:70px;height:56px;border-radius:35px 35px 0 0;background:#C9861E"></i><i style="left:54px;top:68px;width:22px;height:24px;border-radius:11px 11px 0 0;background:var(--paper)"></i><i style="left:26px;top:96px;width:78px;height:6px;background:#2B1E16"></i><i style="left:122px;top:58px;width:120px;height:22px;background:var(--ink)"></i><i style="right:24px;bottom:18px;width:30px;height:30px;border:2px dashed var(--mag);animation:spin 6s linear infinite"></i>`},
   {n:5,t:'Motion design',href:'5-motion.html',d:'El diseño en el tiempo: curvas, anticipación, ritmo, tipografía cinética y transiciones.',l:['Timing y spacing','Editor de curvas','Squash y stretch','Anticipación','Superposición','Arcos','Escalonamiento','Fotogramas clave','Ritmo','Tipografía cinética','Transiciones'],
-   pv:`<i style="left:0;right:0;bottom:24px;height:2px;background:var(--ink)"></i>${[0,1,2,3,4,5].map(i=>`<i style="left:${26+i*36}px;bottom:26px;width:20px;height:80px;background:${i%2?'var(--ink)':'var(--mag)'};transform-origin:bottom;animation:grow 1.2s ${i*.12}s ease-in-out infinite"></i>`).join('')}`}
+   pv:`<i style="left:0;right:0;bottom:24px;height:2px;background:var(--ink)"></i>${[0,1,2,3,4,5].map(i=>`<i style="left:${26+i*36}px;bottom:26px;width:20px;height:80px;background:${i%2?'var(--ink)':'var(--mag)'};transform-origin:bottom;animation:grow 1.2s ${i*.12}s ease-in-out infinite"></i>`).join('')}`},
+  {n:6,t:'After Effects',href:'6-after-effects.html',d:'La herramienta, para quien viene de Flash: keyframes por propiedad, Graph Editor, parenting, mattes, texto, expressions y exportación a video y Lottie.',l:['Interfaz','Keyframes','Graph Editor','Anchor y parenting','Trim Paths','Track mattes','Texto animado','Expressions','Exportar','Atajos','Proyecto final'],
+   pv:`<i style="left:0;right:0;top:0;bottom:0;background:#232529"></i><i style="left:22px;top:20px;width:110px;height:62px;background:#000"></i><i style="left:62px;top:36px;width:30px;height:30px;background:var(--mag);animation:bob 2.4s ease-in-out infinite"></i>${[0,1,2].map(i=>`<i style="left:22px;top:${96+i*14}px;width:${150+i*20}px;height:6px;background:#3A3E46"></i><i style="left:${60+i*30}px;top:${94+i*14}px;width:10px;height:10px;background:#C9CED6;transform:rotate(45deg)"></i>`).join('')}`}
 ];
 $('#mods').innerHTML=MODS.map(m=>`<a class="mod" href="${m.href}"><div class="mv" aria-hidden="true">${m.pv}</div><div class="mod-b"><div class="mod-n mono"><span>Módulo ${m.n}</span><span>${m.l.length} láminas</span></div><h2>${m.t}</h2><p>${m.d}</p><ul>${m.l.map(x=>`<li>${x}</li>`).join('')}</ul><span class="go">Abrir módulo →</span></div></a>`).join('');
 
@@ -363,7 +365,12 @@ const Q={
    ['En un cubic-bezier, si un valor de la curva supera 1, el objeto…',['Se detiene','Se pasa del destino y vuelve','Retrocede antes de arrancar','Se mueve más lento'],1,'Si baja de 0, retrocede antes de arrancar: anticipación.'],
    ['Al aplicar squash y stretch, ¿qué se conserva?',['La altura','El ancho','El volumen','El color'],2,'Si se aplasta hacia abajo, se ensancha hacia los costados.'],
    ['A 120 BPM y 24 fps, ¿cuántos fotogramas dura cada tiempo?',['6','12','24','48'],1,'60 ÷ 120 × 24 = 12 fotogramas.'],
-   ['¿Qué ritmo de lectura es cómodo en tipografía cinética?',['Unas 3 palabras por segundo','Unas 8 palabras por segundo','Una palabra cada 3 segundos','Depende solo del efecto'],0,'Primero se tiene que leer, después moverse.']]
+   ['¿Qué ritmo de lectura es cómodo en tipografía cinética?',['Unas 3 palabras por segundo','Unas 8 palabras por segundo','Una palabra cada 3 segundos','Depende solo del efecto'],0,'Primero se tiene que leer, después moverse.']],
+6:[['En After Effects, ¿qué guarda un keyframe?',['El estado completo de la capa','El valor de una sola propiedad en un momento','Todas las capas de la comp en ese frame','La duración del tween'],1,'Por eso la posición y la rotación pueden tener tiempos distintos.'],
+   ['¿Qué hace F9 sobre los keyframes seleccionados?',['Los borra','Les aplica Easy Ease','Los vuelve lineales','Los copia al segundo siguiente'],1,'Easy Ease pone 33% de influencia de entrada y de salida.'],
+   ['Querés que la aguja de un reloj gire desde su base. ¿Qué cambiás?',['La posición de la capa','El anchor point, con la herramienta Pan Behind','La escala','El parent'],1,'El anchor point es el punto de registro: desde ahí gira y escala la capa.'],
+   ['En una expression, ¿qué devuelve time?',['El número de frame actual','Los segundos transcurridos en la comp','La duración de la comp','La hora del sistema'],1,'Por eso time * 90 da 90 grados por segundo.'],
+   ['Una pieza va a la web en Lottie. ¿Qué conviene evitar?',['Shape layers','Trim Paths','Gaussian Blur y Glow','Parenting'],2,'La mayoría de los efectos no llegan a Lottie.']]
 };
 const QUIZ_KEY='laboratorio-quiz-v2';
  const loaded=(()=>{try{return JSON.parse(localStorage.getItem(QUIZ_KEY)||'{}')}catch{return {}}})();
